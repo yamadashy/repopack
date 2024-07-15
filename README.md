@@ -51,10 +51,11 @@ Once you have generated the packed file, you can use it with Generative AI tools
 
 ### Command Line Options
 
+- `-v, --version`: Show tool version
 - `-o, --output <file>`: Specify the output file name
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
-- `-v, --verbose`: Enable verbose logging
+- `--verbose`: Enable verbose logging
 
 Examples:
 ```bash

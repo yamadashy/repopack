@@ -10,6 +10,7 @@ import pc from 'picocolors';
 import { handleError } from '../utils/errorHandler.js';
 
 interface CliOptions extends OptionValues {
+  version?: boolean;
   output?: string;
   ignore?: string;
   config?: string;
@@ -17,6 +18,15 @@ interface CliOptions extends OptionValues {
 }
 
 async function executeAction(directory: string, options: CliOptions) {
+  const version = await getVersion();
+
+  if (options.version) {
+    console.log(version);
+    return;
+  }
+
+  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
+
   logger.setVerbose(options.verbose || false);
 
   const fileConfig: RepopackConfigFile = await loadFileConfig(options.config ?? null);
@@ -67,16 +77,15 @@ export async function run() {
   try {
     const version = await getVersion();
 
-    console.log(pc.dim(`\n📦 Repopack v${version}\n`));
-
     program
       .version(version)
       .description('Repopack - Pack your repository into a single AI-friendly file')
       .arguments('[directory]')
+      .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
-      .option('-v, --verbose', 'enable verbose logging for detailed output')
+      .option('--verbose', 'enable verbose logging for detailed output')
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 
     await program.parseAsync(process.argv);
