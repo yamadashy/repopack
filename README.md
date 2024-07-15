@@ -41,11 +41,13 @@ To pack your entire repository:
 repopack
 ```
 
-To pack specific files or directories:
+To pack a specific directory:
 
 ```bash
-repopack path/to/file1 path/to/directory
+repopack path/to/directory
 ```
+
+Once you have generated the packed file, you can use it with Generative AI tools like Claude or ChatGPT.
 
 ### Command Line Options
 
@@ -59,14 +61,21 @@ Examples:
 repopack -o custom-output.txt
 repopack -i "*.log,tmp" -v
 repopack -c ./custom-config.json
-npx repopack src tests
+npx repopack src
 ```
-
-This will create a packed file containing the specified files or the entire repository.
 
 ## ⚙️ Configuration
 
-Create a `repopack.config.json` file in your project root for custom configurations:
+Create a `repopack.config.json` file in your project root for custom configurations. Here's an explanation of the configuration options:
+
+| Option | Description | Default |
+|--------|-------------|---------|
+|`output.filePath`| The name of the output file | `"repopack-output.txt"` |
+|`output.headerText`| Custom text to include in the file header |`null`|
+|`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
+|`ignore.customPatterns`| Additional patterns to ignore |`[]`|
+
+Example configuration:
 
 ```json
 {
@@ -80,6 +89,18 @@ Create a `repopack.config.json` file in your project root for custom configurati
   }
 }
 ```
+
+### Default Ignore Patterns
+
+Repopack automatically ignores certain files and directories by default:
+
+- All patterns specified in your project's `.gitignore` file
+- Git-related files and directories (e.g., `.git`, `.gitattributes`)
+- Binary files (e.g., images, executables)
+- Common build output and dependency directories (e.g., `node_modules`, `dist`)
+- System and IDE-specific files (e.g., `.DS_Store`, `.vscode`)
+
+This ensures that only relevant source code is included in the packed file. You can add additional ignore patterns using the `ignore.customPatterns` configuration option or the `-i` command line flag.
 
 ## 📄 Output Format
 
