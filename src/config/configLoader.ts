@@ -4,6 +4,7 @@ import { defaultConfig } from './defaultConfig.js';
 import { logger } from '../utils/logger.js';
 import * as fs from 'fs/promises';
 import { RepopackError } from '../utils/errorHandler.js';
+import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
 
 const defaultConfigPath = 'repopack.config.json';
 
@@ -37,9 +38,14 @@ export async function loadFileConfig(configPath: string | null): Promise<Repopac
   try {
     const fileContent = await fs.readFile(fullPath, 'utf-8');
     const config = JSON.parse(fileContent);
+    validateConfig(config);
     return config;
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof RepopackConfigValidationError) {
+      throw new RepopackError(`Invalid configuration in ${configPath}: ${error.message}`);
+    } else if (error instanceof SyntaxError) {
+      throw new RepopackError(`Invalid JSON in config file ${configPath}: ${error.message}`);
+    } else if (error instanceof Error) {
       throw new RepopackError(`Error loading config from ${configPath}: ${error.message}`);
     } else {
       throw new RepopackError(`Error loading config from ${configPath}`);
