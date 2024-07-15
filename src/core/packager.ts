@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import path from 'path';
-import { RepopackConfig } from '../types/index.js';
+import { RepopackConfigMerged } from '../types/index.js';
 import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
 import {
   getGitignorePatterns as defaultGetGitignorePatterns,
@@ -23,7 +23,7 @@ export interface PackResult {
 
 export async function pack(
   rootDir: string,
-  config: RepopackConfig,
+  config: RepopackConfigMerged,
   deps: Dependencies = {
     getGitignorePatterns: defaultGetGitignorePatterns,
     createIgnoreFilter: defaultCreateIgnoreFilter,
@@ -49,7 +49,7 @@ export async function pack(
   };
 }
 
-function getIgnorePatterns(gitignorePatterns: string[], config: RepopackConfig): string[] {
+function getIgnorePatterns(gitignorePatterns: string[], config: RepopackConfigMerged): string[] {
   let ignorePatterns = [...gitignorePatterns];
   if (config.ignore.useDefaultPatterns) {
     ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
@@ -63,7 +63,7 @@ function getIgnorePatterns(gitignorePatterns: string[], config: RepopackConfig):
 async function packDirectory(
   dir: string,
   relativePath: string,
-  config: RepopackConfig,
+  config: RepopackConfigMerged,
   ignoreFilter: (path: string) => boolean,
   deps: Dependencies,
 ): Promise<{ path: string; content: string }[]> {

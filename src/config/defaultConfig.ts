@@ -1,6 +1,6 @@
-import { RepopackConfig } from '../types/index.js';
+import { RepopackConfigDefault } from '../types/index.js';
 
-export const defaultConfig: RepopackConfig = {
+export const defaultConfig: RepopackConfigDefault = {
   output: {
     filePath: 'repopack-output.txt',
   },

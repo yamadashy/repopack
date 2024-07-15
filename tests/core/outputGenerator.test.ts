@@ -1,6 +1,6 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { generateOutput, generateFileHeader } from '../../src/core/outputGenerator.js';
-import { RepopackConfig } from '../../src/types/index.js';
+import { RepopackConfigMerged } from '../../src/types/index.js';
 import * as fs from 'fs/promises';
 import path from 'path';
 
@@ -12,7 +12,7 @@ describe('outputGenerator', () => {
   });
 
   test('generateOutput should write correct content to file', async () => {
-    const mockConfig: RepopackConfig = {
+    const mockConfig: RepopackConfigMerged = {
       output: { filePath: 'output.txt' },
       ignore: { useDefaultPatterns: true },
     };
@@ -35,7 +35,7 @@ describe('outputGenerator', () => {
   });
 
   test('generateFileHeader should include user-provided header text', () => {
-    const mockConfig: RepopackConfig = {
+    const mockConfig: RepopackConfigMerged = {
       output: {
         filePath: 'output.txt',
         headerText: 'Custom header text',
