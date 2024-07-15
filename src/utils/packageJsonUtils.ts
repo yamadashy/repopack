@@ -15,7 +15,8 @@ async function getPackageJson(): Promise<{
   name: string;
   version: string;
 }> {
-  const packageJsonPath = path.join(import.meta.dirname, '..', '..', 'package.json');
+  const dirName = import.meta.dirname ?? __dirname;
+  const packageJsonPath = path.join(dirName, '..', '..', 'package.json');
   const packageJsonFile = await fs.readFile(packageJsonPath, 'utf-8');
   const packageJson = JSON.parse(packageJsonFile);
   return packageJson;
