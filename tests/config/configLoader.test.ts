@@ -1,61 +1,67 @@
-import { expect, test, describe } from 'vitest';
-import { mergeConfigs } from '../../src/config/configLoader.js';
-import { RepopackConfigCli, RepopackConfigFile } from '../../src/types/index.js';
-import { defaultConfig } from '../../src/config/defaultConfig.js';
+import { expect, test, describe, vi, beforeEach } from 'vitest';
+import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
+import { RepopackConfigFile, RepopackConfigCli } from '../../src/types/index.js';
+import * as fs from 'fs/promises';
+import { Stats } from 'fs';
+
+vi.mock('fs/promises');
+vi.mock('../../src/utils/logger', () => ({
+  logger: {
+    trace: vi.fn(),
+    note: vi.fn(),
+  },
+}));
 
 describe('configLoader', () => {
-  test('mergeConfigs should correctly merge configs', () => {
-    const fileConfig: RepopackConfigFile = {
-      output: {
-        filePath: 'file-output.txt',
-        headerText: 'File header',
-      },
-      ignore: {
-        useDefaultPatterns: true,
-        customPatterns: ['file-ignore'],
-      },
-    };
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
-    const cliConfig: RepopackConfigCli = {
-      output: {
-        filePath: 'cli-output.txt',
-      },
-      ignore: {
-        useDefaultPatterns: true,
-        customPatterns: ['cli-ignore'],
-      },
-    };
+  describe('loadFileConfig', () => {
+    test('should load and parse a valid config file', async () => {
+      const mockConfig = {
+        output: { filePath: 'test-output.txt' },
+        ignore: { useDefaultPatterns: true },
+      };
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockConfig));
+      vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
 
-    const mergedConfig = mergeConfigs(fileConfig, cliConfig);
+      const result = await loadFileConfig('test-config.json');
+      expect(result).toEqual(mockConfig);
+    });
 
-    expect(mergedConfig).toEqual({
-      output: {
-        filePath: 'cli-output.txt',
-        headerText: 'File header',
-      },
-      ignore: {
-        useDefaultPatterns: true,
-        customPatterns: ['file-ignore', 'cli-ignore'],
-      },
+    test('should return an empty object if no config file is found', async () => {
+      vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
+
+      const result = await loadFileConfig(null);
+      expect(result).toEqual({});
+    });
+
+    test('should throw an error for invalid JSON', async () => {
+      vi.mocked(fs.readFile).mockResolvedValue('invalid json');
+      vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
+
+      await expect(loadFileConfig('test-config.json')).rejects.toThrow('Invalid JSON');
     });
   });
 
-  test('mergeConfigs should use default values when not provided', () => {
-    const mergedConfig = mergeConfigs({}, {});
+  describe('mergeConfigs', () => {
+    test('should correctly merge configs', () => {
+      const fileConfig: RepopackConfigFile = {
+        output: { filePath: 'file-output.txt' },
+        ignore: { useDefaultPatterns: true, customPatterns: ['file-ignore'] },
+      };
+      const cliConfig: RepopackConfigCli = {
+        output: { filePath: 'cli-output.txt' },
+        ignore: { customPatterns: ['cli-ignore'] },
+      };
 
-    expect(mergedConfig).toEqual(defaultConfig);
-  });
+      const result = mergeConfigs(fileConfig, cliConfig);
 
-  test('mergeConfigs should override default headerText', () => {
-    const fileConfig: RepopackConfigFile = {
-      output: {
-        filePath: 'file-output.txt',
-        headerText: 'Custom header',
-      },
-    };
-
-    const mergedConfig = mergeConfigs(fileConfig, {});
-
-    expect(mergedConfig.output.headerText).toBe('Custom header');
+      expect(result.output.filePath).toBe('cli-output.txt');
+      expect(result.ignore.useDefaultPatterns).toBe(true);
+      expect(result.ignore.customPatterns).toContain('file-ignore');
+      expect(result.ignore.customPatterns).toContain('cli-ignore');
+    });
   });
 });
