@@ -1,0 +1,47 @@
+# Source files
+src/
+
+# Test files
+tests/
+coverage/
+
+# Configuration files
+tsconfig.json
+tsconfig.build.json
+.eslintrc.js
+eslint.config.mjs
+prettier.config.mjs
+vite.config.mts
+
+# Git files
+.gitignore
+.git
+
+# CI files
+.github/
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Repopack output
+repopack-output.txt
+
+# Development scripts
+scripts/
+
+# Documentation files (except README and LICENSE)
+docs/
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db

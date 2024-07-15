@@ -1,0 +1,21 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "es2016",
+    "outDir": "./lib",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "lib": ["es2022"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["node", "picocolors"]
+  }
+}

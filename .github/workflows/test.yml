@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+        cache: npm
+
+    - name: Install dependencies
+      run: npm i
+
+    - name: Lint
+      run: yarn lint
+
+  test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+        cache: npm
+
+    - name: Install dependencies
+      run: npm i
+
+    - name: Test
+      run: npm test
