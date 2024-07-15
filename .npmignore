@@ -20,6 +20,18 @@ vite.config.mts
 # CI files
 .github/
 
+# yarn files
+.yarn
+
+# ESLint files
+.eslintcache
+
+# Config files
+.editorconfig
+.node-version
+.tool-versions
+repopack.config.js
+
 # Editor files
 .vscode/
 .idea/
