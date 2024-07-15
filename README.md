@@ -49,6 +49,22 @@ repopack path/to/directory
 
 Once you have generated the packed file, you can use it with Generative AI tools like Claude or ChatGPT.
 
+### Prompt Examples
+
+When using the packed file with AI tools, you can use prompts like these to start your conversation:
+
+#### English
+
+```
+This file contains the contents of my repository combined into a single file. I'd like to refactor the code, so please review the code first.
+```
+
+#### Japanese
+
+```
+このファイルはリポジトリのファイルを1つにしたものです。コードのリファクタをしたいのでまずコードを確認してください。
+```
+
 ### Command Line Options
 
 - `-v, --version`: Show tool version
