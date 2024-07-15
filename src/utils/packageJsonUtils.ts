@@ -1,5 +1,6 @@
 import path from 'path';
 import * as fs from 'fs/promises';
+import * as url from 'url';
 
 export async function getVersion(): Promise<string> {
   try {
@@ -15,7 +16,7 @@ async function getPackageJson(): Promise<{
   name: string;
   version: string;
 }> {
-  const dirName = import.meta.dirname ?? __dirname;
+  const dirName = url.fileURLToPath(new URL('.', import.meta.url));
   const packageJsonPath = path.join(dirName, '..', '..', 'package.json');
   const packageJsonFile = await fs.readFile(packageJsonPath, 'utf-8');
   const packageJson = JSON.parse(packageJsonFile);
