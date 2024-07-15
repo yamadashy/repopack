@@ -1,4 +1,4 @@
-import { RepopackConfig } from '../types/index.js';
+import { RepopackConfigMerged } from '../types/index.js';
 import * as fs from 'fs/promises';
 import path from 'path';
 
@@ -7,7 +7,7 @@ const LONG_SEPARATOR = '='.repeat(64);
 
 export async function generateOutput(
   rootDir: string,
-  config: RepopackConfig,
+  config: RepopackConfigMerged,
   packedFiles: { path: string; content: string }[],
   fsModule = fs,
 ): Promise<void> {
@@ -30,7 +30,7 @@ export async function generateOutput(
   await fsModule.writeFile(outputPath, output.join('\n'));
 }
 
-export function generateFileHeader(config: RepopackConfig): string {
+export function generateFileHeader(config: RepopackConfigMerged): string {
   const defaultHeader = `${LONG_SEPARATOR}
 REPOPACK OUTPUT FILE
 ${LONG_SEPARATOR}
@@ -74,7 +74,7 @@ For more information about Repopack, visit: https://github.com/yamadashy/repopac
 
   let headerText = defaultHeader;
 
-  if (config.output.headerText) {
+  if (config.output?.headerText) {
     headerText += `
 Additional User-Provided Header:
 --------------------------------

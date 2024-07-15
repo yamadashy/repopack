@@ -1,93 +1,58 @@
-import { program } from 'commander';
-import Spinner from '../utils/spinner.js';
+import { program, OptionValues } from 'commander';
+import path from 'path';
 import { pack } from '../core/packager.js';
-import { RepopackConfig } from '../types/index.js';
-import { loadConfig, mergeConfigs } from '../config/configLoader.js';
+import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from '../types/index.js';
+import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
 import { logger } from '../utils/logger.js';
 import { getVersion } from '../utils/packageJsonUtils.js';
-import { handleError, RepopackError } from '../utils/errorHandler.js';
+import Spinner from '../utils/spinner.js';
 import pc from 'picocolors';
+import { handleError } from '../utils/errorHandler.js';
 
-export async function run() {
-  try {
-    await runInternal();
-  } catch (error) {
-    handleError(error);
-  }
+interface CliOptions extends OptionValues {
+  output?: string;
+  ignore?: string;
+  config?: string;
+  verbose?: boolean;
 }
 
-async function runInternal() {
-  const version = await getVersion();
+async function executeAction(directory: string, options: CliOptions) {
+  logger.setVerbose(options.verbose || false);
 
-  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
-
-  program
-    .version(version)
-    .description('Repopack - Pack your repository into a single AI-friendly file')
-    .option('-o, --output <file>', 'specify the output file name (default: repopack-output.txt)')
-    .option('-i, --ignore <items>', 'comma-separated list of additional items to ignore')
-    .option('-c, --config <path>', 'path to a custom config file (default: repopack.config.js)')
-    .option('--no-default-ignore', 'disable the default ignore list')
-    .option('-v, --verbose', 'enable verbose logging for detailed output')
-    .addHelpText(
-      'after',
-      `
-Example calls:
-  $ repopack
-  $ repopack -o custom-output.txt
-  $ repopack -i "*.log,tmp" -v
-  $ repopack -c ./custom-config.js
-
-For more information, visit: https://github.com/yamadashy/repopack`,
-    )
-    .parse(process.argv);
-
-  const options = program.opts();
-
-  logger.setVerbose(options.verbose);
-
-  logger.trace('Command line options:', options);
-
-  const fileConfig = await loadConfig(options.config);
-
+  const fileConfig: RepopackConfigFile = await loadFileConfig(options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
 
-  const cliConfig: Partial<RepopackConfig> = {
-    ...(options.output && { output: { filePath: options.output } }),
-    ignore: {
-      useDefaultPatterns: options.defaultIgnore !== false,
-      customPatterns: options.ignore ? options.ignore.split(',') : undefined,
-    },
-  };
-
+  const cliConfig: RepopackConfigCli = {};
+  if (options.output) {
+    cliConfig.output = { filePath: options.output };
+  }
+  if (options.ignore) {
+    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
+  }
   logger.trace('CLI config:', cliConfig);
 
-  const config = mergeConfigs(fileConfig, cliConfig);
+  const config: RepopackConfigMerged = mergeConfigs(fileConfig, cliConfig);
 
   logger.trace('Merged config:', config);
 
-  if (!config.output.filePath) {
-    throw new RepopackError(
-      'Output file is not specified. Please provide it in the config file or via command line option.',
-    );
-  }
+  // Ensure the output file is always in the current working directory
+  config.output.filePath = path.resolve(process.cwd(), path.basename(config.output.filePath));
 
-  console.log('');
+  const targetPath = path.resolve(directory);
 
   const spinner = new Spinner('Packing files...');
   spinner.start();
 
   try {
-    const { totalFiles, totalCharacters } = await pack(process.cwd(), config);
-
+    const { totalFiles, totalCharacters } = await pack(targetPath, config);
     spinner.succeed('Packing completed successfully!');
 
     console.log('');
     console.log(pc.white('📊 Pack Summary:'));
     console.log(pc.dim('────────────────'));
-    console.log(`${pc.white('Total Files:')}  ${pc.white(totalFiles.toString())}`);
-    console.log(`${pc.white('Total Chars:')}  ${pc.white(totalCharacters.toString())}`);
-    console.log(`${pc.white('     Output:')}  ${pc.white(config.output.filePath)}`);
+    console.log(`${pc.white('Total Files:')} ${pc.white(totalFiles.toString())}`);
+    console.log(`${pc.white('Total Chars:')} ${pc.white(totalCharacters.toString())}`);
+    console.log(`${pc.white('     Output:')} ${pc.white(config.output.filePath)}`);
 
     console.log('');
     console.log(pc.green('🎉 All Done!'));
@@ -95,5 +60,27 @@ For more information, visit: https://github.com/yamadashy/repopack`,
   } catch (error) {
     spinner.fail('Error during packing');
     throw error;
+  }
+}
+
+export async function run() {
+  try {
+    const version = await getVersion();
+
+    console.log(pc.dim(`\n📦 Repopack v${version}\n`));
+
+    program
+      .version(version)
+      .description('Repopack - Pack your repository into a single AI-friendly file')
+      .arguments('[directory]')
+      .option('-o, --output <file>', 'specify the output file name')
+      .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
+      .option('-c, --config <path>', 'path to a custom config file')
+      .option('-v, --verbose', 'enable verbose logging for detailed output')
+      .action((directory = '.', options: CliOptions) => executeAction(directory, options));
+
+    await program.parseAsync(process.argv);
+  } catch (error) {
+    handleError(error);
   }
 }

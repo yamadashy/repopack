@@ -1,12 +1,13 @@
 import path from 'path';
-import { RepopackConfig } from '../types/index.js';
+import { RepopackConfigCli as RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from '../types/index.js';
 import { defaultConfig } from './defaultConfig.js';
 import { logger } from '../utils/logger.js';
 import * as fs from 'fs/promises';
+import { RepopackError } from '../utils/errorHandler.js';
 
-const defaultConfigPath = 'repopack.config.js';
+const defaultConfigPath = 'repopack.config.json';
 
-export async function loadConfig(configPath: string | null): Promise<Partial<RepopackConfig>> {
+export async function loadFileConfig(configPath: string | null): Promise<RepopackConfigFile> {
   let useDefaultConfig = false;
   if (!configPath) {
     useDefaultConfig = true;
@@ -29,23 +30,24 @@ export async function loadConfig(configPath: string | null): Promise<Partial<Rep
       );
       return {};
     } else {
-      throw new Error(`Config file not found at ${configPath}`);
+      throw new RepopackError(`Config file not found at ${configPath}`);
     }
   }
 
   try {
-    const config = await import(fullPath);
-    return config.default || {};
+    const fileContent = await fs.readFile(fullPath, 'utf-8');
+    const config = JSON.parse(fileContent);
+    return config;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Error loading config from ${configPath}: ${error.message}`);
+      throw new RepopackError(`Error loading config from ${configPath}: ${error.message}`);
     } else {
-      throw new Error(`Error loading config from ${configPath}`);
+      throw new RepopackError(`Error loading config from ${configPath}`);
     }
   }
 }
 
-export function mergeConfigs(fileConfig: Partial<RepopackConfig>, cliConfig: Partial<RepopackConfig>): RepopackConfig {
+export function mergeConfigs(fileConfig: RepopackConfigFile, cliConfig: RepopackConfigCli): RepopackConfigMerged {
   return {
     output: {
       ...defaultConfig.output,

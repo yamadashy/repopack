@@ -1,6 +1,6 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { pack, Dependencies } from '../../src/core/packager.js';
-import { RepopackConfig } from '../../src/types/index.js';
+import { RepopackConfigMerged } from '../../src/types/index.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { Dirent } from 'fs';
@@ -21,7 +21,7 @@ describe('packager', () => {
   });
 
   test('pack should process files and generate output', async () => {
-    const mockConfig: RepopackConfig = {
+    const mockConfig: RepopackConfigMerged = {
       output: { filePath: 'output.txt' },
       ignore: { useDefaultPatterns: true },
     };

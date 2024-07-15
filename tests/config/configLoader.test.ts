@@ -1,11 +1,11 @@
 import { expect, test, describe } from 'vitest';
 import { mergeConfigs } from '../../src/config/configLoader.js';
-import { RepopackConfig } from '../../src/types/index.js';
+import { RepopackConfigCli, RepopackConfigFile } from '../../src/types/index.js';
 import { defaultConfig } from '../../src/config/defaultConfig.js';
 
 describe('configLoader', () => {
   test('mergeConfigs should correctly merge configs', () => {
-    const fileConfig: Partial<RepopackConfig> = {
+    const fileConfig: RepopackConfigFile = {
       output: {
         filePath: 'file-output.txt',
         headerText: 'File header',
@@ -16,7 +16,7 @@ describe('configLoader', () => {
       },
     };
 
-    const cliConfig: Partial<RepopackConfig> = {
+    const cliConfig: RepopackConfigCli = {
       output: {
         filePath: 'cli-output.txt',
       },
@@ -47,7 +47,7 @@ describe('configLoader', () => {
   });
 
   test('mergeConfigs should override default headerText', () => {
-    const fileConfig: Partial<RepopackConfig> = {
+    const fileConfig: RepopackConfigFile = {
       output: {
         filePath: 'file-output.txt',
         headerText: 'Custom header',

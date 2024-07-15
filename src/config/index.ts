@@ -1,2 +1,2 @@
 export { defaultConfig } from './defaultConfig.js';
-export { loadConfig, mergeConfigs } from './configLoader.js';
+export { loadFileConfig as loadConfig, mergeConfigs } from './configLoader.js';
