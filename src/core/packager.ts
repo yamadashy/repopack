@@ -81,7 +81,7 @@ async function packDirectory(
       const subDirFiles = await packDirectory(fullPath, entryRelativePath, config, ignoreFilter, deps);
       packedFiles.push(...subDirFiles);
     } else {
-      const content = await deps.processFile(fullPath);
+      const content = await deps.processFile(fullPath, config);
       if (content) {
         packedFiles.push({ path: entryRelativePath, content });
       }

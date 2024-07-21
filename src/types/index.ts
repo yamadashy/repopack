@@ -2,6 +2,7 @@ interface RepopackConfigBase {
   output?: {
     filePath?: string;
     headerText?: string;
+    removeComments?: boolean;
   };
   ignore?: {
     useDefaultPatterns?: boolean;
@@ -13,6 +14,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
   output: {
     filePath: string;
     headerText?: string;
+    removeComments?: boolean;
   };
   ignore: {
     useDefaultPatterns: boolean;
@@ -24,6 +26,7 @@ export type RepopackConfigFile = RepopackConfigBase & {
   output?: {
     filePath?: string;
     headerText?: string;
+    removeComments?: boolean;
   };
   ignore?: {
     useDefaultPatterns?: boolean;
@@ -35,6 +38,7 @@ export type RepopackConfigCli = RepopackConfigBase & {
   output?: {
     filePath?: string;
     headerText?: string;
+    removeComments?: boolean;
   };
   ignore?: {
     useDefaultPatterns?: boolean;

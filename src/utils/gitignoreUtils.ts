@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import path from 'path';
 import ignore from 'ignore';
+import { logger } from './logger.js';
 
 export async function getGitignorePatterns(rootDir: string, fsModule = fs): Promise<string[]> {
   const gitignorePath = path.join(rootDir, '.gitignore');
@@ -8,7 +9,7 @@ export async function getGitignorePatterns(rootDir: string, fsModule = fs): Prom
     const gitignoreContent = await fsModule.readFile(gitignorePath, 'utf-8');
     return parseGitignoreContent(gitignoreContent);
   } catch (error) {
-    console.warn('No .gitignore file found or unable to read it.');
+    logger.warn('No .gitignore file found or unable to read it.');
     return [];
   }
 }
