@@ -44,4 +44,4 @@ jobs:
       run: npm i
 
     - name: Test
-      run: npm test
+      run: npm run test-coverage
