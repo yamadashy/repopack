@@ -43,6 +43,6 @@ jobs:
     - name: Clean install dependencies
       run: npm ci
 
-    - run: npm test
+    - run: npm run test-coverage -- --reporter=verbose
       env:
         CI_OS: ${{ runner.os }}

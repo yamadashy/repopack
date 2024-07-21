@@ -6,6 +6,8 @@ import os from 'os';
 
 vi.mock('fs/promises');
 
+const isWindows = os.platform() === 'win32';
+
 describe('gitignoreUtils', () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -90,17 +92,19 @@ node_modules
       expect(filter('styles/main.css')).toBe(false);
       expect(filter('node_modules/package/index.js')).toBe(false);
 
-      // Windows-style paths
-      if (os.platform() === 'win32') {
-        expect(filter('docs\\README.md')).toBe(false);
-        expect(filter('src\\assets\\logo.svg')).toBe(false);
-        expect(filter('styles\\main.css')).toBe(false);
-        expect(filter('node_modules\\package\\index.js')).toBe(false);
-        expect(filter('src\\components\\Button.js')).toBe(true);
-      }
-
       // Files that should not be ignored
       expect(filter('src/index.js')).toBe(true);
+    });
+
+    test.runIf(isWindows)('should correctly ignore files with Windows-style paths', () => {
+      const patterns = ['*.md', '*.svg', '*.css', 'node_modules/**'];
+      const filter = createIgnoreFilter(patterns);
+
+      expect(filter('docs\\README.md')).toBe(false);
+      expect(filter('src\\assets\\logo.svg')).toBe(false);
+      expect(filter('styles\\main.css')).toBe(false);
+      expect(filter('node_modules\\package\\index.js')).toBe(false);
+      expect(filter('src\\components\\Button.js')).toBe(true);
     });
 
     test('should handle nested directory patterns correctly', () => {
@@ -111,12 +115,15 @@ node_modules
       expect(filter('build/output.js')).toBe(false);
 
       expect(filter('src/test/helper.js')).toBe(true);
+    });
 
-      if (os.platform() === 'win32') {
-        expect(filter('src\\build\\utils.js')).toBe(true);
-        expect(filter('test\\integration\\api.spec.js')).toBe(false);
-        expect(filter('build\\temp\\cache.json')).toBe(false);
-      }
+    test.runIf(isWindows)('should handle nested directory patterns with Windows-style paths', () => {
+      const patterns = ['test/**/*.spec.js', 'build/**'];
+      const filter = createIgnoreFilter(patterns);
+
+      expect(filter('src\\build\\utils.js')).toBe(true);
+      expect(filter('test\\integration\\api.spec.js')).toBe(false);
+      expect(filter('build\\temp\\cache.json')).toBe(false);
     });
 
     test('should correctly handle patterns with special characters', () => {
@@ -131,19 +138,12 @@ node_modules
       expect(filter('docs/temp/file.txt')).toBe(true);
     });
 
-    test('should handle case sensitivity correctly on different platforms', () => {
+    test('should handle case sensitivity correctly', () => {
       const patterns = ['*.MD', 'TEST'];
       const filter = createIgnoreFilter(patterns);
 
-      if (os.platform() === 'win32') {
-        // Windows is case-insensitive
-        expect(filter('readme.md')).toBe(false);
-        expect(filter('test/file.txt')).toBe(false);
-      } else {
-        // Unix-like systems are case-insensitive
-        expect(filter('readme.md')).toBe(false);
-        expect(filter('test/file.txt')).toBe(false);
-      }
+      expect(filter('readme.md')).toBe(false);
+      expect(filter('test/file.txt')).toBe(false);
 
       expect(filter('README.MD')).toBe(false);
       expect(filter('TEST/file.txt')).toBe(false);
