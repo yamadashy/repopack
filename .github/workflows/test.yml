@@ -21,27 +21,28 @@ jobs:
         node-version-file: .tool-versions
         cache: npm
 
-    - name: Install dependencies
-      run: npm i
+    - name: Clean install dependencies
+      run: npm ci
 
     - name: Lint
       run: yarn lint
 
   test:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16.x, 18.x, 20.x]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup node
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
-        node-version-file: .tool-versions
-        cache: npm
+        node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
-      run: npm i
+    - name: Clean install dependencies
+      run: npm ci
 
-    - name: Test
-      run: npm run test-coverage
+    - run: npm test
+      env:
+        CI_OS: ${{ runner.os }}
