@@ -24,5 +24,5 @@ export type IgnoreFilter = (path: string) => boolean;
 
 export function createIgnoreFilter(patterns: string[]): IgnoreFilter {
   const ig = ignore.default().add(patterns);
-  return (filePath: string) => !ig.ignores(filePath);
+  return ig.createFilter();
 }
