@@ -2,8 +2,14 @@ import * as fs from 'fs/promises';
 import isBinaryPath from 'is-binary-path';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';
+import { RepopackConfigMerged } from '../types/index.js';
+import { getFileManipulator } from './fileManipulator.js';
 
-export async function processFile(filePath: string, fsModule = fs): Promise<string | null> {
+export async function processFile(
+  filePath: string,
+  config: RepopackConfigMerged,
+  fsModule = fs,
+): Promise<string | null> {
   // Skip binary files
   if (isBinaryPath(filePath)) {
     return null;
@@ -12,13 +18,22 @@ export async function processFile(filePath: string, fsModule = fs): Promise<stri
   try {
     const buffer = await fsModule.readFile(filePath);
     const encoding = jschardet.detect(buffer).encoding || 'utf-8';
-    const content = iconv.decode(buffer, encoding);
+    let content = iconv.decode(buffer, encoding);
 
     if (!isValidTextContent(content)) {
       return null;
     }
 
-    return preprocessContent(content);
+    content = preprocessContent(content);
+
+    if (config.output.removeComments) {
+      const manipulator = getFileManipulator(filePath);
+      if (manipulator) {
+        content = manipulator.removeComments(content);
+      }
+    }
+
+    return content;
   } catch (error) {
     console.warn(`Error processing file ${filePath}:`, error);
     return null;

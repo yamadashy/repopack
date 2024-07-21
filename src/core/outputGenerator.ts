@@ -68,6 +68,7 @@ Notes:
 - Some files may have been excluded based on .gitignore rules and Repopack's
   configuration.
 - Binary files are not included in this packed representation.
+${config.output.removeComments ? '- Code comments have been removed.\n' : ''}
 
 For more information about Repopack, visit: https://github.com/yamadashy/repopack
 `;

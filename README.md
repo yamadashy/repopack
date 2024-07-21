@@ -6,12 +6,16 @@
 
 Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools.
 
+
+
 ## 🚀 Features
 
 - **AI-Optimized**: Formats your codebase in a way that's easy for AI to understand and process.
 - **Simple to Use**: Just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your .gitignore files.
+
+
 
 ## 🛠 Installation
 
@@ -32,6 +36,8 @@ Alternatively, you can use npx to run Repopack without installing it:
 ```bash
 npx repopack
 ```
+
+
 
 ## 📊 Usage
 
@@ -81,6 +87,8 @@ repopack -c ./custom-config.json
 npx repopack src
 ```
 
+
+
 ## ⚙️ Configuration
 
 Create a `repopack.config.json` file in your project root for custom configurations. Here's an explanation of the configuration options:
@@ -89,6 +97,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |--------|-------------|---------|
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
 |`output.headerText`| Custom text to include in the file header |`null`|
+|`output.removeComments`| Whether to remove comments from supported file types. Suppurts python  | `false` |
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore |`[]`|
 
@@ -97,8 +106,9 @@ Example configuration:
 ```json
 {
   "output": {
-    "filePath": "custom-output.txt",
-    "headerText": "Custom header information for the packed file."
+    "filePath": "repopack-output.txt",
+    "headerText": "Custom header information for the packed file.",
+    "removeComments": true
   },
   "ignore": {
     "useDefaultPatterns": true,
@@ -118,6 +128,36 @@ Repopack automatically ignores certain files and directories by default:
 - System and IDE-specific files (e.g., `.DS_Store`, `.vscode`)
 
 This ensures that only relevant source code is included in the packed file. You can add additional ignore patterns using the `ignore.customPatterns` configuration option or the `-i` command line flag.
+
+### Comment Removal
+
+When `output.removeComments` is set to `true`, Repopack will attempt to remove comments from supported file types. This feature can help reduce the size of the output file and focus on the essential code content.
+
+Currently supported file types for comment removal:
+
+- HTML (.html)
+- CSS (.css, .scss, .sass)
+- JavaScript, React (.js, .jsx)
+- TypeScript (.ts, .tsx)
+- Vue (.vue)
+- Svelte (.svelte)
+- Python (.py)
+- PHP (.php)
+- Ruby (.rb)
+- C (.c)
+- C# (.cs)
+- Java (.java)
+- Go (.go)
+- Rust (.rs)
+- Swift (.swift)
+- Kotlin (.kt)
+- Dart (.dart)
+- Shell (.sh)
+- YAML (.yml, .yaml)
+
+Note: The comment removal process is designed to be conservative to avoid accidentally removing code. In some complex cases, especially with nested comments or language-specific peculiarities, some comments might be retained.
+
+
 
 ## 📄 Output Format
 
@@ -145,6 +185,8 @@ File: src/utils.js
 ```
 
 This format ensures that AI tools can easily distinguish between different files in your codebase.
+
+
 
 ## 📜 License
 MIT
