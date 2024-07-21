@@ -20,7 +20,9 @@ export function parseGitignoreContent(content: string): string[] {
     .filter((line) => line && !line.startsWith('#'));
 }
 
-export function createIgnoreFilter(patterns: string[]): (path: string) => boolean {
+export type IgnoreFilter = (path: string) => boolean;
+
+export function createIgnoreFilter(patterns: string[]): IgnoreFilter {
   const ig = ignore.default().add(patterns);
   return (filePath: string) => !ig.ignores(filePath);
 }

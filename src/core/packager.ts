@@ -5,6 +5,7 @@ import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
 import {
   getGitignorePatterns as defaultGetGitignorePatterns,
   createIgnoreFilter as defaultCreateIgnoreFilter,
+  IgnoreFilter,
 } from '../utils/gitignoreUtils.js';
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { defaultIgnoreList } from '../utils/defaultIgnore.js';
@@ -64,7 +65,7 @@ async function packDirectory(
   dir: string,
   relativePath: string,
   config: RepopackConfigMerged,
-  ignoreFilter: (path: string) => boolean,
+  ignoreFilter: IgnoreFilter,
   deps: Dependencies,
 ): Promise<{ path: string; content: string }[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
