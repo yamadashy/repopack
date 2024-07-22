@@ -75,6 +75,7 @@ This file contains the contents of my repository combined into a single file. I'
 
 - `-v, --version`: Show tool version
 - `-o, --output <file>`: Specify the output file name
+- `--top-files-len <number>`: Number of top files to display in the summary
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
 - `--verbose`: Enable verbose logging
@@ -98,6 +99,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types. Suppurts python  | `false` |
+|`output.topFilesLength`| Number of top files to display in the summary |`5`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore |`[]`|
 

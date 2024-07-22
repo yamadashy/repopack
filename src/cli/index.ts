@@ -8,6 +8,7 @@ import { getVersion } from '../utils/packageJsonUtils.js';
 import Spinner from '../utils/spinner.js';
 import pc from 'picocolors';
 import { handleError } from '../utils/errorHandler.js';
+import { printSummary, printTopFiles, printCompletion } from './cliOutput.js';
 
 interface CliOptions extends OptionValues {
   version?: boolean;
@@ -15,6 +16,7 @@ interface CliOptions extends OptionValues {
   ignore?: string;
   config?: string;
   verbose?: boolean;
+  topFilesLen?: number;
 }
 
 async function executeAction(directory: string, options: CliOptions) {
@@ -39,6 +41,9 @@ async function executeAction(directory: string, options: CliOptions) {
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
   }
+  if (options.topFilesLen !== undefined) {
+    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
+  }
   logger.trace('CLI config:', cliConfig);
 
   const config: RepopackConfigMerged = mergeConfigs(fileConfig, cliConfig);
@@ -54,19 +59,19 @@ async function executeAction(directory: string, options: CliOptions) {
   spinner.start();
 
   try {
-    const { totalFiles, totalCharacters } = await pack(targetPath, config);
+    const { totalFiles, totalCharacters, fileCharCounts } = await pack(targetPath, config);
     spinner.succeed('Packing completed successfully!');
-
     console.log('');
-    console.log(pc.white('📊 Pack Summary:'));
-    console.log(pc.dim('────────────────'));
-    console.log(`${pc.white('Total Files:')} ${pc.white(totalFiles.toString())}`);
-    console.log(`${pc.white('Total Chars:')} ${pc.white(totalCharacters.toString())}`);
-    console.log(`${pc.white('     Output:')} ${pc.white(config.output.filePath)}`);
 
+    if (config.output.topFilesLength > 0) {
+      printTopFiles(fileCharCounts, config.output.topFilesLength);
+      console.log('');
+    }
+
+    printSummary(totalFiles, totalCharacters, config.output.filePath);
     console.log('');
-    console.log(pc.green('🎉 All Done!'));
-    console.log(pc.white('Your repository has been successfully packed.'));
+
+    printCompletion();
   } catch (error) {
     spinner.fail('Error during packing');
     throw error;
@@ -86,6 +91,7 @@ export async function run() {
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--verbose', 'enable verbose logging for detailed output')
+      .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 
     await program.parseAsync(process.argv);
