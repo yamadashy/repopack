@@ -20,6 +20,7 @@ export interface Dependencies {
 export interface PackResult {
   totalFiles: number;
   totalCharacters: number;
+  fileCharCounts: Record<string, number>;
 }
 
 export async function pack(
@@ -44,9 +45,15 @@ export async function pack(
 
   await deps.generateOutput(rootDir, config, packedFiles);
 
+  const fileCharCounts: Record<string, number> = {};
+  packedFiles.forEach((file) => {
+    fileCharCounts[file.path] = file.content.length;
+  });
+
   return {
     totalFiles,
     totalCharacters,
+    fileCharCounts,
   };
 }
 
