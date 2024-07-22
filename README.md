@@ -135,7 +135,7 @@ This ensures that only relevant source code is included in the packed file. You 
 
 When `output.removeComments` is set to `true`, Repopack will attempt to remove comments from supported file types. This feature can help reduce the size of the output file and focus on the essential code content.
 
-Supported languages include:
+Supported languages include:  
 HTML, CSS, JavaScript, TypeScript, Vue, Svelte, Python, PHP, Ruby, C, C#, Java, Go, Rust, Swift, Kotlin, Dart, Shell, and YAML.
 
 Note: The comment removal process is conservative to avoid accidentally removing code. In complex cases, some comments might be retained.
