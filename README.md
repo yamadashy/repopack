@@ -62,7 +62,8 @@ Once you have generated the packed file, you can use it with Generative AI tools
 
 ### Output File Format
 
-Repopack generates a single file with clear separators between different parts of your codebase. To enhance AI comprehension, the output file begins with an AI-oriented explanation, making it easier for AI models to understand the context and structure of the packed repository.
+Repopack generates a single file with clear separators between different parts of your codebase.  
+To enhance AI comprehension, the output file begins with an AI-oriented explanation, making it easier for AI models to understand the context and structure of the packed repository.
 
 ```
 ================================================================
