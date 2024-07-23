@@ -6,6 +6,8 @@ describe('secretLintUtils', () => {
   const config: SecretLintCoreConfig = createSecretLintConfig();
 
   test('should detect sensitive information', async () => {
+    // Sensitive content with secrets from https://secretlint.github.io/
+    // secretlint-disable
     const sensitiveContent = `
 # Secretlint Demo
 
@@ -40,6 +42,7 @@ FAntUvhhofW72VG6ppPmPPV7VALARQvmOWxpoPSbJAqPFqyy5tamejv/UdCshuX/
 H4PSJT5bvaEhxRj7QCwonoX4ZpV0beTnzloS55Z65g==
 -----END RSA PRIVATE KEY-----
     `;
+    // secretlint-enable
 
     const result = await checkFileWithSecretLint('test.md', sensitiveContent, config);
     expect(result).toBe(true);

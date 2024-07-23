@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
-    "lint": "eslint ./src ./tests --max-warnings 0 --cache --fix && tsc --noEmit",
+    "lint": "eslint ./src ./tests --max-warnings 0 --cache --fix && tsc --noEmit && secretlint **/*",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
     "cli-run": "npm run build && node --trace-warnings bin/repopack",
@@ -76,6 +76,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
     "rimraf": "^5.0.7",
+    "secretlint": "^8.2.4",
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vitest": "^2.0.2"
