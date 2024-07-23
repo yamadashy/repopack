@@ -10,7 +10,7 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 
 
 
-## 🚀 Features
+## 🌟 Features
 
 - **AI-Optimized**: Formats your codebase in a way that's easy for AI to understand and process.
 - **Simple to Use**: Just one command to pack your entire repository.
@@ -20,27 +20,28 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 
 
 
-## 🛠 Installation
+## 🚀 Quick Start
 
-You can install Repopack globally using npm:
-
-```bash
-npm install -g repopack
-```
-
-Or if you prefer using Yarn:
-
-```bash
-yarn global add repopack
-```
-
-Alternatively, you can use npx to run Repopack without installing it:
+Try Repopack instantly in your project directory without installation:
 
 ```bash
 npx repopack
 ```
 
+Or install globally for repeated use:
 
+```bash
+# Install using npm
+npm install -g repopack
+
+# Or using yarn
+yarn global add repopack
+
+# Then run in any project directory
+repopack
+```
+
+That's it! Repopack will generate an `repopack-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
 ## 📊 Usage
 
