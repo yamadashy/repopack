@@ -59,6 +59,34 @@ repopack path/to/directory
 
 Once you have generated the packed file, you can use it with Generative AI tools like Claude or ChatGPT.
 
+
+### Output File Format
+
+Repopack generates a single file with clear separators between different parts of your codebase. To enhance AI comprehension, the output file begins with an AI-oriented explanation, making it easier for AI models to understand the context and structure of the packed repository.
+
+```
+================================================================
+REPOPACK OUTPUT FILE
+================================================================
+(Metadata and usage AI instructions)
+
+================================================================
+Repository Files
+================================================================
+
+================
+File: src/index.js
+================
+// File contents here
+
+================
+File: src/utils.js
+================
+// File contents here
+
+... (remaining files)
+```
+
 ### Prompt Examples
 
 Once you have generated the packed file with Repopack, you can use it with AI tools like Claude or ChatGPT. Here are some example prompts to get you started:
@@ -155,35 +183,6 @@ Supported languages include:
 HTML, CSS, JavaScript, TypeScript, Vue, Svelte, Python, PHP, Ruby, C, C#, Java, Go, Rust, Swift, Kotlin, Dart, Shell, and YAML.
 
 Note: The comment removal process is conservative to avoid accidentally removing code. In complex cases, some comments might be retained.
-
-
-
-## 📄 Output Format
-
-Repopack generates a single file with clear separators between different parts of your codebase:
-
-```
-================================================================
-REPOPACK OUTPUT FILE
-================================================================
-(Metadata and usage instructions)
-
-================================================================
-Repository Files
-================================================================
-
-================
-File: src/index.js
-================
-// File contents here
-
-================
-File: src/utils.js
-================
-// File contents here
-```
-
-This format ensures that AI tools can easily distinguish between different files in your codebase.
 
 
 
