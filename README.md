@@ -61,19 +61,30 @@ Once you have generated the packed file, you can use it with Generative AI tools
 
 ### Prompt Examples
 
-When using the packed file with AI tools, you can use prompts like these to start your conversation:
+Once you have generated the packed file with Repopack, you can use it with AI tools like Claude or ChatGPT. Here are some example prompts to get you started:
 
-#### English
-
-```
-This file contains the contents of my repository combined into a single file. I'd like to refactor the code, so please review the code first.
-```
-
-#### Japanese
+#### Code Review and Refactoring
+For a comprehensive code review and refactoring suggestions:
 
 ```
-このファイルはリポジトリのファイルを1つにしたものです。コードのリファクタをしたいのでまずコードを確認してください。
+This file contains my entire codebase. Please review the overall structure and suggest any improvements or refactoring opportunities, focusing on maintainability and scalability.
 ```
+
+#### Documentation Generation
+To generate project documentation:
+
+```
+Based on the codebase in this file, please generate a detailed README.md that includes an overview of the project, its main features, setup instructions, and usage examples.
+```
+
+#### Test Case Generation
+For generating test cases:
+
+```
+Analyze the code in this file and suggest a comprehensive set of unit tests for the main functions and classes. Include edge cases and potential error scenarios.
+```
+
+Feel free to modify these prompts based on your specific needs and the capabilities of the AI tool you're using.
 
 ### Command Line Options
 
