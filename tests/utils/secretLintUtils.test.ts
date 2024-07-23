@@ -44,8 +44,9 @@ H4PSJT5bvaEhxRj7QCwonoX4ZpV0beTnzloS55Z65g==
     `;
     // secretlint-enable
 
-    const result = await checkFileWithSecretLint('test.md', sensitiveContent, config);
-    expect(result).toBe(true);
+    const secretLintResult = await checkFileWithSecretLint('test.md', sensitiveContent, config);
+    const isSuspicious = secretLintResult.messages.length > 0;
+    expect(isSuspicious).toBe(true);
   });
 
   test('should not detect sensitive information in normal content', async () => {
@@ -71,7 +72,8 @@ And here's a list:
 That's all!
     `;
 
-    const result = await checkFileWithSecretLint('normal.md', normalContent, config);
-    expect(result).toBe(false);
+    const secretLintResult = await checkFileWithSecretLint('normal.md', normalContent, config);
+    const isSuspicious = secretLintResult.messages.length > 0;
+    expect(isSuspicious).toBe(false);
   });
 });
