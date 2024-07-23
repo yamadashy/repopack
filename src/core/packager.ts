@@ -9,6 +9,7 @@ import {
 } from '../utils/gitignoreUtils.js';
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { defaultIgnoreList } from '../utils/defaultIgnore.js';
+import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
 
 export interface Dependencies {
   getGitignorePatterns: typeof defaultGetGitignorePatterns;
@@ -21,6 +22,7 @@ export interface PackResult {
   totalFiles: number;
   totalCharacters: number;
   fileCharCounts: Record<string, number>;
+  suspiciousFiles: string[];
 }
 
 export async function pack(
@@ -33,18 +35,24 @@ export async function pack(
     generateOutput: defaultGenerateOutput,
   },
 ): Promise<PackResult> {
+  // Get ignore patterns
   const gitignorePatterns = await deps.getGitignorePatterns(rootDir);
-
   const ignorePatterns = getIgnorePatterns(gitignorePatterns, config);
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
-  const packedFiles = await packDirectory(rootDir, '', config, ignoreFilter, deps);
+  // Get all file paths in the directory
+  const filePaths = await getFilePaths(rootDir, '', ignoreFilter);
 
-  const totalFiles = packedFiles.length;
-  const totalCharacters = packedFiles.reduce((sum, file) => sum + file.content.length, 0);
+  // Perform security check
+  const suspiciousFiles = await performSecurityCheck(filePaths, rootDir);
 
+  // Pack files and generate output
+  const packedFiles = await packFiles(filePaths, rootDir, config, deps);
   await deps.generateOutput(rootDir, config, packedFiles);
 
+  // Metrics
+  const totalFiles = packedFiles.length;
+  const totalCharacters = packedFiles.reduce((sum, file) => sum + file.content.length, 0);
   const fileCharCounts: Record<string, number> = {};
   packedFiles.forEach((file) => {
     fileCharCounts[file.path] = file.content.length;
@@ -54,6 +62,7 @@ export async function pack(
     totalFiles,
     totalCharacters,
     fileCharCounts,
+    suspiciousFiles,
   };
 }
 
@@ -68,30 +77,55 @@ function getIgnorePatterns(gitignorePatterns: string[], config: RepopackConfigMe
   return ignorePatterns;
 }
 
-async function packDirectory(
-  dir: string,
-  relativePath: string,
-  config: RepopackConfigMerged,
-  ignoreFilter: IgnoreFilter,
-  deps: Dependencies,
-): Promise<{ path: string; content: string }[]> {
+async function getFilePaths(dir: string, relativePath: string, ignoreFilter: IgnoreFilter): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
-  const packedFiles: { path: string; content: string }[] = [];
+  const filePaths: string[] = [];
 
   for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
     const entryRelativePath = path.join(relativePath, entry.name);
 
     if (!ignoreFilter(entryRelativePath)) continue;
 
     if (entry.isDirectory()) {
-      const subDirFiles = await packDirectory(fullPath, entryRelativePath, config, ignoreFilter, deps);
-      packedFiles.push(...subDirFiles);
+      const subDirPaths = await getFilePaths(path.join(dir, entry.name), entryRelativePath, ignoreFilter);
+      filePaths.push(...subDirPaths);
     } else {
-      const content = await deps.processFile(fullPath, config);
-      if (content) {
-        packedFiles.push({ path: entryRelativePath, content });
-      }
+      filePaths.push(entryRelativePath);
+    }
+  }
+
+  return filePaths;
+}
+
+async function performSecurityCheck(filePaths: string[], rootDir: string): Promise<string[]> {
+  const secretLintConfig = createSecretLintConfig();
+  const suspiciousFiles: string[] = [];
+
+  for (const filePath of filePaths) {
+    const fullPath = path.join(rootDir, filePath);
+    const content = await fs.readFile(fullPath, 'utf-8');
+    const isSuspicious = await checkFileWithSecretLint(fullPath, content, secretLintConfig);
+    if (isSuspicious) {
+      suspiciousFiles.push(filePath);
+    }
+  }
+
+  return suspiciousFiles;
+}
+
+async function packFiles(
+  filePaths: string[],
+  rootDir: string,
+  config: RepopackConfigMerged,
+  deps: Dependencies,
+): Promise<{ path: string; content: string }[]> {
+  const packedFiles: { path: string; content: string }[] = [];
+
+  for (const filePath of filePaths) {
+    const fullPath = path.join(rootDir, filePath);
+    const content = await deps.processFile(fullPath, config);
+    if (content) {
+      packedFiles.push({ path: filePath, content });
     }
   }
 

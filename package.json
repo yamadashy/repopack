@@ -49,6 +49,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@secretlint/core": "^8.2.4",
+    "@secretlint/secretlint-rule-preset-recommend": "^8.2.4",
     "cli-spinners": "^2.9.2",
     "commander": "^7.1.0",
     "iconv-lite": "^0.6.3",
@@ -62,8 +64,8 @@
   "devDependencies": {
     "@eslint/js": "^9.7.0",
     "@types/eslint": "~8.56.10",
-    "@types/eslint__js": "~8.42.3",
     "@types/eslint-config-prettier": "~6.11.3",
+    "@types/eslint__js": "~8.42.3",
     "@types/node": "^20.14.10",
     "@types/strip-comments": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^7.16.0",

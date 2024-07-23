@@ -8,7 +8,7 @@ import { getVersion } from '../utils/packageJsonUtils.js';
 import Spinner from '../utils/spinner.js';
 import pc from 'picocolors';
 import { handleError } from '../utils/errorHandler.js';
-import { printSummary, printTopFiles, printCompletion } from './cliOutput.js';
+import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './cliOutput.js';
 
 interface CliOptions extends OptionValues {
   version?: boolean;
@@ -59,7 +59,7 @@ async function executeAction(directory: string, options: CliOptions) {
   spinner.start();
 
   try {
-    const { totalFiles, totalCharacters, fileCharCounts } = await pack(targetPath, config);
+    const { totalFiles, totalCharacters, fileCharCounts, suspiciousFiles } = await pack(targetPath, config);
     spinner.succeed('Packing completed successfully!');
     console.log('');
 
@@ -67,6 +67,9 @@ async function executeAction(directory: string, options: CliOptions) {
       printTopFiles(fileCharCounts, config.output.topFilesLength);
       console.log('');
     }
+
+    printSecurityCheck(suspiciousFiles);
+    console.log('');
 
     printSummary(totalFiles, totalCharacters, config.output.filePath);
     console.log('');

@@ -8,6 +8,21 @@ export function printSummary(totalFiles: number, totalCharacters: number, output
   console.log(`${pc.white('     Output:')} ${pc.white(outputPath)}`);
 }
 
+export function printSecurityCheck(suspiciousFiles: string[]) {
+  console.log(pc.white('🔎 Security Check:'));
+  console.log(pc.dim('──────────────────'));
+
+  if (suspiciousFiles.length === 0) {
+    console.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
+  } else {
+    console.log(pc.yellow(`${suspiciousFiles.length} suspicious file(s) detected:`));
+    suspiciousFiles.forEach((file, index) => {
+      console.log(`${pc.white(`${index + 1}.`)} ${pc.white(file)}`);
+    });
+    console.log(pc.yellow('\nPlease review these files for potential sensitive information.'));
+  }
+}
+
 export function printTopFiles(fileCharCounts: Record<string, number>, topFilesLength: number) {
   console.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count:`));
   console.log(pc.dim('──────────────────────────────────'));
