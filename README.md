@@ -99,7 +99,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types. Suppurts python  | `false` |
-|`output.topFilesLength`| Number of top files to display in the summary |`5`|
+|`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore |`[]`|
 
@@ -110,7 +110,8 @@ Example configuration:
   "output": {
     "filePath": "repopack-output.txt",
     "headerText": "Custom header information for the packed file.",
-    "removeComments": true
+    "removeComments": true,
+    "topFilesLength": 5
   },
   "ignore": {
     "useDefaultPatterns": true,
