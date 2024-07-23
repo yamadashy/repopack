@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import path from 'path';
+import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../types/index.js';
 import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
 import {
@@ -22,7 +23,7 @@ export interface PackResult {
   totalFiles: number;
   totalCharacters: number;
   fileCharCounts: Record<string, number>;
-  suspiciousFiles: string[];
+  suspiciousFilesResults: SecretLintCoreResult[];
 }
 
 export async function pack(
@@ -44,7 +45,7 @@ export async function pack(
   const filePaths = await getFilePaths(rootDir, '', ignoreFilter);
 
   // Perform security check
-  const suspiciousFiles = await performSecurityCheck(filePaths, rootDir);
+  const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
 
   // Pack files and generate output
   const packedFiles = await packFiles(filePaths, rootDir, config, deps);
@@ -62,7 +63,7 @@ export async function pack(
     totalFiles,
     totalCharacters,
     fileCharCounts,
-    suspiciousFiles,
+    suspiciousFilesResults,
   };
 }
 
@@ -97,20 +98,21 @@ async function getFilePaths(dir: string, relativePath: string, ignoreFilter: Ign
   return filePaths;
 }
 
-async function performSecurityCheck(filePaths: string[], rootDir: string): Promise<string[]> {
+async function performSecurityCheck(filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> {
   const secretLintConfig = createSecretLintConfig();
-  const suspiciousFiles: string[] = [];
+  const suspiciousFilesResults: SecretLintCoreResult[] = [];
 
   for (const filePath of filePaths) {
     const fullPath = path.join(rootDir, filePath);
     const content = await fs.readFile(fullPath, 'utf-8');
-    const isSuspicious = await checkFileWithSecretLint(fullPath, content, secretLintConfig);
+    const secretLintResult = await checkFileWithSecretLint(fullPath, content, secretLintConfig);
+    const isSuspicious = secretLintResult.messages.length > 0;
     if (isSuspicious) {
-      suspiciousFiles.push(filePath);
+      suspiciousFilesResults.push(secretLintResult);
     }
   }
 
-  return suspiciousFiles;
+  return suspiciousFilesResults;
 }
 
 async function packFiles(

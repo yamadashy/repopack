@@ -1,23 +1,42 @@
 import pc from 'picocolors';
+import path from 'path';
+import type { SecretLintCoreResult } from '@secretlint/types';
 
-export function printSummary(totalFiles: number, totalCharacters: number, outputPath: string) {
+export function printSummary(
+  totalFiles: number,
+  totalCharacters: number,
+  outputPath: string,
+  suspiciousFilesResults: SecretLintCoreResult[],
+) {
+  const relativeOutputPath = path.relative(process.cwd(), outputPath);
+
+  let securityCheckMessage = '';
+  if (suspiciousFilesResults.length > 0) {
+    securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected`);
+  } else {
+    securityCheckMessage = pc.white('✔ No suspicious files detected');
+  }
+
   console.log(pc.white('📊 Pack Summary:'));
   console.log(pc.dim('────────────────'));
   console.log(`${pc.white('Total Files:')} ${pc.white(totalFiles.toString())}`);
   console.log(`${pc.white('Total Chars:')} ${pc.white(totalCharacters.toString())}`);
-  console.log(`${pc.white('     Output:')} ${pc.white(outputPath)}`);
+  console.log(`${pc.white('     Output:')} ${pc.white(relativeOutputPath)}`);
+  console.log(`${pc.white('   Security:')} ${pc.white(securityCheckMessage)}`);
 }
 
-export function printSecurityCheck(suspiciousFiles: string[]) {
+export function printSecurityCheck(suspiciousFilesResults: SecretLintCoreResult[]) {
   console.log(pc.white('🔎 Security Check:'));
   console.log(pc.dim('──────────────────'));
 
-  if (suspiciousFiles.length === 0) {
+  if (suspiciousFilesResults.length === 0) {
     console.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
   } else {
-    console.log(pc.yellow(`${suspiciousFiles.length} suspicious file(s) detected:`));
-    suspiciousFiles.forEach((file, index) => {
-      console.log(`${pc.white(`${index + 1}.`)} ${pc.white(file)}`);
+    console.log(pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected:`));
+    suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
+      const relativeFilePath = path.relative(process.cwd(), suspiciousFilesResult.filePath);
+      console.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
+      console.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
     });
     console.log(pc.yellow('\nPlease review these files for potential sensitive information.'));
   }

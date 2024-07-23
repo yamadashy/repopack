@@ -16,7 +16,7 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 - **Simple to Use**: Just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your .gitignore files.
-- **Security-Focused**: Incorporates [secretlint](https://github.com/secretlint/secretlint) for robust security checks to detect and prevent inclusion of sensitive information.
+- **Security-Focused**: Incorporates [Secretlint](https://github.com/secretlint/secretlint) for robust security checks to detect and prevent inclusion of sensitive information.
 
 
 
@@ -89,26 +89,6 @@ repopack -o custom-output.txt
 repopack -i "*.log,tmp" -v
 repopack -c ./custom-config.json
 npx repopack src
-```
-
-
-
-## 🔍 Security Check
-
-Repopack now includes a security check feature that uses SecretLint to detect potentially sensitive information in your files. This feature helps you identify possible security risks before sharing your packed repository.
-
-The security check results will be displayed in the CLI output after the packing process is complete. If any suspicious files are detected, you'll see a list of these files along with a warning message.
-
-Example output:
-
-```
-🔍 Security Check:
-──────────────────
-2 suspicious file(s) detected:
-1. src/config.js
-2. tests/testData.json
-
-Please review these files for potential sensitive information.
 ```
 
 
@@ -192,6 +172,26 @@ File: src/utils.js
 ```
 
 This format ensures that AI tools can easily distinguish between different files in your codebase.
+
+
+
+## 🔍 Security Check
+
+Repopack includes a security check feature that uses [Secretlint](https://github.com/secretlint/secretlint) to detect potentially sensitive information in your files. This feature helps you identify possible security risks before sharing your packed repository.
+
+The security check results will be displayed in the CLI output after the packing process is complete. If any suspicious files are detected, you'll see a list of these files along with a warning message.
+
+Example output:
+
+```
+🔍 Security Check:
+──────────────────
+2 suspicious file(s) detected:
+1. src/utils/test.txt
+2. tests/utils/secretLintUtils.test.ts
+
+Please review these files for potential sensitive information.
+```
 
 
 

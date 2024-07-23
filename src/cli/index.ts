@@ -59,19 +59,24 @@ async function executeAction(directory: string, options: CliOptions) {
   spinner.start();
 
   try {
-    const { totalFiles, totalCharacters, fileCharCounts, suspiciousFiles } = await pack(targetPath, config);
+    const packResult = await pack(targetPath, config);
     spinner.succeed('Packing completed successfully!');
     console.log('');
 
     if (config.output.topFilesLength > 0) {
-      printTopFiles(fileCharCounts, config.output.topFilesLength);
+      printTopFiles(packResult.fileCharCounts, config.output.topFilesLength);
       console.log('');
     }
 
-    printSecurityCheck(suspiciousFiles);
+    printSecurityCheck(packResult.suspiciousFilesResults);
     console.log('');
 
-    printSummary(totalFiles, totalCharacters, config.output.filePath);
+    printSummary(
+      packResult.totalFiles,
+      packResult.totalCharacters,
+      config.output.filePath,
+      packResult.suspiciousFilesResults,
+    );
     console.log('');
 
     printCompletion();
