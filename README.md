@@ -5,7 +5,8 @@
 [![npm](https://img.shields.io/npm/l/repopack.svg?maxAge=1000)](https://github.com/yamadashy/repopack/blob/master/LICENSE.md)
 [![node](https://img.shields.io/node/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 
-Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools. It now includes a security check feature to detect potentially sensitive information in your files.
+Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file.  
+Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude or ChatGPT.
 
 
 
@@ -15,7 +16,7 @@ Repopack is a powerful tool that packs your entire repository into a single, AI-
 - **Simple to Use**: Just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your .gitignore files.
-- **Security Check**: Detects potentially sensitive information in your files.
+- **Security-Focused**: Incorporates [secretlint](https://github.com/secretlint/secretlint) for robust security checks to detect and prevent inclusion of sensitive information.
 
 
 
