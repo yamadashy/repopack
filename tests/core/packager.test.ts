@@ -22,7 +22,7 @@ describe('packager', () => {
 
   test('pack should process files and generate output', async () => {
     const mockConfig: RepopackConfigMerged = {
-      output: { filePath: 'output.txt', topFilesLength: 2 },
+      output: { filePath: 'output.txt', topFilesLength: 2, showLineNumbers: false },
       ignore: { useDefaultPatterns: true },
     };
 

@@ -119,9 +119,10 @@ Feel free to modify these prompts based on your specific needs and the capabilit
 
 - `-v, --version`: Show tool version
 - `-o, --output <file>`: Specify the output file name
-- `--top-files-len <number>`: Number of top files to display in the summary
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
+- `--top-files-len <number>`: Number of top files to display in the summary
+- `--output-show-line-numbers`: Show line numbers in the output
 - `--verbose`: Enable verbose logging
 
 Examples:
@@ -144,6 +145,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
+|`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore |`[]`|
 
@@ -155,7 +157,8 @@ Example configuration:
     "filePath": "repopack-output.txt",
     "headerText": "Custom header information for the packed file.",
     "removeComments": true,
-    "topFilesLength": 5
+    "topFilesLength": 5,
+    "showLineNumbers": false
   },
   "ignore": {
     "useDefaultPatterns": true,

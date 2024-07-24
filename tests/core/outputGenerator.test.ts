@@ -13,7 +13,7 @@ describe('outputGenerator', () => {
 
   test('generateOutput should write correct content to file', async () => {
     const mockConfig: RepopackConfigMerged = {
-      output: { filePath: 'output.txt', topFilesLength: 2 },
+      output: { filePath: 'output.txt', topFilesLength: 2, showLineNumbers: false },
       ignore: { useDefaultPatterns: true },
     };
     const mockPackedFiles = [
@@ -40,6 +40,7 @@ describe('outputGenerator', () => {
         filePath: 'output.txt',
         headerText: 'Custom header text',
         topFilesLength: 2,
+        showLineNumbers: false,
       },
       ignore: { useDefaultPatterns: true },
     };
