@@ -15,7 +15,7 @@ describe('fileHandler', () => {
     vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
     const mockConfig: RepopackConfigMerged = {
-      output: { filePath: 'output.txt', topFilesLength: 2 },
+      output: { filePath: 'output.txt', topFilesLength: 2, showLineNumbers: false },
       ignore: { useDefaultPatterns: true },
     };
     const result = await processFile('/path/to/file.txt', mockConfig);
