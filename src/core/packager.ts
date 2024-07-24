@@ -11,6 +11,7 @@ import {
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { defaultIgnoreList } from '../utils/defaultIgnore.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
+import { logger } from '../utils/logger.js';
 
 export interface Dependencies {
   getGitignorePatterns: typeof defaultGetGitignorePatterns;
@@ -85,12 +86,16 @@ async function getFilePaths(dir: string, relativePath: string, ignoreFilter: Ign
   for (const entry of entries) {
     const entryRelativePath = path.join(relativePath, entry.name);
 
-    if (!ignoreFilter(entryRelativePath)) continue;
+    if (!ignoreFilter(entryRelativePath)) {
+      logger.trace(`Ignoring file: ${entryRelativePath}`);
+      continue;
+    }
 
     if (entry.isDirectory()) {
       const subDirPaths = await getFilePaths(path.join(dir, entry.name), entryRelativePath, ignoreFilter);
       filePaths.push(...subDirPaths);
     } else {
+      logger.trace(`Adding file: ${entryRelativePath}`);
       filePaths.push(entryRelativePath);
     }
   }
