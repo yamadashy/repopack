@@ -119,9 +119,10 @@ Feel free to modify these prompts based on your specific needs and the capabilit
 
 - `-v, --version`: Show tool version
 - `-o, --output <file>`: Specify the output file name
-- `--top-files-len <number>`: Number of top files to display in the summary
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
+- `--top-files-len <number>`: Number of top files to display in the summary
+- `--output-show-line-numbers`: Show line numbers in the output
 - `--verbose`: Enable verbose logging
 
 Examples:
