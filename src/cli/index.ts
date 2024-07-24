@@ -17,6 +17,7 @@ interface CliOptions extends OptionValues {
   config?: string;
   verbose?: boolean;
   topFilesLen?: number;
+  outputShowLineNumbers?: boolean;
 }
 
 async function executeAction(directory: string, options: CliOptions) {
@@ -43,6 +44,9 @@ async function executeAction(directory: string, options: CliOptions) {
   }
   if (options.topFilesLen !== undefined) {
     cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
+  }
+  if (options.outputShowLineNumbers !== undefined) {
+    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -98,8 +102,9 @@ export async function run() {
       .option('-o, --output <file>', 'specify the output file name')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
-      .option('--verbose', 'enable verbose logging for detailed output')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
+      .option('--output-show-line-numbers', 'add line numbers to each line in the output')
+      .option('--verbose', 'enable verbose logging for detailed output')
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 
     await program.parseAsync(process.argv);

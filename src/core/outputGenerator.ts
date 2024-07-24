@@ -22,7 +22,15 @@ export async function generateOutput(
     output.push(SEPARATOR);
     output.push(`File: ${file.path}`);
     output.push(SEPARATOR);
-    output.push(file.content);
+
+    if (config.output.showLineNumbers) {
+      const lines = file.content.split('\n');
+      const numberedLines = lines.map((line, index) => `${(index + 1).toString().padStart(4)}: ${line}`);
+      output.push(numberedLines.join('\n'));
+    } else {
+      output.push(file.content);
+    }
+
     output.push(''); // Add an empty line after each file content
   }
 
@@ -69,6 +77,7 @@ Notes:
   configuration.
 - Binary files are not included in this packed representation.
 ${config.output.removeComments ? '- Code comments have been removed.\n' : ''}
+${config.output.showLineNumbers ? '- Line numbers have been added to the beginning of each line.\n' : ''}
 
 For more information about Repopack, visit: https://github.com/yamadashy/repopack
 `;

@@ -5,6 +5,7 @@ export const defaultConfig: RepopackConfigDefault = {
     filePath: 'repopack-output.txt',
     removeComments: false,
     topFilesLength: 5,
+    showLineNumbers: false,
   },
   ignore: {
     useDefaultPatterns: true,
