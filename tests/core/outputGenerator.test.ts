@@ -27,7 +27,7 @@ describe('outputGenerator', () => {
     expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe(path.resolve('root', 'output.txt'));
 
     const writtenContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
-    expect(writtenContent).toContain('REPOPACK OUTPUT FILE');
+    expect(writtenContent).toContain('Repopack Output File');
     expect(writtenContent).toContain('File: file1.txt');
     expect(writtenContent).toContain('content1');
     expect(writtenContent).toContain('File: dir/file2.txt');
@@ -45,9 +45,9 @@ describe('outputGenerator', () => {
       ignore: { useDefaultPatterns: true },
     };
 
-    const header = generateFileHeader(mockConfig);
+    const header = generateFileHeader(mockConfig, []);
 
-    expect(header).toContain('REPOPACK OUTPUT FILE');
+    expect(header).toContain('Repopack Output File');
     expect(header).toContain('Custom header text');
   });
 });
