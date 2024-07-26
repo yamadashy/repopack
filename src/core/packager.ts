@@ -27,6 +27,11 @@ export interface PackResult {
   suspiciousFilesResults: SecretLintCoreResult[];
 }
 
+export interface PackedFile {
+  path: string;
+  content: string;
+}
+
 export async function pack(
   rootDir: string,
   config: RepopackConfigMerged,
@@ -125,8 +130,8 @@ async function packFiles(
   rootDir: string,
   config: RepopackConfigMerged,
   deps: Dependencies,
-): Promise<{ path: string; content: string }[]> {
-  const packedFiles: { path: string; content: string }[] = [];
+): Promise<PackedFile[]> {
+  const packedFiles: PackedFile[] = [];
 
   for (const filePath of filePaths) {
     const fullPath = path.join(rootDir, filePath);
