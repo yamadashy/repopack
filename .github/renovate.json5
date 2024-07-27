@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "schedule:earlySaturdays",
+    'group:allNonMajor'
+  ],
+  "rangeStrategy": "bump",
+  "labels": ["dependencies", "renovate"],
+  "packageRules": [
+    {
+      matchDepTypes: ['peerDependencies'],
+      enabled: false,
+    },
+  ],
+  "ignoreDeps": [
+    "node",
+  ]
+}
