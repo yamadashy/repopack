@@ -13,7 +13,7 @@ describe('packager', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockDeps = {
-      getGitignorePatterns: vi.fn().mockResolvedValue([]),
+      getAllIgnorePatterns: vi.fn().mockResolvedValue([]),
       createIgnoreFilter: vi.fn().mockReturnValue(() => true),
       processFile: vi.fn().mockResolvedValue('processed content'),
       generateOutput: vi.fn().mockResolvedValue(undefined),
@@ -36,6 +36,9 @@ describe('packager', () => {
     expect(vi.mocked(fs.readdir).mock.calls[0][0]).toBe('root');
     expect(vi.mocked(fs.readdir).mock.calls[1][0]).toBe(path.join('root', 'dir1'));
 
+    expect(mockDeps.getAllIgnorePatterns).toHaveBeenCalledWith('root', mockConfig);
+    expect(mockDeps.createIgnoreFilter).toHaveBeenCalled();
+    expect(mockDeps.processFile).toHaveBeenCalledTimes(2);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, [
       { path: 'file1.txt', content: 'processed content' },
       { path: path.join('dir1', 'file2.txt'), content: 'processed content' },
