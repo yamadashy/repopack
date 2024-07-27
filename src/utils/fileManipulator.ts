@@ -31,6 +31,9 @@ class PythonManipulator implements FileManipulator {
     result = result.replace(/'''[\s\S]*?'''/g, '');
     result = result.replace(/"""[\s\S]*?"""/g, '');
 
+    // Then, remove inline comments
+    result = result.replace(/(?<!\\)#.*$/gm, '');
+
     return rtrimLines(result);
   }
 }
