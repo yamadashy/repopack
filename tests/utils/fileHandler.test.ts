@@ -23,8 +23,61 @@ describe('fileHandler', () => {
 
   test('preprocessContent should trim content', () => {
     const content = '  Some content with whitespace  \n';
-    const result = preprocessContent(content);
+    const config = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
+      },
+    });
+    const result = preprocessContent(content, config);
 
     expect(result).toBe('Some content with whitespace');
+  });
+
+  test('preprocessContent should remove empty lines when configured', () => {
+    const content = `
+    Some content
+
+    with empty lines
+
+    in between
+    `;
+    const config = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: true,
+      },
+    });
+    const result = preprocessContent(content, config);
+
+    expect(result).toBe('Some content\n    with empty lines\n    in between');
+  });
+
+  test('preprocessContent should not remove empty lines when not configured', () => {
+    const content = `
+    Some content
+
+    with empty lines
+
+    in between
+    `;
+    const config = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
+      },
+    });
+    const result = preprocessContent(content, config);
+
+    expect(result).toBe('Some content\n\n    with empty lines\n\n    in between');
   });
 });
