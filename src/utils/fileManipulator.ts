@@ -6,7 +6,7 @@ interface FileManipulator {
 }
 
 function rtrimLines(content: string): string {
-  return content.replace(/\s+$/gm, '');
+  return content.replace(/[ \t]+$/gm, '');
 }
 
 class StripCommentsManipulator implements FileManipulator {
@@ -30,6 +30,9 @@ class PythonManipulator implements FileManipulator {
     // Then, remove triple-quote comments
     result = result.replace(/'''[\s\S]*?'''/g, '');
     result = result.replace(/"""[\s\S]*?"""/g, '');
+
+    // Then, remove inline comments
+    result = result.replace(/(?<!\\)#.*$/gm, '');
 
     return rtrimLines(result);
   }
