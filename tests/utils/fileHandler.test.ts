@@ -1,5 +1,5 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { processFile, preprocessContent } from '../../src/utils/fileHandler.js';
+import { processFile, postprocessContent } from '../../src/utils/fileHandler.js';
 import * as fs from 'fs/promises';
 import { createMockConfig } from '../testing/testUtils.js';
 
@@ -32,7 +32,7 @@ describe('fileHandler', () => {
         removeEmptyLines: false,
       },
     });
-    const result = preprocessContent(content, config);
+    const result = postprocessContent(content, config);
 
     expect(result).toBe('Some content with whitespace');
   });
@@ -54,7 +54,7 @@ describe('fileHandler', () => {
         removeEmptyLines: true,
       },
     });
-    const result = preprocessContent(content, config);
+    const result = postprocessContent(content, config);
 
     expect(result).toBe('Some content\n    with empty lines\n    in between');
   });
@@ -76,7 +76,7 @@ describe('fileHandler', () => {
         removeEmptyLines: false,
       },
     });
-    const result = preprocessContent(content, config);
+    const result = postprocessContent(content, config);
 
     expect(result).toBe('Some content\n\n    with empty lines\n\n    in between');
   });
