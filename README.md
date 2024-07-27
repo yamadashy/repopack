@@ -144,6 +144,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
+|`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|

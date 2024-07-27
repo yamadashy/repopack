@@ -13,7 +13,13 @@ describe('outputGenerator', () => {
 
   test('generateOutput should write correct content to file', async () => {
     const mockConfig = createMockConfig({
-      output: { filePath: 'output.txt', topFilesLength: 2, showLineNumbers: false },
+      output: {
+        filePath: 'output.txt',
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
+      },
     });
     const mockPackedFiles = [
       { path: 'file1.txt', content: 'content1' },
@@ -40,6 +46,8 @@ describe('outputGenerator', () => {
         headerText: 'Custom header text',
         topFilesLength: 2,
         showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
       },
     });
 

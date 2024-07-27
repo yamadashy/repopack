@@ -28,7 +28,7 @@ export async function processFile(
   const encoding = jschardet.detect(buffer).encoding || 'utf-8';
   let content = iconv.decode(buffer, encoding);
 
-  content = preprocessContent(content);
+  content = preprocessContent(content, config);
 
   if (config.output.removeComments) {
     const manipulator = getFileManipulator(filePath);
@@ -40,6 +40,19 @@ export async function processFile(
   return content;
 }
 
-export function preprocessContent(content: string): string {
-  return content.trim();
+export function preprocessContent(content: string, config: RepopackConfigMerged): string {
+  content = content.trim();
+
+  if (config.output.removeEmptyLines) {
+    content = removeEmptyLines(content);
+  }
+
+  return content;
+}
+
+function removeEmptyLines(content: string): string {
+  return content
+    .split('\n')
+    .filter((line) => line.trim() !== '')
+    .join('\n');
 }
