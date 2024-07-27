@@ -1,7 +1,7 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { processFile, preprocessContent } from '../../src/utils/fileHandler.js';
 import * as fs from 'fs/promises';
-import { RepopackConfigMerged } from '../../src/types/index.js';
+import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('fs/promises');
 
@@ -14,10 +14,7 @@ describe('fileHandler', () => {
     const mockContent = '  Some file content  \n';
     vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-    const mockConfig: RepopackConfigMerged = {
-      output: { filePath: 'output.txt', topFilesLength: 2, showLineNumbers: false },
-      ignore: { useDefaultPatterns: true },
-    };
+    const mockConfig = createMockConfig();
     const result = await processFile('/path/to/file.txt', mockConfig);
 
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.txt');
