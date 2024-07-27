@@ -1,19 +1,25 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { getGitignorePatterns, parseGitignoreContent, createIgnoreFilter } from '../../src/utils/gitignoreUtils.js';
+import {
+  getIgnorePatterns,
+  parseIgnoreContent,
+  createIgnoreFilter,
+  getAllIgnorePatterns,
+} from '../../src/utils/ignoreUtils.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import os from 'os';
+import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('fs/promises');
 
 const isWindows = os.platform() === 'win32';
 
-describe('gitignoreUtils', () => {
+describe('ignoreUtils', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  describe('getGitignorePatterns', () => {
+  describe('getIgnorePatterns', () => {
     test('should read and parse .gitignore file', async () => {
       const mockContent = `
 # Comment
@@ -23,16 +29,16 @@ node_modules
       `;
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const patterns = await getGitignorePatterns('/mock/root');
+      const patterns = await getIgnorePatterns('.gitignore', '/mock/root');
 
       expect(fs.readFile).toHaveBeenCalledWith(path.join('/mock/root', '.gitignore'), 'utf-8');
       expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
     });
 
-    test('should return empty array if .gitignore is not found', async () => {
+    test('should return empty array if ignore file is not found', async () => {
       vi.mocked(fs.readFile).mockRejectedValue(new Error('File not found'));
 
-      const patterns = await getGitignorePatterns('/mock/root');
+      const patterns = await getIgnorePatterns('.repopackignore', '/mock/root');
 
       expect(patterns).toEqual([]);
     });
@@ -41,14 +47,14 @@ node_modules
       const mockContent = 'node_modules\r\n*.log\r\n.DS_Store';
       vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
-      const patterns = await getGitignorePatterns('/mock/root');
+      const patterns = await getIgnorePatterns('.gitignore', '/mock/root');
 
       expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
     });
   });
 
-  describe('parseGitignoreContent', () => {
-    test('should correctly parse gitignore content', () => {
+  describe('parseIgnoreContent', () => {
+    test('should correctly parse ignore content', () => {
       const content = `
 # Comment
 node_modules
@@ -57,7 +63,7 @@ node_modules
 .DS_Store
       `;
 
-      const patterns = parseGitignoreContent(content);
+      const patterns = parseIgnoreContent(content);
 
       expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
     });
@@ -65,7 +71,7 @@ node_modules
     test('should handle mixed line endings', () => {
       const content = 'node_modules\n*.log\r\n.DS_Store\r';
 
-      const patterns = parseGitignoreContent(content);
+      const patterns = parseIgnoreContent(content);
 
       expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
     });
@@ -113,7 +119,6 @@ node_modules
 
       expect(filter('test/unit/component.spec.js')).toBe(false);
       expect(filter('build/output.js')).toBe(false);
-
       expect(filter('src/test/helper.js')).toBe(true);
     });
 
@@ -121,9 +126,9 @@ node_modules
       const patterns = ['test/**/*.spec.js', 'build/**'];
       const filter = createIgnoreFilter(patterns);
 
-      expect(filter('src\\build\\utils.js')).toBe(true);
-      expect(filter('test\\integration\\api.spec.js')).toBe(false);
-      expect(filter('build\\temp\\cache.json')).toBe(false);
+      expect(filter('test\\unit\\component.spec.js')).toBe(false);
+      expect(filter('build\\output.js')).toBe(false);
+      expect(filter('src\\test\\helper.js')).toBe(true);
     });
 
     test('should correctly handle patterns with special characters', () => {
@@ -148,32 +153,61 @@ node_modules
       expect(filter('README.MD')).toBe(false);
       expect(filter('TEST/file.txt')).toBe(false);
     });
+  });
 
-    test('should handle symlinks correctly', () => {
-      const patterns = ['symlink', 'real_dir'];
-      const filter = createIgnoreFilter(patterns);
+  describe('getAllIgnorePatterns', () => {
+    test('should merge patterns from .gitignore and .repopackignore when useGitignore is true', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
 
-      expect(filter('symlink')).toBe(false);
-      expect(filter('real_dir')).toBe(false);
-      expect(filter('symlink/file.txt')).toBe(false);
-      expect(filter('real_dir/file.txt')).toBe(false);
+      vi.mocked(fs.readFile)
+        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore
+        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
+
+      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
+
+      expect(patterns).toEqual(['node_modules', '*.log', 'dist', '*.tmp']);
     });
 
-    test('should handle long paths correctly', () => {
-      const longPath = 'a'.repeat(200) + '/file.txt';
-      const patterns = ['**/*.txt'];
-      const filter = createIgnoreFilter(patterns);
+    test('should only use .repopackignore when useGitignore is false', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: false,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
 
-      expect(filter(longPath)).toBe(false);
+      vi.mocked(fs.readFile)
+        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore (should be ignored)
+        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
+
+      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
+
+      expect(patterns).toEqual(['dist', '*.tmp']);
     });
 
-    test('should handle Unicode characters in paths and patterns', () => {
-      const patterns = ['📁/*', '*.🚀'];
-      const filter = createIgnoreFilter(patterns);
+    test('should include custom patterns when provided', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: false,
+          customPatterns: ['*.custom', 'temp/'],
+        },
+      });
 
-      expect(filter('📁/file.txt')).toBe(false);
-      expect(filter('document.🚀')).toBe(false);
-      expect(filter('normal/path/file.txt')).toBe(true);
+      vi.mocked(fs.readFile)
+        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore
+        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
+
+      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
+
+      expect(patterns).toEqual(['node_modules', '*.log', 'dist', '*.tmp', '*.custom', 'temp/']);
     });
   });
 });

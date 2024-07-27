@@ -8,6 +8,7 @@
     "showLineNumbers": false
   },
   "ignore": {
+    "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": []
   }

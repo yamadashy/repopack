@@ -147,6 +147,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
+|`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore |`[]`|
 
@@ -162,23 +163,28 @@ Example configuration:
     "showLineNumbers": false
   },
   "ignore": {
+    "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": ["additional-folder", "*.log"]
   }
 }
 ```
 
-### Default Ignore Patterns
+### Ignore Patterns
+Repopack offers multiple methods to set ignore patterns for excluding specific files or directories during the packing process:
 
-Repopack automatically ignores certain files and directories by default:
+- **.gitignore**: By default, patterns listed in your project's `.gitignore` file are used. This behavior can be controlled with the `ignore.useGitignore` setting.
+- **Default patterns**: Repopack includes a default list of commonly excluded files and directories (e.g., node_modules, .git, binary files). This feature can be controlled with the `ignore.useDefaultPatterns` setting. Please see [defaultIgnore.ts](src/utils/defaultIgnore.ts) for more details.
+- **.repopackignore**: You can create a `.repopackignore` file in your project root to define Repopack-specific ignore patterns. This file follows the same format as `.gitignore`.
+- **Custom patterns**: Additional ignore patterns can be specified using the `ignore.customPatterns` option in the configuration file. You can overwrite this setting with the `-i, --ignore` command line option.
 
-- All patterns specified in your project's `.gitignore` file
-- Git-related files and directories (e.g., `.git`, `.gitattributes`)
-- Binary files (e.g., images, executables)
-- Common build output and dependency directories (e.g., `node_modules`, `dist`)
-- System and IDE-specific files (e.g., `.DS_Store`, `.vscode`)
+Priority Order (from highest to lowest):
+1. Custom patterns `ignore.customPatterns`
+2. `.repopackignore`
+3. `.gitignore` (if `ignore.useGitignore` is true)
+4. Default patterns (if `ignore.useDefaultPatterns` is true)
 
-This ensures that only relevant source code is included in the packed file. You can add additional ignore patterns using the `ignore.customPatterns` configuration option or the `-i` command line flag.
+This approach allows for flexible file exclusion configuration based on your project's needs. It helps optimize the size of the generated pack file by ensuring the exclusion of security-sensitive files and large binary files, while preventing the leakage of confidential information.
 
 ### Comment Removal
 

@@ -4,17 +4,16 @@ import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../types/index.js';
 import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
 import {
-  getGitignorePatterns as defaultGetGitignorePatterns,
+  getAllIgnorePatterns as defaultGetAllIgnorePatterns,
   createIgnoreFilter as defaultCreateIgnoreFilter,
   IgnoreFilter,
-} from '../utils/gitignoreUtils.js';
+} from '../utils/ignoreUtils.js';
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
-import { defaultIgnoreList } from '../utils/defaultIgnore.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
 import { logger } from '../utils/logger.js';
 
 export interface Dependencies {
-  getGitignorePatterns: typeof defaultGetGitignorePatterns;
+  getAllIgnorePatterns: typeof defaultGetAllIgnorePatterns;
   createIgnoreFilter: typeof defaultCreateIgnoreFilter;
   processFile: typeof defaultProcessFile;
   generateOutput: typeof defaultGenerateOutput;
@@ -36,15 +35,14 @@ export async function pack(
   rootDir: string,
   config: RepopackConfigMerged,
   deps: Dependencies = {
-    getGitignorePatterns: defaultGetGitignorePatterns,
+    getAllIgnorePatterns: defaultGetAllIgnorePatterns,
     createIgnoreFilter: defaultCreateIgnoreFilter,
     processFile: defaultProcessFile,
     generateOutput: defaultGenerateOutput,
   },
 ): Promise<PackResult> {
   // Get ignore patterns
-  const gitignorePatterns = await deps.getGitignorePatterns(rootDir);
-  const ignorePatterns = getIgnorePatterns(gitignorePatterns, config);
+  const ignorePatterns = await deps.getAllIgnorePatterns(rootDir, config);
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
   // Get all file paths in the directory
@@ -71,17 +69,6 @@ export async function pack(
     fileCharCounts,
     suspiciousFilesResults,
   };
-}
-
-function getIgnorePatterns(gitignorePatterns: string[], config: RepopackConfigMerged): string[] {
-  let ignorePatterns = [...gitignorePatterns];
-  if (config.ignore.useDefaultPatterns) {
-    ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
-  }
-  if (config.ignore.customPatterns) {
-    ignorePatterns = [...ignorePatterns, ...config.ignore.customPatterns];
-  }
-  return ignorePatterns;
 }
 
 async function getFilePaths(dir: string, relativePath: string, ignoreFilter: IgnoreFilter): Promise<string[]> {
