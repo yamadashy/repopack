@@ -38,7 +38,7 @@ export async function getAllIgnorePatterns(rootDir: string, config: RepopackConf
   }
 
   const gitignorePatterns = await getIgnorePatterns('.gitignore', rootDir);
-  if (config.ignore.useGitignorePatterns) {
+  if (config.ignore.useGitignore) {
     ignorePatterns = [...ignorePatterns, ...gitignorePatterns];
   }
 

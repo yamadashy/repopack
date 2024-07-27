@@ -8,7 +8,7 @@ interface RepopackConfigBase {
     showLineNumbers?: boolean;
   };
   ignore?: {
-    useGitignorePatterns?: boolean;
+    useGitignore?: boolean;
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
@@ -24,7 +24,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     showLineNumbers: boolean;
   };
   ignore: {
-    useGitignorePatterns: boolean;
+    useGitignore: boolean;
     useDefaultPatterns: boolean;
     customPatterns?: string[];
   };
@@ -40,7 +40,7 @@ export type RepopackConfigFile = RepopackConfigBase & {
     showLineNumbers?: boolean;
   };
   ignore?: {
-    useGitignorePatterns?: boolean;
+    useGitignore?: boolean;
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
@@ -56,7 +56,7 @@ export type RepopackConfigCli = RepopackConfigBase & {
     showLineNumbers?: boolean;
   };
   ignore?: {
-    useGitignorePatterns?: boolean;
+    useGitignore?: boolean;
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };

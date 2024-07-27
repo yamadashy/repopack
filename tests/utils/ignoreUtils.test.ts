@@ -156,10 +156,10 @@ node_modules
   });
 
   describe('getAllIgnorePatterns', () => {
-    test('should merge patterns from .gitignore and .repopackignore when useGitignorePatterns is true', async () => {
+    test('should merge patterns from .gitignore and .repopackignore when useGitignore is true', async () => {
       const mockConfig = createMockConfig({
         ignore: {
-          useGitignorePatterns: true,
+          useGitignore: true,
           useDefaultPatterns: false,
           customPatterns: [],
         },
@@ -174,10 +174,10 @@ node_modules
       expect(patterns).toEqual(['node_modules', '*.log', 'dist', '*.tmp']);
     });
 
-    test('should only use .repopackignore when useGitignorePatterns is false', async () => {
+    test('should only use .repopackignore when useGitignore is false', async () => {
       const mockConfig = createMockConfig({
         ignore: {
-          useGitignorePatterns: false,
+          useGitignore: false,
           useDefaultPatterns: false,
           customPatterns: [],
         },
@@ -195,7 +195,7 @@ node_modules
     test('should include custom patterns when provided', async () => {
       const mockConfig = createMockConfig({
         ignore: {
-          useGitignorePatterns: true,
+          useGitignore: true,
           useDefaultPatterns: false,
           customPatterns: ['*.custom', 'temp/'],
         },

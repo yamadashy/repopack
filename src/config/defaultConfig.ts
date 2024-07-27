@@ -9,7 +9,7 @@ export const defaultConfig: RepopackConfigDefault = {
     showLineNumbers: false,
   },
   ignore: {
-    useGitignorePatterns: true,
+    useGitignore: true,
     useDefaultPatterns: true,
     customPatterns: [],
   },
