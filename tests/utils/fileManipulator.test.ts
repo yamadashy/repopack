@@ -15,9 +15,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         int main() {
+
+
           return 0;
-        }`,
+        }
+`,
     },
     {
       name: 'C# comment removal',
@@ -31,9 +35,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         public class Test {
+
+
           public void Method() {}
-        }`,
+        }
+`,
     },
     {
       name: 'CSS comment removal',
@@ -45,9 +53,11 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         body {
           color: red;
-        }`,
+        }
+`,
     },
     {
       name: 'HTML comment removal',
@@ -67,9 +77,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         public class Test {
+
+
           public void method() {}
-        }`,
+        }
+`,
     },
     {
       name: 'JavaScript comment removal',
@@ -83,9 +97,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         function test() {
+
+
           return true;
-        }`,
+        }
+`,
     },
     {
       name: 'Less comment removal',
@@ -98,8 +116,12 @@ describe('fileManipulator', () => {
         body { color: @variable; }
       `,
       expected: `
+
         @variable: #888;
-        body { color: @variable; }`,
+
+
+        body { color: @variable; }
+`,
     },
     {
       name: 'PHP comment removal',
@@ -117,10 +139,15 @@ describe('fileManipulator', () => {
       `,
       expected: `
         <?php
+
+
         function test() {
+
+
           return true;
         }
-        ?>`,
+        ?>
+`,
     },
     {
       name: 'Python comment removal',
@@ -137,8 +164,14 @@ describe('fileManipulator', () => {
         """
       `,
       expected: `
+
         def test():
-          return True`,
+
+          return True
+
+
+
+`,
     },
     {
       name: 'Ruby comment removal',
@@ -153,9 +186,14 @@ describe('fileManipulator', () => {
         end
       `,
       expected: `
+
         def test
+
+
+
           true
-        end`,
+        end
+`,
     },
     {
       name: 'Sass comment removal',
@@ -169,9 +207,13 @@ describe('fileManipulator', () => {
           color: $variable
       `,
       expected: `
+
         $variable: #888
+
+
         body
-          color: $variable`,
+          color: $variable
+`,
     },
     {
       name: 'SCSS comment removal',
@@ -184,8 +226,12 @@ describe('fileManipulator', () => {
         body { color: $variable; }
       `,
       expected: `
+
         $variable: #888;
-        body { color: $variable; }`,
+
+
+        body { color: $variable; }
+`,
     },
     {
       name: 'SQL comment removal',
@@ -195,7 +241,9 @@ describe('fileManipulator', () => {
         SELECT * FROM table WHERE id = 1;
       `,
       expected: `
-        SELECT * FROM table WHERE id = 1;`,
+
+        SELECT * FROM table WHERE id = 1;
+`,
     },
     {
       name: 'Swift comment removal',
@@ -209,9 +257,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         func test() {
+
+
           return true
-        }`,
+        }
+`,
     },
     {
       name: 'TypeScript comment removal',
@@ -225,9 +277,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         function test(): boolean {
+
+
           return true;
-        }`,
+        }
+`,
     },
     {
       name: 'XML comment removal',
@@ -247,9 +303,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         void main() {
+
+
           print('Hello');
-        }`,
+        }
+`,
     },
     {
       name: 'Go comment removal',
@@ -263,9 +323,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         func main() {
+
+
           fmt.Println("Hello")
-        }`,
+        }
+`,
     },
     {
       name: 'Kotlin comment removal',
@@ -279,9 +343,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         fun main() {
+
+
           println("Hello")
-        }`,
+        }
+`,
     },
     {
       name: 'Rust comment removal',
@@ -295,9 +363,13 @@ describe('fileManipulator', () => {
         }
       `,
       expected: `
+
         fn main() {
+
+
           println!("Hello");
-        }`,
+        }
+`,
     },
     {
       name: 'Shell script comment removal',
@@ -307,7 +379,9 @@ describe('fileManipulator', () => {
         echo "Hello"
       `,
       expected: `
-        echo "Hello"`,
+
+        echo "Hello"
+`,
     },
     {
       name: 'YAML comment removal',
@@ -318,7 +392,8 @@ describe('fileManipulator', () => {
       `,
       expected: `
         key: value
-        another_key: another_value`,
+        another_key: another_value
+`,
     },
     {
       name: 'Vue file comment removal',
@@ -345,9 +420,11 @@ describe('fileManipulator', () => {
       `,
       expected: `
         <template>
+
           <div>{{ message }}</div>
         </template>
         <script>
+
         export default {
           data() {
             return {
@@ -357,8 +434,10 @@ describe('fileManipulator', () => {
         }
         </script>
         <style>
+
         .test { color: red; }
-        </style>`,
+        </style>
+`,
     },
     {
       name: 'Svelte file comment removal',
@@ -376,13 +455,17 @@ describe('fileManipulator', () => {
         </style>
       `,
       expected: `
+
         <div>{message}</div>
         <script>
+
         let message = 'Hello';
         </script>
         <style>
+
         div { color: red; }
-        </style>`,
+        </style>
+`,
     },
   ];
 

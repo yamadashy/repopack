@@ -6,7 +6,7 @@ interface FileManipulator {
 }
 
 function rtrimLines(content: string): string {
-  return content.replace(/\s+$/gm, '');
+  return content.replace(/[ \t]+$/gm, '');
 }
 
 class StripCommentsManipulator implements FileManipulator {
