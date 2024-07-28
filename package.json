@@ -52,7 +52,7 @@
     "@secretlint/core": "^8.2.4",
     "@secretlint/secretlint-rule-preset-recommend": "^8.2.4",
     "cli-spinners": "^2.9.2",
-    "commander": "^7.1.0",
+    "commander": "^11.1.0",
     "iconv-lite": "^0.6.3",
     "ignore": "^5.2.0",
     "istextorbinary": "^9.5.0",
@@ -75,10 +75,10 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.2.1",
-    "rimraf": "^5.0.7",
+    "rimraf": "^6.0.1",
     "secretlint": "^8.2.4",
-    "typescript": "^4.9.5",
-    "vite": "^4.1.4",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
     "vitest": "^2.0.4"
   },
   "engines": {
