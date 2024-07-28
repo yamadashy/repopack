@@ -46,3 +46,41 @@ jobs:
     - run: npm run test-coverage -- --reporter=verbose
       env:
         CI_OS: ${{ runner.os }}
+
+  build-and-run:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16.x, 18.x, 20.x]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Clean install dependencies
+      run: npm ci
+
+    - run: npm run build
+
+    - run: node bin/repopack
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: repopack-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
+        path: repopack-output.txt
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: npm ci
+      - name: Run npm audit
+        run: npm audit
