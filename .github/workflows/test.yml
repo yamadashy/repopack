@@ -72,3 +72,15 @@ jobs:
       with:
         name: repopack-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
         path: repopack-output.txt
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: npm ci
+      - name: Run npm audit
+        run: npm audit
