@@ -6,6 +6,7 @@
     'group:allNonMajor'
   ],
   "rangeStrategy": "bump",
+  "dependencyDashboard": false,
   "labels": ["dependencies", "renovate"],
   "packageRules": [
     {
