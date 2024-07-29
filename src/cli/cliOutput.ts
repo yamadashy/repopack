@@ -1,6 +1,7 @@
 import pc from 'picocolors';
-import path from 'path';
+import path from 'node:path';
 import type { SecretLintCoreResult } from '@secretlint/types';
+import process from 'node:process';
 
 export function printSummary(
   totalFiles: number,
