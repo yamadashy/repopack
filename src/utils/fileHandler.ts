@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';
@@ -6,7 +7,30 @@ import { RepopackConfigMerged } from '../types/index.js';
 import { getFileManipulator } from './fileManipulator.js';
 import { logger } from './logger.js';
 
-export async function processFile(
+export interface SanitizedFile {
+  path: string;
+  content: string;
+}
+
+export async function sanitizeFiles(
+  filePaths: string[],
+  rootDir: string,
+  config: RepopackConfigMerged,
+): Promise<SanitizedFile[]> {
+  const sanitizedFiles: SanitizedFile[] = [];
+
+  for (const filePath of filePaths) {
+    const fullPath = path.join(rootDir, filePath);
+    const content = await sanitizeFile(fullPath, config);
+    if (content) {
+      sanitizedFiles.push({ path: filePath, content });
+    }
+  }
+
+  return sanitizedFiles;
+}
+
+export async function sanitizeFile(
   filePath: string,
   config: RepopackConfigMerged,
   fsModule = fs,

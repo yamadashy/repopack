@@ -1,5 +1,6 @@
+import path from 'node:path';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { processFile, postprocessContent } from '../../src/utils/fileHandler.js';
+import { sanitizeFile, postprocessContent, sanitizeFiles } from '../../src/utils/fileHandler.js';
 import * as fs from 'fs/promises';
 import { createMockConfig } from '../testing/testUtils.js';
 
@@ -10,12 +11,12 @@ describe('fileHandler', () => {
     vi.resetAllMocks();
   });
 
-  test('processFile should read and preprocess file content', async () => {
+  test('sanitizeFile should read and preprocess file content', async () => {
     const mockContent = '  Some file content  \n';
     vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
     const mockConfig = createMockConfig();
-    const result = await processFile('/path/to/file.txt', mockConfig);
+    const result = await sanitizeFile('/path/to/file.txt', mockConfig);
 
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.txt');
     expect(result).toBe('Some file content');
@@ -79,5 +80,24 @@ describe('fileHandler', () => {
     const result = postprocessContent(content, config);
 
     expect(result).toBe('Some content\n\n    with empty lines\n\n    in between');
+  });
+
+  test('sanitizeFiles should process multiple files', async () => {
+    const mockConfig = createMockConfig();
+    const mockFilePaths = ['file1.txt', 'dir/file2.txt'];
+    const mockRootDir = '/mock/root';
+
+    vi.mocked(fs.readFile).mockResolvedValueOnce('content1').mockResolvedValueOnce('content2');
+
+    const result = await sanitizeFiles(mockFilePaths, mockRootDir, mockConfig);
+
+    expect(result).toEqual([
+      { path: 'file1.txt', content: 'content1' },
+      { path: 'dir/file2.txt', content: 'content2' },
+    ]);
+
+    expect(fs.readFile).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(fs.readFile).mock.calls[0][0]).toBe(path.join(mockRootDir, 'file1.txt'));
+    expect(vi.mocked(fs.readFile).mock.calls[1][0]).toBe(path.join(mockRootDir, 'dir/file2.txt'));
   });
 });

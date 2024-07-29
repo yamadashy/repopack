@@ -21,12 +21,12 @@ describe('outputGenerator', () => {
         removeEmptyLines: false,
       },
     });
-    const mockPackedFiles = [
+    const mockSanitizedFiles = [
       { path: 'file1.txt', content: 'content1' },
       { path: 'dir/file2.txt', content: 'content2' },
     ];
 
-    await generateOutput('root', mockConfig, mockPackedFiles);
+    await generateOutput('root', mockConfig, mockSanitizedFiles, []);
 
     expect(fs.writeFile).toHaveBeenCalledTimes(1);
     expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe(path.resolve('root', 'output.txt'));
