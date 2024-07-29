@@ -52,8 +52,6 @@ async function executeAction(directory: string, options: CliOptions) {
   }
   if (options.include) {
     cliConfig.include = options.include;
-    // this line is never logged?
-    logger.trace('Parsed include:', cliConfig.include);
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -116,7 +114,6 @@ export async function run() {
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 
     await program.parseAsync(process.argv);
-    logger.trace('Parsed options:', program.opts())
   } catch (error) {
     handleError(error);
   }

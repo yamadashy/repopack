@@ -11,6 +11,8 @@ import {
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
 import { logger } from '../utils/logger.js';
+import { filterIncludedFiles } from '../utils/includeUtils.js';
+
 
 export interface Dependencies {
   getAllIgnorePatterns: typeof defaultGetAllIgnorePatterns;
@@ -46,19 +48,16 @@ export async function pack(
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
   // Get all file paths in the directory
-  let filePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  const filePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  const filteredPaths = filterIncludedFiles(rootDir, filePaths, config.include);
 
-  // Filter file paths based on include
-  if (config.include && config.include.length > 0) {
-    const includeSet = new Set(config.include.map((file: string) => path.resolve(rootDir, file)));
-    filePaths = filePaths.filter(filePath => includeSet.has(path.resolve(rootDir, filePath)));
-  }
-
+  // Use filteredPaths if not empty, otherwise use filePaths
+  const pathsToProcess = filteredPaths.length > 0 ? filteredPaths : filePaths;
   // Perform security check
-  const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
+  const suspiciousFilesResults = await performSecurityCheck(pathsToProcess, rootDir);
 
   // Pack files and generate output
-  const packedFiles = await packFiles(filePaths, rootDir, config, deps);
+  const packedFiles = await packFiles(pathsToProcess, rootDir, config, deps);
   await deps.generateOutput(rootDir, config, packedFiles);
 
   // Metrics
