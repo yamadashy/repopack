@@ -18,6 +18,7 @@ interface CliOptions extends OptionValues {
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
+  includeFiles?: string;
 }
 
 async function executeAction(directory: string, options: CliOptions) {
@@ -31,6 +32,7 @@ async function executeAction(directory: string, options: CliOptions) {
   console.log(pc.dim(`\n📦 Repopack v${version}\n`));
 
   logger.setVerbose(options.verbose || false);
+  logger.trace('Loaded CLI options:', options);
 
   const fileConfig: RepopackConfigFile = await loadFileConfig(options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
@@ -47,6 +49,10 @@ async function executeAction(directory: string, options: CliOptions) {
   }
   if (options.outputShowLineNumbers !== undefined) {
     cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
+  }
+  if (options.include) {
+    cliConfig.includeFiles = options.include.split(',').map((file: string) => file.trim());
+    logger.trace('Parsed includeFiles:', cliConfig.includeFiles);
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -104,6 +110,7 @@ export async function run() {
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
+      .option('--include <files>', 'comma-separated list of files to include')
       .option('--verbose', 'enable verbose logging for detailed output')
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 

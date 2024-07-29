@@ -46,7 +46,15 @@ export async function pack(
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
   // Get all file paths in the directory
-  const filePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  let filePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  logger.debug('Included files:', config.includeFiles);
+
+
+  if (config.includeFiles && config.includeFiles.length > 0) {
+    const includeSet = new Set(config.includeFiles.map((file: string) => path.resolve(rootDir, file)));
+    logger.trace('Include set:', includeSet);
+    filePaths = filePaths.filter(filePath => includeSet.has(path.resolve(rootDir, filePath)));
+  }
 
   // Perform security check
   const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);

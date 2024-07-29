@@ -12,9 +12,10 @@ interface RepopackConfigBase {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
+  includeFiles?: string[];
 }
 
-export type RepopackConfigDefault = RepopackConfigBase & {
+export type RepopackConfigDefault = {
   output: {
     filePath: string;
     headerText?: string;
@@ -26,8 +27,9 @@ export type RepopackConfigDefault = RepopackConfigBase & {
   ignore: {
     useGitignore: boolean;
     useDefaultPatterns: boolean;
-    customPatterns?: string[];
+    customPatterns: string[];
   };
+  includeFiles: string[];
 };
 
 export type RepopackConfigFile = RepopackConfigBase & {
@@ -44,6 +46,7 @@ export type RepopackConfigFile = RepopackConfigBase & {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
+  includeFiles?: string[];
 };
 
 export type RepopackConfigCli = RepopackConfigBase & {
@@ -60,6 +63,7 @@ export type RepopackConfigCli = RepopackConfigBase & {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
+  includeFiles?: string[];
 };
 
 export type RepopackConfigMerged = RepopackConfigDefault & RepopackConfigFile & RepopackConfigCli;

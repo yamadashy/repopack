@@ -11,5 +11,6 @@
     "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": []
-  }
+  },
+  "includeFiles": []
 }
