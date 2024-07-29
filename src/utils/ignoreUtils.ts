@@ -1,5 +1,5 @@
-import * as fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import ignore from 'ignore';
 import { logger } from './logger.js';
 import { RepopackConfigMerged } from '../types/index.js';

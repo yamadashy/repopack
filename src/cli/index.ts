@@ -1,5 +1,5 @@
 import { program, OptionValues } from 'commander';
-import path from 'path';
+import path from 'node:path';
 import { pack } from '../core/packager.js';
 import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from '../types/index.js';
 import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
@@ -9,6 +9,7 @@ import Spinner from '../utils/spinner.js';
 import pc from 'picocolors';
 import { handleError } from '../utils/errorHandler.js';
 import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './cliOutput.js';
+import process from 'node:process';
 
 interface CliOptions extends OptionValues {
   version?: boolean;

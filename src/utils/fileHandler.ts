@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';

@@ -1,6 +1,6 @@
-import path from 'path';
-import * as fs from 'fs/promises';
-import * as url from 'url';
+import path from 'node:path';
+import * as fs from 'node:fs/promises';
+import * as url from 'node:url';
 
 export async function getVersion(): Promise<string> {
   try {

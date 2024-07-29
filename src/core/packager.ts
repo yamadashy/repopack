@@ -1,5 +1,5 @@
-import * as fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../types/index.js';
 import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
