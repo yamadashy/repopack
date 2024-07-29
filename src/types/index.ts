@@ -12,7 +12,7 @@ interface RepopackConfigBase {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
-  includeFiles?: string[];
+  include?: string[];
 }
 
 export type RepopackConfigDefault = {
@@ -29,7 +29,7 @@ export type RepopackConfigDefault = {
     useDefaultPatterns: boolean;
     customPatterns: string[];
   };
-  includeFiles: string[];
+  include: string[];
 };
 
 export type RepopackConfigFile = RepopackConfigBase & {
@@ -46,7 +46,7 @@ export type RepopackConfigFile = RepopackConfigBase & {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
-  includeFiles?: string[];
+  include?: string[];
 };
 
 export type RepopackConfigCli = RepopackConfigBase & {
@@ -63,7 +63,7 @@ export type RepopackConfigCli = RepopackConfigBase & {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
-  includeFiles?: string[];
+  include?: string[];
 };
 
 export type RepopackConfigMerged = RepopackConfigDefault & RepopackConfigFile & RepopackConfigCli;

@@ -18,7 +18,7 @@ interface CliOptions extends OptionValues {
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
-  includeFiles?: string;
+  include?: string[];
 }
 
 async function executeAction(directory: string, options: CliOptions) {
@@ -51,8 +51,9 @@ async function executeAction(directory: string, options: CliOptions) {
     cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
   }
   if (options.include) {
-    cliConfig.includeFiles = options.include.split(',').map((file: string) => file.trim());
-    logger.trace('Parsed includeFiles:', cliConfig.includeFiles);
+    cliConfig.include = options.include;
+    // this line is never logged?
+    logger.trace('Parsed include:', cliConfig.include);
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -110,11 +111,12 @@ export async function run() {
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
-      .option('--include <files>', 'comma-separated list of files to include')
+      .option('--include <files...>', 'space-separated list of files to include')      
       .option('--verbose', 'enable verbose logging for detailed output')
       .action((directory = '.', options: CliOptions) => executeAction(directory, options));
 
     await program.parseAsync(process.argv);
+    logger.trace('Parsed options:', program.opts())
   } catch (error) {
     handleError(error);
   }

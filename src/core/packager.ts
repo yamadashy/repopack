@@ -47,12 +47,10 @@ export async function pack(
 
   // Get all file paths in the directory
   let filePaths = await getFilePaths(rootDir, '', ignoreFilter);
-  logger.debug('Included files:', config.includeFiles);
 
-
-  if (config.includeFiles && config.includeFiles.length > 0) {
-    const includeSet = new Set(config.includeFiles.map((file: string) => path.resolve(rootDir, file)));
-    logger.trace('Include set:', includeSet);
+  // Filter file paths based on include
+  if (config.include && config.include.length > 0) {
+    const includeSet = new Set(config.include.map((file: string) => path.resolve(rootDir, file)));
     filePaths = filePaths.filter(filePath => includeSet.has(path.resolve(rootDir, filePath)));
   }
 
