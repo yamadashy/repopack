@@ -15,7 +15,7 @@ interface RepopackConfigBase {
   include?: string[];
 }
 
-export type RepopackConfigDefault = {
+export type RepopackConfigDefault = RepopackConfigBase & {
   output: {
     filePath: string;
     headerText?: string;
@@ -27,7 +27,7 @@ export type RepopackConfigDefault = {
   ignore: {
     useGitignore: boolean;
     useDefaultPatterns: boolean;
-    customPatterns: string[];
+    customPatterns?: string[];
   };
   include: string[];
 };
