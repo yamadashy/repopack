@@ -2,7 +2,7 @@ import { RepopackConfigMerged } from '../types/index.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { generateTreeString } from '../utils/treeGenerator.js';
-import { PackedFile } from './packager.js';
+import { SanitizedFile } from '../utils/fileHandler.js';
 
 const SEPARATOR = '='.repeat(16);
 const LONG_SEPARATOR = '='.repeat(64);
@@ -10,17 +10,17 @@ const LONG_SEPARATOR = '='.repeat(64);
 export async function generateOutput(
   rootDir: string,
   config: RepopackConfigMerged,
-  packedFiles: PackedFile[],
+  sanitizedFiles: SanitizedFile[],
   fsModule = fs,
 ): Promise<void> {
   const output: string[] = [];
 
   // Generate and add the header
-  const header = generateFileHeader(config, packedFiles);
+  const header = generateFileHeader(config, sanitizedFiles);
   output.push(header);
 
-  // Add packed files
-  for (const file of packedFiles) {
+  // Add sanitized files
+  for (const file of sanitizedFiles) {
     output.push(SEPARATOR);
     output.push(`File: ${file.path}`);
     output.push(SEPARATOR);
@@ -40,8 +40,8 @@ export async function generateOutput(
   await fsModule.writeFile(outputPath, output.join('\n'));
 }
 
-export function generateFileHeader(config: RepopackConfigMerged, packedFiles: PackedFile[]): string {
-  const fileTree = generateTreeString(packedFiles.map((file) => file.path));
+export function generateFileHeader(config: RepopackConfigMerged, sanitizedFiles: SanitizedFile[]): string {
+  const fileTree = generateTreeString(sanitizedFiles.map((file) => file.path));
 
   const defaultHeader = `${LONG_SEPARATOR}
 Repopack Output File

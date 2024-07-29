@@ -2,7 +2,7 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../types/index.js';
-import { processFile as defaultProcessFile } from '../utils/fileHandler.js';
+import { sanitizeFiles as defaultSanitizeFiles } from '../utils/fileHandler.js';
 import {
   getAllIgnorePatterns as defaultGetAllIgnorePatterns,
   createIgnoreFilter as defaultCreateIgnoreFilter,
@@ -15,8 +15,8 @@ import { logger } from '../utils/logger.js';
 export interface Dependencies {
   getAllIgnorePatterns: typeof defaultGetAllIgnorePatterns;
   createIgnoreFilter: typeof defaultCreateIgnoreFilter;
-  processFile: typeof defaultProcessFile;
   generateOutput: typeof defaultGenerateOutput;
+  sanitizeFiles: typeof defaultSanitizeFiles;
 }
 
 export interface PackResult {
@@ -26,19 +26,14 @@ export interface PackResult {
   suspiciousFilesResults: SecretLintCoreResult[];
 }
 
-export interface PackedFile {
-  path: string;
-  content: string;
-}
-
 export async function pack(
   rootDir: string,
   config: RepopackConfigMerged,
   deps: Dependencies = {
     getAllIgnorePatterns: defaultGetAllIgnorePatterns,
     createIgnoreFilter: defaultCreateIgnoreFilter,
-    processFile: defaultProcessFile,
     generateOutput: defaultGenerateOutput,
+    sanitizeFiles: defaultSanitizeFiles,
   },
 ): Promise<PackResult> {
   // Get ignore patterns
@@ -51,15 +46,15 @@ export async function pack(
   // Perform security check
   const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
 
-  // Pack files and generate output
-  const packedFiles = await packFiles(filePaths, rootDir, config, deps);
-  await deps.generateOutput(rootDir, config, packedFiles);
+  // Sanitize files and generate output
+  const sanitizedFiles = await deps.sanitizeFiles(filePaths, rootDir, config);
+  await deps.generateOutput(rootDir, config, sanitizedFiles);
 
   // Metrics
-  const totalFiles = packedFiles.length;
-  const totalCharacters = packedFiles.reduce((sum, file) => sum + file.content.length, 0);
+  const totalFiles = sanitizedFiles.length;
+  const totalCharacters = sanitizedFiles.reduce((sum, file) => sum + file.content.length, 0);
   const fileCharCounts: Record<string, number> = {};
-  packedFiles.forEach((file) => {
+  sanitizedFiles.forEach((file) => {
     fileCharCounts[file.path] = file.content.length;
   });
 
@@ -110,23 +105,4 @@ async function performSecurityCheck(filePaths: string[], rootDir: string): Promi
   }
 
   return suspiciousFilesResults;
-}
-
-async function packFiles(
-  filePaths: string[],
-  rootDir: string,
-  config: RepopackConfigMerged,
-  deps: Dependencies,
-): Promise<PackedFile[]> {
-  const packedFiles: PackedFile[] = [];
-
-  for (const filePath of filePaths) {
-    const fullPath = path.join(rootDir, filePath);
-    const content = await deps.processFile(fullPath, config);
-    if (content) {
-      packedFiles.push({ path: filePath, content });
-    }
-  }
-
-  return packedFiles;
 }
