@@ -48,7 +48,7 @@ export async function pack(
 
   // Sanitize files and generate output
   const sanitizedFiles = await deps.sanitizeFiles(filePaths, rootDir, config);
-  await deps.generateOutput(rootDir, config, sanitizedFiles);
+  await deps.generateOutput(rootDir, config, sanitizedFiles, filePaths);
 
   // Metrics
   const totalFiles = sanitizedFiles.length;

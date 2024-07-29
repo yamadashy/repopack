@@ -26,7 +26,7 @@ describe('outputGenerator', () => {
       { path: 'dir/file2.txt', content: 'content2' },
     ];
 
-    await generateOutput('root', mockConfig, mockSanitizedFiles);
+    await generateOutput('root', mockConfig, mockSanitizedFiles, []);
 
     expect(fs.writeFile).toHaveBeenCalledTimes(1);
     expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe(path.resolve('root', 'output.txt'));

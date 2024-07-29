@@ -12,13 +12,14 @@ describe('packager', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    const file2Path = path.join('dir1', 'file2.txt');
     mockDeps = {
       getAllIgnorePatterns: vi.fn().mockResolvedValue([]),
       createIgnoreFilter: vi.fn().mockReturnValue(() => true),
       generateOutput: vi.fn().mockResolvedValue(undefined),
       sanitizeFiles: vi.fn().mockResolvedValue([
         { path: 'file1.txt', content: 'processed content 1' },
-        { path: 'dir1/file2.txt', content: 'processed content 2' },
+        { path: file2Path, content: 'processed content 2' },
       ]),
     };
   });
@@ -41,22 +42,24 @@ describe('packager', () => {
 
     expect(mockDeps.getAllIgnorePatterns).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.createIgnoreFilter).toHaveBeenCalled();
-    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(
-      ['file1.txt', path.join('dir1', 'file2.txt')],
+    const file2Path = path.join('dir1', 'file2.txt');
+    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
       'root',
       mockConfig,
+      [
+        { path: 'file1.txt', content: 'processed content 1' },
+        { path: file2Path, content: 'processed content 2' },
+      ],
+      ['file1.txt', file2Path],
     );
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, [
-      { path: 'file1.txt', content: 'processed content 1' },
-      { path: 'dir1/file2.txt', content: 'processed content 2' },
-    ]);
 
     // Check the result of pack function
     expect(result.totalFiles).toBe(2);
     expect(result.totalCharacters).toBe(38); // 'processed content 1' + 'processed content 2'
     expect(result.fileCharCounts).toEqual({
       'file1.txt': 19,
-      'dir1/file2.txt': 19,
+      [file2Path]: 19,
     });
   });
 });

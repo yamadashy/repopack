@@ -72,6 +72,21 @@ REPOPACK OUTPUT FILE
 (Metadata and usage AI instructions)
 
 ================================================================
+Repository Structure
+================================================================
+src/
+  cli/
+    cliOutput.ts
+    index.ts
+  config/
+    configLoader.ts
+    configValidator.ts
+    defaultConfig.ts
+    index.ts
+
+(...remaining directories)
+
+================================================================
 Repository Files
 ================================================================
 
@@ -185,6 +200,8 @@ Priority Order (from highest to lowest):
 4. Default patterns (if `ignore.useDefaultPatterns` is true)
 
 This approach allows for flexible file exclusion configuration based on your project's needs. It helps optimize the size of the generated pack file by ensuring the exclusion of security-sensitive files and large binary files, while preventing the leakage of confidential information.
+
+Note: Binary files are not included in the packed output by default, but their paths are listed in the "Repository Structure" section of the output file. This provides a complete overview of the repository structure while keeping the packed file efficient and text-based.
 
 ### Comment Removal
 

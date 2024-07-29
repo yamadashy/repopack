@@ -11,12 +11,13 @@ export async function generateOutput(
   rootDir: string,
   config: RepopackConfigMerged,
   sanitizedFiles: SanitizedFile[],
+  allFilePaths: string[],
   fsModule = fs,
 ): Promise<void> {
   const output: string[] = [];
 
   // Generate and add the header
-  const header = generateFileHeader(config, sanitizedFiles);
+  const header = generateFileHeader(config, allFilePaths);
   output.push(header);
 
   // Add sanitized files
@@ -40,8 +41,8 @@ export async function generateOutput(
   await fsModule.writeFile(outputPath, output.join('\n'));
 }
 
-export function generateFileHeader(config: RepopackConfigMerged, sanitizedFiles: SanitizedFile[]): string {
-  const fileTree = generateTreeString(sanitizedFiles.map((file) => file.path));
+export function generateFileHeader(config: RepopackConfigMerged, allFilePaths: string[]): string {
+  const fileTree = generateTreeString(allFilePaths);
 
   const defaultHeader = `${LONG_SEPARATOR}
 Repopack Output File
@@ -60,26 +61,28 @@ File Format:
 The content is organized as follows:
 1. This header section
 2. Multiple file entries, each consisting of:
-   a. A separator line (${SEPARATOR})
-   b. The file path (File: path/to/file)
-   c. Another separator line
-   d. The full contents of the file
-   e. A blank line
+  a. A separator line (${SEPARATOR})
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
 
 Usage Guidelines:
 -----------------
 1. This file should be treated as read-only. Any changes should be made to the
-   original repository files, not this packed version.
+  original repository files, not this packed version.
 2. When processing this file, use the separators and "File:" markers to
-   distinguish between different files in the repository.
+  distinguish between different files in the repository.
 3. Be aware that this file may contain sensitive information. Handle it with
-   the same level of security as you would the original repository.
+  the same level of security as you would the original repository.
 
 Notes:
 ------
 - Some files may have been excluded based on .gitignore rules and Repopack's
   configuration.
-- Binary files are not included in this packed representation.
+- Binary files are not included in this packed representation. Please refer to
+  the Repository Structure section for a complete list of file paths, including
+  binary files.
 ${config.output.removeComments ? '- Code comments have been removed.\n' : ''}
 ${config.output.showLineNumbers ? '- Line numbers have been added to the beginning of each line.\n' : ''}
 
