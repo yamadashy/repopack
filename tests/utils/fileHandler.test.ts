@@ -27,6 +27,7 @@ describe('fileHandler', () => {
     const config = createMockConfig({
       output: {
         filePath: 'output.txt',
+        style: 'plain',
         topFilesLength: 2,
         showLineNumbers: false,
         removeComments: false,
@@ -49,6 +50,7 @@ describe('fileHandler', () => {
     const config = createMockConfig({
       output: {
         filePath: 'output.txt',
+        style: 'plain',
         topFilesLength: 2,
         showLineNumbers: false,
         removeComments: false,
@@ -71,6 +73,7 @@ describe('fileHandler', () => {
     const config = createMockConfig({
       output: {
         filePath: 'output.txt',
+        style: 'plain',
         topFilesLength: 2,
         showLineNumbers: false,
         removeComments: false,

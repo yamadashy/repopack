@@ -157,6 +157,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 | Option | Description | Default |
 |--------|-------------|---------|
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
+|`output.style`| The style of the output (`plain`, `xml`) |`"plain"`|
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
@@ -172,6 +173,7 @@ Example configuration:
 {
   "output": {
     "filePath": "repopack-output.txt",
+    "style": "plain",
     "headerText": "Custom header information for the packed file.",
     "removeComments": true,
     "topFilesLength": 5,

@@ -1,5 +1,10 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { generateOutput, generateFileHeader } from '../../src/core/outputGenerator.js';
+import {
+  generateCommonData,
+  generateOutput,
+  generatePlainOutput,
+  generateXmlOutput,
+} from '../../src/core/outputGenerator.js';
 import * as fs from 'fs/promises';
 import path from 'path';
 import { createMockConfig } from '../testing/testUtils.js';
@@ -15,6 +20,7 @@ describe('outputGenerator', () => {
     const mockConfig = createMockConfig({
       output: {
         filePath: 'output.txt',
+        style: 'plain',
         topFilesLength: 2,
         showLineNumbers: false,
         removeComments: false,
@@ -39,10 +45,11 @@ describe('outputGenerator', () => {
     expect(writtenContent).toContain('content2');
   });
 
-  test('generateFileHeader should include user-provided header text', () => {
+  test('generatePlainOutput should include user-provided header text', async () => {
     const mockConfig = createMockConfig({
       output: {
         filePath: 'output.txt',
+        style: 'plain',
         headerText: 'Custom header text',
         topFilesLength: 2,
         showLineNumbers: false,
@@ -51,9 +58,30 @@ describe('outputGenerator', () => {
       },
     });
 
-    const header = generateFileHeader(mockConfig, []);
+    const commonData = generateCommonData(mockConfig, [], []);
+    const output = await generatePlainOutput(commonData);
 
-    expect(header).toContain('Repopack Output File');
-    expect(header).toContain('Custom header text');
+    expect(output).toContain('Repopack Output File');
+    expect(output).toContain('Custom header text');
+  });
+
+  test('generateXmlOutput should include user-provided header text', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'xml',
+        headerText: 'Custom header text',
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
+      },
+    });
+
+    const commonData = generateCommonData(mockConfig, [], []);
+    const output = await generateXmlOutput(commonData);
+
+    expect(output).toContain('Repopack Output File');
+    expect(output).toContain('Custom header text');
   });
 });
