@@ -1,0 +1,12 @@
+{
+  "name": "simple-project",
+  "version": "1.0.0",
+  "description": "A simple project for testing Repopack",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": ["simple", "test"],
+  "author": "Test Author",
+  "license": "MIT"
+}

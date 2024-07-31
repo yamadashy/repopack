@@ -26,14 +26,14 @@ describe('configLoader', () => {
       vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockConfig));
       vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
 
-      const result = await loadFileConfig('test-config.json');
+      const result = await loadFileConfig(process.cwd(), 'test-config.json');
       expect(result).toEqual(mockConfig);
     });
 
     test('should return an empty object if no config file is found', async () => {
       vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
 
-      const result = await loadFileConfig(null);
+      const result = await loadFileConfig(process.cwd(), null);
       expect(result).toEqual({});
     });
 
@@ -41,7 +41,7 @@ describe('configLoader', () => {
       vi.mocked(fs.readFile).mockResolvedValue('invalid json');
       vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
 
-      await expect(loadFileConfig('test-config.json')).rejects.toThrow('Invalid JSON');
+      await expect(loadFileConfig(process.cwd(), 'test-config.json')).rejects.toThrow('Invalid JSON');
     });
   });
 

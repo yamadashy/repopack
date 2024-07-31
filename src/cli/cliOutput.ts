@@ -1,15 +1,15 @@
 import pc from 'picocolors';
 import path from 'node:path';
 import type { SecretLintCoreResult } from '@secretlint/types';
-import process from 'node:process';
 
 export function printSummary(
+  rootDir: string,
   totalFiles: number,
   totalCharacters: number,
   outputPath: string,
   suspiciousFilesResults: SecretLintCoreResult[],
 ) {
-  const relativeOutputPath = path.relative(process.cwd(), outputPath);
+  const relativeOutputPath = path.relative(rootDir, outputPath);
 
   let securityCheckMessage = '';
   if (suspiciousFilesResults.length > 0) {
@@ -26,7 +26,7 @@ export function printSummary(
   console.log(`${pc.white('   Security:')} ${pc.white(securityCheckMessage)}`);
 }
 
-export function printSecurityCheck(suspiciousFilesResults: SecretLintCoreResult[]) {
+export function printSecurityCheck(rootDir: string, suspiciousFilesResults: SecretLintCoreResult[]) {
   console.log(pc.white('🔎 Security Check:'));
   console.log(pc.dim('──────────────────'));
 
@@ -35,7 +35,7 @@ export function printSecurityCheck(suspiciousFilesResults: SecretLintCoreResult[
   } else {
     console.log(pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected:`));
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
-      const relativeFilePath = path.relative(process.cwd(), suspiciousFilesResult.filePath);
+      const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
       console.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
       console.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
     });

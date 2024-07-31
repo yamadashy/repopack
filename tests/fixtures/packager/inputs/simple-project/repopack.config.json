@@ -1,0 +1,15 @@
+{
+  "output": {
+    "filePath": "repopack-output.txt",
+    "headerText": "This repository is simple-project",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false
+  },
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  }
+}
