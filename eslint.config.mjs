@@ -9,6 +9,7 @@ import globals from 'globals';
 export default [
   {
     files: ['**/*.ts'],
+    ignores: ['tests/fixtures/**/*'],
     languageOptions: {
       globals: {
         ...globals.es2021,

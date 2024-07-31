@@ -1,6 +1,9 @@
+type RepopackOutputStyle = 'plain' | 'xml';
+
 interface RepopackConfigBase {
   output?: {
     filePath?: string;
+    style?: RepopackOutputStyle;
     headerText?: string;
     removeComments?: boolean;
     removeEmptyLines?: boolean;
@@ -17,6 +20,7 @@ interface RepopackConfigBase {
 export type RepopackConfigDefault = RepopackConfigBase & {
   output: {
     filePath: string;
+    style: RepopackOutputStyle;
     headerText?: string;
     removeComments: boolean;
     removeEmptyLines: boolean;
@@ -33,6 +37,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
 export type RepopackConfigFile = RepopackConfigBase & {
   output?: {
     filePath?: string;
+    style?: RepopackOutputStyle;
     headerText?: string;
     removeComments?: boolean;
     removeEmptyLines?: boolean;
@@ -49,6 +54,7 @@ export type RepopackConfigFile = RepopackConfigBase & {
 export type RepopackConfigCli = RepopackConfigBase & {
   output?: {
     filePath?: string;
+    style?: RepopackOutputStyle;
     headerText?: string;
     removeComments?: boolean;
     removeEmptyLines?: boolean;

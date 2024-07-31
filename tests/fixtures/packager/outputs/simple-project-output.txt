@@ -14,7 +14,8 @@ File Format:
 ------------
 The content is organized as follows:
 1. This header section
-2. Multiple file entries, each consisting of:
+2. Repository structure
+3. Multiple file entries, each consisting of:
   a. A separator line (================)
   b. The file path (File: path/to/file)
   c. Another separator line
