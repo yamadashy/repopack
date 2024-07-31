@@ -5,18 +5,17 @@ import { logger } from '../utils/logger.js';
 import * as fs from 'node:fs/promises';
 import { RepopackError } from '../utils/errorHandler.js';
 import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
-import process from 'node:process';
 
 const defaultConfigPath = 'repopack.config.json';
 
-export async function loadFileConfig(configPath: string | null): Promise<RepopackConfigFile> {
+export async function loadFileConfig(rootDir: string, configPath: string | null): Promise<RepopackConfigFile> {
   let useDefaultConfig = false;
   if (!configPath) {
     useDefaultConfig = true;
     configPath = defaultConfigPath;
   }
 
-  const fullPath = path.resolve(process.cwd(), configPath);
+  const fullPath = path.resolve(rootDir, configPath);
 
   logger.trace('Loading config from:', fullPath);
 

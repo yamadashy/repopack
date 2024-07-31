@@ -1,3 +1,4 @@
 node_modules
 .yarn
 .eslinttcache
+tests/fixtures/output

@@ -17,5 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "types": ["node", "picocolors"]
-  }
+  },
+  "exclude": ["tests/fixtures/"],
 }

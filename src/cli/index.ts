@@ -21,7 +21,7 @@ interface CliOptions extends OptionValues {
   outputShowLineNumbers?: boolean;
 }
 
-async function executeAction(directory: string, options: CliOptions) {
+async function executeAction(directory: string, rootDir: string, options: CliOptions) {
   const version = await getVersion();
 
   if (options.version) {
@@ -33,7 +33,7 @@ async function executeAction(directory: string, options: CliOptions) {
 
   logger.setVerbose(options.verbose || false);
 
-  const fileConfig: RepopackConfigFile = await loadFileConfig(options.config ?? null);
+  const fileConfig: RepopackConfigFile = await loadFileConfig(rootDir, options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
 
   const cliConfig: RepopackConfigCli = {};
@@ -56,7 +56,7 @@ async function executeAction(directory: string, options: CliOptions) {
   logger.trace('Merged config:', config);
 
   // Ensure the output file is always in the current working directory
-  config.output.filePath = path.resolve(process.cwd(), path.basename(config.output.filePath));
+  config.output.filePath = path.resolve(rootDir, path.basename(config.output.filePath));
 
   const targetPath = path.resolve(directory);
 
@@ -73,10 +73,11 @@ async function executeAction(directory: string, options: CliOptions) {
       console.log('');
     }
 
-    printSecurityCheck(packResult.suspiciousFilesResults);
+    printSecurityCheck(rootDir, packResult.suspiciousFilesResults);
     console.log('');
 
     printSummary(
+      rootDir,
       packResult.totalFiles,
       packResult.totalCharacters,
       config.output.filePath,
@@ -106,7 +107,7 @@ export async function run() {
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--verbose', 'enable verbose logging for detailed output')
-      .action((directory = '.', options: CliOptions) => executeAction(directory, options));
+      .action((directory = '.', options: CliOptions) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);
   } catch (error) {
