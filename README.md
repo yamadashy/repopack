@@ -65,7 +65,9 @@ Once you have generated the packed file, you can use it with Generative AI tools
 Repopack generates a single file with clear separators between different parts of your codebase.  
 To enhance AI comprehension, the output file begins with an AI-oriented explanation, making it easier for AI models to understand the context and structure of the packed repository.
 
-```
+#### Plain Text Format (default)
+
+```text
 ================================================================
 REPOPACK OUTPUT FILE
 ================================================================
@@ -80,9 +82,6 @@ src/
     index.ts
   config/
     configLoader.ts
-    configValidator.ts
-    defaultConfig.ts
-    index.ts
 
 (...remaining directories)
 
@@ -100,8 +99,47 @@ File: src/utils.js
 ================
 // File contents here
 
-... (remaining files)
+(...remaining files)
 ```
+
+#### XML Format
+
+To generate output in XML format, use the `--style xml` option:
+```bash
+repopack --style xml
+```
+
+The XML format structures the content in a hierarchical manner:
+
+```xml
+<summary>
+(Metadata and usage AI instructions)
+</summary>
+
+<repository_structure>
+src/
+  cli/
+    cliOutput.ts
+    index.ts
+
+(...remaining directories)
+</repository_structure>
+
+<repository_files>
+<file path="src/index.js">
+// File contents here
+</file>
+
+(...remaining files)
+</repository_files>
+```
+
+For those interested in the potential of XML tags in AI contexts:  
+https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags
+
+> When your prompts involve multiple components like context, instructions, and examples, XML tags can be a game-changer. They help Claude parse your prompts more accurately, leading to higher-quality outputs.
+
+This means that the XML output from Repopack is not just a different format, but potentially a more effective way to feed your codebase into AI systems for analysis, code review, or other tasks.
 
 ### Prompt Examples
 
