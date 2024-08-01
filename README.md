@@ -136,6 +136,7 @@ Feel free to modify these prompts based on your specific needs and the capabilit
 - `-o, --output <file>`: Specify the output file name
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
+- `--style <style>`: Specify the output style (`plain` or `xml`)
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--verbose`: Enable verbose logging
@@ -145,6 +146,7 @@ Examples:
 repopack -o custom-output.txt
 repopack -i "*.log,tmp" -v
 repopack -c ./custom-config.json
+repopack --style xml
 npx repopack src
 ```
 

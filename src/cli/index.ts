@@ -1,7 +1,7 @@
 import { program, OptionValues } from 'commander';
 import path from 'node:path';
 import { pack } from '../core/packager.js';
-import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from '../types/index.js';
+import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../types/index.js';
 import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
 import { logger } from '../utils/logger.js';
 import { getVersion } from '../utils/packageJsonUtils.js';
@@ -19,6 +19,7 @@ interface CliOptions extends OptionValues {
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
+  style?: RepopackOutputStyle;
 }
 
 async function executeAction(directory: string, rootDir: string, options: CliOptions) {
@@ -48,6 +49,9 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   }
   if (options.outputShowLineNumbers !== undefined) {
     cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
+  }
+  if (options.style) {
+    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -106,6 +110,7 @@ export async function run() {
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
+      .option('--style <type>', 'specify the output style (plain or xml)')
       .option('--verbose', 'enable verbose logging for detailed output')
       .action((directory = '.', options: CliOptions) => executeAction(directory, process.cwd(), options));
 
