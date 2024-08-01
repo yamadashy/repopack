@@ -41,14 +41,19 @@ export async function pack(
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
   // Get all file paths in the directory
-  const filePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  const allFilePaths = await getFilePaths(rootDir, '', ignoreFilter);
 
   // Perform security check
-  const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
+  const suspiciousFilesResults = await performSecurityCheck(allFilePaths, rootDir);
+
+  // Filter out suspicious files
+  const safeFilePaths = allFilePaths.filter(
+    (filePath) => !suspiciousFilesResults.some((result) => result.filePath === path.join(rootDir, filePath)),
+  );
 
   // Sanitize files and generate output
-  const sanitizedFiles = await deps.sanitizeFiles(filePaths, rootDir, config);
-  await deps.generateOutput(rootDir, config, sanitizedFiles, filePaths);
+  const sanitizedFiles = await deps.sanitizeFiles(safeFilePaths, rootDir, config);
+  await deps.generateOutput(rootDir, config, sanitizedFiles, safeFilePaths);
 
   // Metrics
   const totalFiles = sanitizedFiles.length;
