@@ -13,7 +13,7 @@ export function printSummary(
 
   let securityCheckMessage = '';
   if (suspiciousFilesResults.length > 0) {
-    securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected`);
+    securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded`);
   } else {
     securityCheckMessage = pc.white('✔ No suspicious files detected');
   }
@@ -33,13 +33,16 @@ export function printSecurityCheck(rootDir: string, suspiciousFilesResults: Secr
   if (suspiciousFilesResults.length === 0) {
     console.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
   } else {
-    console.log(pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected:`));
+    console.log(
+      pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded from the output:`),
+    );
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
       const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
       console.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
       console.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
     });
-    console.log(pc.yellow('\nPlease review these files for potential sensitive information.'));
+    console.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
+    console.log(pc.yellow('Please review these files for potential sensitive information.'));
   }
 }
 
