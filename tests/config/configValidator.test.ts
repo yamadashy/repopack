@@ -28,4 +28,24 @@ describe('configValidator', () => {
     const invalidConfig = { ignore: { customPatterns: 'not an array' } };
     expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
   });
+
+  test('should pass for a valid config with output style', () => {
+    const validConfig = {
+      output: { filePath: 'test.txt', style: 'xml' },
+      ignore: { useDefaultPatterns: true },
+    };
+    expect(() => validateConfig(validConfig)).not.toThrow();
+  });
+
+  test('should throw for invalid output.style type', () => {
+    const invalidConfig = { output: { style: 123 } };
+    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow('output.style must be a string');
+  });
+
+  test('should throw for invalid output.style value', () => {
+    const invalidConfig = { output: { style: 'invalid' } };
+    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow('output.style must be either "plain" or "xml"');
+  });
 });

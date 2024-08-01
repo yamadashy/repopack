@@ -1,4 +1,4 @@
-type RepopackOutputStyle = 'plain' | 'xml';
+export type RepopackOutputStyle = 'plain' | 'xml';
 
 interface RepopackConfigBase {
   output?: {

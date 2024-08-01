@@ -21,16 +21,24 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
       throw new RepopackConfigValidationError('output must be an object');
     }
 
-    const { filePath, headerText } = output;
+    const { filePath, headerText, style } = output;
     if (filePath !== undefined && typeof filePath !== 'string') {
       throw new RepopackConfigValidationError('output.filePath must be a string');
     }
     if (headerText !== undefined && typeof headerText !== 'string') {
       throw new RepopackConfigValidationError('output.headerText must be a string');
     }
+    if (style !== undefined) {
+      if (typeof style !== 'string') {
+        throw new RepopackConfigValidationError('output.style must be a string');
+      }
+      if (style !== 'plain' && style !== 'xml') {
+        throw new RepopackConfigValidationError('output.style must be either "plain" or "xml"');
+      }
+    }
   }
 
-  // Validate ignore
+  // Validate ignore (existing code remains unchanged)
   if (ignore !== undefined) {
     if (typeof ignore !== 'object' || ignore === null) {
       throw new RepopackConfigValidationError('ignore must be an object');
