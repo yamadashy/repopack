@@ -1,6 +1,6 @@
 {
   "name": "repopack",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "A tool to pack repository contents to single file for AI consumption",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
