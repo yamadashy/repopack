@@ -178,7 +178,7 @@ For more information about Repopack, visit: https://github.com/yamadashy/repopac
   if (config.output.headerText) {
     xml += `
 <user_provided_header>
-${escapeXml(config.output.headerText)}
+${config.output.headerText}
 </user_provided_header>
 `;
   }
@@ -187,7 +187,7 @@ ${escapeXml(config.output.headerText)}
 </summary>
 
 <repository_structure>
-${escapeXml(treeString)}
+${treeString}
 </repository_structure>
 
 <repository_files>
@@ -195,8 +195,8 @@ ${escapeXml(treeString)}
 
   for (const file of sanitizedFiles) {
     xml += `
-<file path="${escapeXml(file.path)}">
-${escapeXml(file.content)}
+<file path="${file.path}">
+${file.content}
 </file>
 `;
   }
@@ -206,22 +206,4 @@ ${escapeXml(file.content)}
 `;
 
   return xml.trim() + '\n';
-}
-
-function escapeXml(unsafe: string): string {
-  return unsafe.replace(/[<>&'"]/g, (c) => {
-    switch (c) {
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '&':
-        return '&amp;';
-      case "'":
-        return '&apos;';
-      case '"':
-        return '&quot;';
-    }
-    return c;
-  });
 }
