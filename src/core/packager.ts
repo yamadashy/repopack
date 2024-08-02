@@ -41,7 +41,7 @@ export async function pack(
   const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
 
   // Get all file paths in the directory
-  const allFilePaths = await getFilePaths(rootDir, '', ignoreFilter);
+  const allFilePaths = await getFilePaths(rootDir, '', ignoreFilter, config);
 
   // Perform security check
   const suspiciousFilesResults = await performSecurityCheck(allFilePaths, rootDir);
@@ -71,12 +71,23 @@ export async function pack(
   };
 }
 
-async function getFilePaths(dir: string, relativePath: string, ignoreFilter: IgnoreFilter): Promise<string[]> {
+async function getFilePaths(
+  dir: string,
+  relativePath: string,
+  ignoreFilter: IgnoreFilter,
+  config: RepopackConfigMerged,
+): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const filePaths: string[] = [];
 
   for (const entry of entries) {
     const entryRelativePath = path.join(relativePath, entry.name);
+
+    // Skip the repopack output file
+    if (path.join(dir, entryRelativePath) === config.output.filePath) {
+      logger.trace(`Skipping output file: ${entryRelativePath}`);
+      continue;
+    }
 
     if (!ignoreFilter(entryRelativePath)) {
       logger.trace(`Ignoring file: ${entryRelativePath}`);
@@ -84,7 +95,7 @@ async function getFilePaths(dir: string, relativePath: string, ignoreFilter: Ign
     }
 
     if (entry.isDirectory()) {
-      const subDirPaths = await getFilePaths(path.join(dir, entry.name), entryRelativePath, ignoreFilter);
+      const subDirPaths = await getFilePaths(path.join(dir, entry.name), entryRelativePath, ignoreFilter, config);
       filePaths.push(...subDirPaths);
     } else {
       logger.trace(`Adding file: ${entryRelativePath}`);
