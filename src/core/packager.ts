@@ -11,6 +11,8 @@ import {
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
 import { logger } from '../utils/logger.js';
+import { filterIncludedFiles } from '../utils/includeUtils.js';
+
 
 export interface Dependencies {
   getAllIgnorePatterns: typeof defaultGetAllIgnorePatterns;
@@ -42,9 +44,13 @@ export async function pack(
 
   // Get all file paths in the directory
   const allFilePaths = await getFilePaths(rootDir, '', ignoreFilter, config);
+  const filteredPaths = filterIncludedFiles(rootDir, allFilePaths, config.include);
+
+  // Use filteredPaths if not empty, otherwise use filePaths
+  const pathsToProcess = filteredPaths.length > 0 ? filteredPaths : allFilePaths;
 
   // Perform security check
-  const suspiciousFilesResults = await performSecurityCheck(allFilePaths, rootDir);
+  const suspiciousFilesResults = await performSecurityCheck(pathsToProcess, rootDir);
 
   // Filter out suspicious files
   const safeFilePaths = allFilePaths.filter(

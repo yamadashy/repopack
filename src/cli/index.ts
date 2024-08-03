@@ -20,6 +20,7 @@ interface CliOptions extends OptionValues {
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
   style?: RepopackOutputStyle;
+  include?: string[];
 }
 
 async function executeAction(directory: string, rootDir: string, options: CliOptions) {
@@ -33,6 +34,7 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   console.log(pc.dim(`\n📦 Repopack v${version}\n`));
 
   logger.setVerbose(options.verbose || false);
+  logger.trace('Loaded CLI options:', options);
 
   const fileConfig: RepopackConfigFile = await loadFileConfig(rootDir, options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
@@ -52,6 +54,9 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   }
   if (options.style) {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
+  }
+  if (options.include) {
+    cliConfig.include = options.include;
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -106,6 +111,7 @@ export async function run() {
       .arguments('[directory]')
       .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
+      .option('--include <files...>', 'space-separated list of files to include')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)

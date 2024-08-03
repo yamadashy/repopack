@@ -70,5 +70,10 @@ export function mergeConfigs(fileConfig: RepopackConfigFile, cliConfig: Repopack
         ...(cliConfig.ignore?.customPatterns || []),
       ],
     },
+    include: [
+      ...(defaultConfig.include || []),
+      ...(fileConfig.include || []),
+      ...(cliConfig.include || []),  
+    ],
   };
 }

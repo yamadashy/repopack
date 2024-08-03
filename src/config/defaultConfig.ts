@@ -14,4 +14,5 @@ export const defaultConfig: RepopackConfigDefault = {
     useDefaultPatterns: true,
     customPatterns: [],
   },
+  include: [],
 };
