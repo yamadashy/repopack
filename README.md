@@ -95,6 +95,20 @@ For generating test cases:
 Analyze the code in this file and suggest a comprehensive set of unit tests for the main functions and classes. Include edge cases and potential error scenarios.
 ```
 
+#### Code Quality Assessment
+Evaluate code quality and adherence to best practices:
+
+```
+Review the codebase for adherence to coding best practices and industry standards. Identify areas where the code could be improved in terms of readability, maintainability, and efficiency. Suggest specific changes to align the code with best practices.
+```
+
+#### Library Overview
+Get a high-level understanding of the library
+
+```
+This file contains the entire codebase of library. Please provide a comprehensive overview of the library, including its main purpose, key features, and overall architecture.
+```
+
 Feel free to modify these prompts based on your specific needs and the capabilities of the AI tool you're using.
 
 ### Output File Format
