@@ -1,18 +1,10 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import {
-  getIgnorePatterns,
-  parseIgnoreContent,
-  createIgnoreFilter,
-  getAllIgnorePatterns,
-} from '../../src/utils/ignoreUtils.js';
+import { getIgnorePatterns, parseIgnoreContent, getAllIgnorePatterns } from '../../src/utils/filterUtils.js';
 import path from 'path';
 import * as fs from 'fs/promises';
-import os from 'os';
 import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('fs/promises');
-
-const isWindows = os.platform() === 'win32';
 
 describe('ignoreUtils', () => {
   beforeEach(() => {
@@ -74,84 +66,6 @@ node_modules
       const patterns = parseIgnoreContent(content);
 
       expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
-    });
-  });
-
-  describe('createIgnoreFilter', () => {
-    test('should create a function that correctly filters paths', () => {
-      const patterns = ['node_modules', '*.log', '.DS_Store'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('src/index.js')).toBe(true);
-      expect(filter('node_modules/package/index.js')).toBe(false);
-      expect(filter('logs/error.log')).toBe(false);
-      expect(filter('.DS_Store')).toBe(false);
-    });
-
-    test('should correctly ignore files with different path separators', () => {
-      const patterns = ['*.md', '*.svg', '*.css', 'node_modules/**'];
-      const filter = createIgnoreFilter(patterns);
-
-      // UNIX-style paths
-      expect(filter('README.md')).toBe(false);
-      expect(filter('src/assets/logo.svg')).toBe(false);
-      expect(filter('styles/main.css')).toBe(false);
-      expect(filter('node_modules/package/index.js')).toBe(false);
-
-      // Files that should not be ignored
-      expect(filter('src/index.js')).toBe(true);
-    });
-
-    test.runIf(isWindows)('should correctly ignore files with Windows-style paths', () => {
-      const patterns = ['*.md', '*.svg', '*.css', 'node_modules/**'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('docs\\README.md')).toBe(false);
-      expect(filter('src\\assets\\logo.svg')).toBe(false);
-      expect(filter('styles\\main.css')).toBe(false);
-      expect(filter('node_modules\\package\\index.js')).toBe(false);
-      expect(filter('src\\components\\Button.js')).toBe(true);
-    });
-
-    test('should handle nested directory patterns correctly', () => {
-      const patterns = ['test/**/*.spec.js', 'build/**'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('test/unit/component.spec.js')).toBe(false);
-      expect(filter('build/output.js')).toBe(false);
-      expect(filter('src/test/helper.js')).toBe(true);
-    });
-
-    test.runIf(isWindows)('should handle nested directory patterns with Windows-style paths', () => {
-      const patterns = ['test/**/*.spec.js', 'build/**'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('test\\unit\\component.spec.js')).toBe(false);
-      expect(filter('build\\output.js')).toBe(false);
-      expect(filter('src\\test\\helper.js')).toBe(true);
-    });
-
-    test('should correctly handle patterns with special characters', () => {
-      const patterns = ['**/*.min.js', '**/#temp#', '**/node_modules'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('dist/bundle.min.js')).toBe(false);
-      expect(filter('temp/#temp#/file.txt')).toBe(false);
-      expect(filter('project/node_modules/package/index.js')).toBe(false);
-
-      expect(filter('src/app.js')).toBe(true);
-      expect(filter('docs/temp/file.txt')).toBe(true);
-    });
-
-    test('should handle case sensitivity correctly', () => {
-      const patterns = ['*.MD', 'TEST'];
-      const filter = createIgnoreFilter(patterns);
-
-      expect(filter('readme.md')).toBe(false);
-      expect(filter('test/file.txt')).toBe(false);
-
-      expect(filter('README.MD')).toBe(false);
-      expect(filter('TEST/file.txt')).toBe(false);
     });
   });
 

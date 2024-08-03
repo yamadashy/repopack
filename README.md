@@ -57,6 +57,18 @@ To pack a specific directory:
 repopack path/to/directory
 ```
 
+To pack specific files or directories using glob patterns:
+
+```bash
+repopack --include "src/**/*.ts,**/*.md"
+```
+
+To exclude specific files or directories using .gitignore syntax:
+
+```bash
+repopack --ignore "*.log,tmp/"
+```
+
 Once you have generated the packed file, you can use it with Generative AI tools like Claude or ChatGPT.
 
 
@@ -172,6 +184,7 @@ Feel free to modify these prompts based on your specific needs and the capabilit
 
 - `-v, --version`: Show tool version
 - `-o, --output <file>`: Specify the output file name
+- `--include <patterns>`: List of include patterns (comma-separated)
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
 - `--style <style>`: Specify the output style (`plain` or `xml`)
@@ -203,9 +216,10 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
+|`include`| Patterns of files to include (using glob syntax) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
-|`ignore.customPatterns`| Additional patterns to ignore |`[]`|
+|`ignore.customPatterns`| Additional patterns to ignore (using .gitignore syntax) |`[]`|
 
 Example configuration:
 
@@ -219,6 +233,7 @@ Example configuration:
     "topFilesLength": 5,
     "showLineNumbers": false
   },
+  "include": ["**/*"],
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
@@ -227,7 +242,15 @@ Example configuration:
 }
 ```
 
-### Ignore Patterns
+### Include and Ignore
+#### Include Patterns
+Repopack now supports specifying files to include using glob patterns. This allows for more flexible and powerful file selection:
+
+- Use `**/*.js` to include all JavaScript files in any directory
+- Use `src/**/*` to include all files within the `src` directory and its subdirectories
+- Combine multiple patterns like `["src/**/*.js", "**/*.md"]` to include JavaScript files in `src` and all Markdown files
+
+#### Ignore Patterns
 Repopack offers multiple methods to set ignore patterns for excluding specific files or directories during the packing process:
 
 - **.gitignore**: By default, patterns listed in your project's `.gitignore` file are used. This behavior can be controlled with the `ignore.useGitignore` setting.

@@ -1,4 +1,4 @@
-import { RepopackConfigFile } from '../types/index.js';
+import { RepopackConfigFile } from './configTypes.js';
 import { RepopackError } from '../utils/errorHandler.js';
 
 export class RepopackConfigValidationError extends RepopackError {

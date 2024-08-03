@@ -1,7 +1,12 @@
 import { program, OptionValues } from 'commander';
 import path from 'node:path';
 import { pack } from '../core/packager.js';
-import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../types/index.js';
+import {
+  RepopackConfigCli,
+  RepopackConfigFile,
+  RepopackConfigMerged,
+  RepopackOutputStyle,
+} from '../config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
 import { logger } from '../utils/logger.js';
 import { getVersion } from '../utils/packageJsonUtils.js';
@@ -14,13 +19,13 @@ import process from 'node:process';
 interface CliOptions extends OptionValues {
   version?: boolean;
   output?: string;
+  include?: string;
   ignore?: string;
   config?: string;
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
   style?: RepopackOutputStyle;
-  include?: string[];
 }
 
 async function executeAction(directory: string, rootDir: string, options: CliOptions) {
@@ -43,6 +48,9 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   if (options.output) {
     cliConfig.output = { filePath: options.output };
   }
+  if (options.include) {
+    cliConfig.include = options.include.split(',');
+  }
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
   }
@@ -54,9 +62,6 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   }
   if (options.style) {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
-  }
-  if (options.include) {
-    cliConfig.include = options.include;
   }
   logger.trace('CLI config:', cliConfig);
 
@@ -111,7 +116,7 @@ export async function run() {
       .arguments('[directory]')
       .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
-      .option('--include <files...>', 'space-separated list of files to include')
+      .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)

@@ -1,4 +1,4 @@
-import { RepopackConfigDefault } from '../types/index.js';
+import { RepopackConfigDefault } from './configTypes.js';
 
 export const defaultConfig: RepopackConfigDefault = {
   output: {
@@ -9,10 +9,10 @@ export const defaultConfig: RepopackConfigDefault = {
     topFilesLength: 5,
     showLineNumbers: false,
   },
+  include: [],
   ignore: {
     useGitignore: true,
     useDefaultPatterns: true,
     customPatterns: [],
   },
-  include: [],
 };

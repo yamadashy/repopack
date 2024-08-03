@@ -3,7 +3,7 @@ import path from 'node:path';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';
-import { RepopackConfigMerged } from '../types/index.js';
+import { RepopackConfigMerged } from '../config/configTypes.js';
 import { getFileManipulator } from './fileManipulator.js';
 import { logger } from './logger.js';
 

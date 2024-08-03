@@ -8,10 +8,10 @@
     "topFilesLength": 5,
     "showLineNumbers": false
   },
+  "include": [],
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": []
-  },
-  "includeFiles": []
+  }
 }

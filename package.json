@@ -53,8 +53,8 @@
     "@secretlint/secretlint-rule-preset-recommend": "^8.2.4",
     "cli-spinners": "^2.9.2",
     "commander": "^11.1.0",
+    "globby": "^14.0.2",
     "iconv-lite": "^0.6.3",
-    "ignore": "^5.2.0",
     "istextorbinary": "^9.5.0",
     "jschardet": "^3.1.3",
     "log-update": "^6.1.0",
@@ -78,7 +78,6 @@
     "rimraf": "^6.0.1",
     "secretlint": "^8.2.4",
     "typescript": "^5.5.4",
-    "vite": "^5.3.5",
     "vitest": "^2.0.4"
   },
   "engines": {

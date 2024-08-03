@@ -1,22 +1,13 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import type { SecretLintCoreResult } from '@secretlint/types';
-import { RepopackConfigMerged } from '../types/index.js';
+import { RepopackConfigMerged } from '../config/configTypes.js';
 import { sanitizeFiles as defaultSanitizeFiles } from '../utils/fileHandler.js';
-import {
-  getAllIgnorePatterns as defaultGetAllIgnorePatterns,
-  createIgnoreFilter as defaultCreateIgnoreFilter,
-  IgnoreFilter,
-} from '../utils/ignoreUtils.js';
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
-import { logger } from '../utils/logger.js';
-import { filterIncludedFiles } from '../utils/includeUtils.js';
-
+import { filterFiles } from '../utils/filterUtils.js';
 
 export interface Dependencies {
-  getAllIgnorePatterns: typeof defaultGetAllIgnorePatterns;
-  createIgnoreFilter: typeof defaultCreateIgnoreFilter;
   generateOutput: typeof defaultGenerateOutput;
   sanitizeFiles: typeof defaultSanitizeFiles;
 }
@@ -32,28 +23,16 @@ export async function pack(
   rootDir: string,
   config: RepopackConfigMerged,
   deps: Dependencies = {
-    getAllIgnorePatterns: defaultGetAllIgnorePatterns,
-    createIgnoreFilter: defaultCreateIgnoreFilter,
     generateOutput: defaultGenerateOutput,
     sanitizeFiles: defaultSanitizeFiles,
   },
 ): Promise<PackResult> {
-  // Get ignore patterns
-  const ignorePatterns = await deps.getAllIgnorePatterns(rootDir, config);
-  const ignoreFilter = deps.createIgnoreFilter(ignorePatterns);
+  // Get all file paths that should be processed
+  const filteredPaths = await filterFiles(rootDir, config);
 
-  // Get all file paths in the directory
-  const allFilePaths = await getFilePaths(rootDir, '', ignoreFilter, config);
-  const filteredPaths = filterIncludedFiles(rootDir, allFilePaths, config.include);
-
-  // Use filteredPaths if not empty, otherwise use filePaths
-  const pathsToProcess = filteredPaths.length > 0 ? filteredPaths : allFilePaths;
-
-  // Perform security check
-  const suspiciousFilesResults = await performSecurityCheck(pathsToProcess, rootDir);
-
-  // Filter out suspicious files
-  const safeFilePaths = allFilePaths.filter(
+  // Perform security check and filter out suspicious files
+  const suspiciousFilesResults = await performSecurityCheck(filteredPaths, rootDir);
+  const safeFilePaths = filteredPaths.filter(
     (filePath) => !suspiciousFilesResults.some((result) => result.filePath === path.join(rootDir, filePath)),
   );
 
@@ -75,41 +54,6 @@ export async function pack(
     fileCharCounts,
     suspiciousFilesResults,
   };
-}
-
-async function getFilePaths(
-  dir: string,
-  relativePath: string,
-  ignoreFilter: IgnoreFilter,
-  config: RepopackConfigMerged,
-): Promise<string[]> {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  const filePaths: string[] = [];
-
-  for (const entry of entries) {
-    const entryRelativePath = path.join(relativePath, entry.name);
-
-    // Skip the repopack output file
-    if (path.join(dir, entryRelativePath) === config.output.filePath) {
-      logger.trace(`Skipping output file: ${entryRelativePath}`);
-      continue;
-    }
-
-    if (!ignoreFilter(entryRelativePath)) {
-      logger.trace(`Ignoring file: ${entryRelativePath}`);
-      continue;
-    }
-
-    if (entry.isDirectory()) {
-      const subDirPaths = await getFilePaths(path.join(dir, entry.name), entryRelativePath, ignoreFilter, config);
-      filePaths.push(...subDirPaths);
-    } else {
-      logger.trace(`Adding file: ${entryRelativePath}`);
-      filePaths.push(entryRelativePath);
-    }
-  }
-
-  return filePaths;
 }
 
 async function performSecurityCheck(filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> {

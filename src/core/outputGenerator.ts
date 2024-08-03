@@ -1,4 +1,4 @@
-import { RepopackConfigMerged } from '../types/index.js';
+import { RepopackConfigMerged } from '../config/configTypes.js';
 import { SanitizedFile } from '../utils/fileHandler.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
