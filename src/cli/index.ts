@@ -1,7 +1,12 @@
 import { program, OptionValues } from 'commander';
 import path from 'node:path';
 import { pack } from '../core/packager.js';
-import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../types/index.js';
+import {
+  RepopackConfigCli,
+  RepopackConfigFile,
+  RepopackConfigMerged,
+  RepopackOutputStyle,
+} from '../config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
 import { logger } from '../utils/logger.js';
 import { getVersion } from '../utils/packageJsonUtils.js';
@@ -14,6 +19,7 @@ import process from 'node:process';
 interface CliOptions extends OptionValues {
   version?: boolean;
   output?: string;
+  include?: string;
   ignore?: string;
   config?: string;
   verbose?: boolean;
@@ -33,6 +39,7 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   console.log(pc.dim(`\n📦 Repopack v${version}\n`));
 
   logger.setVerbose(options.verbose || false);
+  logger.trace('Loaded CLI options:', options);
 
   const fileConfig: RepopackConfigFile = await loadFileConfig(rootDir, options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
@@ -40,6 +47,9 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
   const cliConfig: RepopackConfigCli = {};
   if (options.output) {
     cliConfig.output = { filePath: options.output };
+  }
+  if (options.include) {
+    cliConfig.include = options.include.split(',');
   }
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
@@ -106,6 +116,7 @@ export async function run() {
       .arguments('[directory]')
       .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
+      .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', parseInt)

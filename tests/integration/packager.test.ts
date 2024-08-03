@@ -3,14 +3,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
 import { pack } from '../../src/core/packager.js';
-import { RepopackConfigFile, RepopackConfigMerged } from '../../src/types/index.js';
+import { RepopackConfigFile, RepopackConfigMerged } from '../../src/config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
+import { isWindows } from '../testing/testUtils.js';
 
 const fixturesDir = path.join(__dirname, '..', 'fixtures', 'packager');
 const inputsDir = path.join(fixturesDir, 'inputs');
 const outputsDir = path.join(fixturesDir, 'outputs');
-
-const isWindows = os.platform() === 'win32';
 
 describe.runIf(!isWindows)('packager integration', () => {
   const testCases = [{ name: 'simple-project', config: {} }];

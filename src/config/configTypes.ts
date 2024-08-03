@@ -10,6 +10,7 @@ interface RepopackConfigBase {
     topFilesLength?: number;
     showLineNumbers?: boolean;
   };
+  include?: string[];
   ignore?: {
     useGitignore?: boolean;
     useDefaultPatterns?: boolean;
@@ -27,6 +28,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     topFilesLength: number;
     showLineNumbers: boolean;
   };
+  include: string[];
   ignore: {
     useGitignore: boolean;
     useDefaultPatterns: boolean;
@@ -34,38 +36,8 @@ export type RepopackConfigDefault = RepopackConfigBase & {
   };
 };
 
-export type RepopackConfigFile = RepopackConfigBase & {
-  output?: {
-    filePath?: string;
-    style?: RepopackOutputStyle;
-    headerText?: string;
-    removeComments?: boolean;
-    removeEmptyLines?: boolean;
-    topFilesLength?: number;
-    showLineNumbers?: boolean;
-  };
-  ignore?: {
-    useGitignore?: boolean;
-    useDefaultPatterns?: boolean;
-    customPatterns?: string[];
-  };
-};
+export type RepopackConfigFile = RepopackConfigBase;
 
-export type RepopackConfigCli = RepopackConfigBase & {
-  output?: {
-    filePath?: string;
-    style?: RepopackOutputStyle;
-    headerText?: string;
-    removeComments?: boolean;
-    removeEmptyLines?: boolean;
-    topFilesLength?: number;
-    showLineNumbers?: boolean;
-  };
-  ignore?: {
-    useGitignore?: boolean;
-    useDefaultPatterns?: boolean;
-    customPatterns?: string[];
-  };
-};
+export type RepopackConfigCli = RepopackConfigBase;
 
 export type RepopackConfigMerged = RepopackConfigDefault & RepopackConfigFile & RepopackConfigCli;

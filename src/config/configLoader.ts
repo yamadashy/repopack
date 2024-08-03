@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { RepopackConfigCli as RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from '../types/index.js';
+import { RepopackConfigCli as RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
 import { defaultConfig } from './defaultConfig.js';
 import { logger } from '../utils/logger.js';
 import * as fs from 'node:fs/promises';
@@ -70,5 +70,6 @@ export function mergeConfigs(fileConfig: RepopackConfigFile, cliConfig: Repopack
         ...(cliConfig.ignore?.customPatterns || []),
       ],
     },
+    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
   };
 }

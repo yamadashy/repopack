@@ -2,10 +2,11 @@ import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { pack, Dependencies } from '../../src/core/packager.js';
 import path from 'path';
 import * as fs from 'fs/promises';
-import { Dirent } from 'fs';
 import { createMockConfig } from '../testing/testUtils.js';
+import { filterFiles } from '../../src/utils/filterUtils.js';
 
 vi.mock('fs/promises');
+vi.mock('../../src/utils/filterUtils');
 
 describe('packager', () => {
   let mockDeps: Dependencies;
@@ -14,35 +15,25 @@ describe('packager', () => {
     vi.resetAllMocks();
     const file2Path = path.join('dir1', 'file2.txt');
     mockDeps = {
-      getAllIgnorePatterns: vi.fn().mockResolvedValue([]),
-      createIgnoreFilter: vi.fn().mockReturnValue(() => true),
       generateOutput: vi.fn().mockResolvedValue(undefined),
       sanitizeFiles: vi.fn().mockResolvedValue([
         { path: 'file1.txt', content: 'processed content 1' },
         { path: file2Path, content: 'processed content 2' },
       ]),
     };
+
+    // Mock filterFiles function
+    vi.mocked(filterFiles).mockResolvedValue(['file1.txt', file2Path]);
   });
 
   test('pack should process files and generate output', async () => {
     const mockConfig = createMockConfig();
 
-    vi.mocked(fs.readdir)
-      .mockResolvedValueOnce([
-        { name: 'file1.txt', isDirectory: () => false },
-        { name: 'dir1', isDirectory: () => true },
-      ] as Dirent[])
-      .mockResolvedValueOnce([{ name: 'file2.txt', isDirectory: () => false }] as Dirent[]);
-
+    const file2Path = path.join('dir1', 'file2.txt');
     const result = await pack('root', mockConfig, mockDeps);
 
-    expect(fs.readdir).toHaveBeenCalledTimes(2);
-    expect(vi.mocked(fs.readdir).mock.calls[0][0]).toBe('root');
-    expect(vi.mocked(fs.readdir).mock.calls[1][0]).toBe(path.join('root', 'dir1'));
+    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
 
-    expect(mockDeps.getAllIgnorePatterns).toHaveBeenCalledWith('root', mockConfig);
-    expect(mockDeps.createIgnoreFilter).toHaveBeenCalled();
-    const file2Path = path.join('dir1', 'file2.txt');
     expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
       'root',
@@ -61,5 +52,47 @@ describe('packager', () => {
       'file1.txt': 19,
       [file2Path]: 19,
     });
+  });
+
+  test('pack should handle empty filtered files list', async () => {
+    const mockConfig = createMockConfig();
+    vi.mocked(filterFiles).mockResolvedValue([]);
+
+    vi.mocked(mockDeps.sanitizeFiles).mockResolvedValue([]);
+
+    const result = await pack('root', mockConfig, mockDeps);
+
+    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith([], 'root', mockConfig);
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, [], []);
+
+    expect(result.totalFiles).toBe(0);
+    expect(result.totalCharacters).toBe(0);
+    expect(result.fileCharCounts).toEqual({});
+  });
+
+  test('pack should handle security check and filter out suspicious files', async () => {
+    const mockConfig = createMockConfig();
+    const suspiciousFile = 'suspicious.txt';
+    const file2Path = path.join('dir1', 'file2.txt');
+    vi.mocked(filterFiles).mockResolvedValue(['file1.txt', file2Path, suspiciousFile]);
+
+    // Mock fs.readFile to return content for security check
+    vi.mocked(fs.readFile).mockImplementation((filepath) => {
+      if (filepath.toString().includes(suspiciousFile)) {
+        // secretlint-disable
+        return Promise.resolve('URL: https://user:pass@example.com');
+        // secretlint-enable
+      }
+      return Promise.resolve('normal content');
+    });
+
+    const result = await pack('root', mockConfig, mockDeps);
+
+    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
+
+    expect(result.suspiciousFilesResults).toHaveLength(1);
+    expect(result.suspiciousFilesResults[0].filePath).toContain(suspiciousFile);
   });
 });

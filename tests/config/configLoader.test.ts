@@ -1,6 +1,6 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
-import { RepopackConfigFile, RepopackConfigCli } from '../../src/types/index.js';
+import { RepopackConfigFile, RepopackConfigCli } from '../../src/config/configTypes.js';
 import * as fs from 'fs/promises';
 import { Stats } from 'fs';
 

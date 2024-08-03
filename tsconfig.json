@@ -18,5 +18,6 @@
     "resolveJsonModule": true,
     "types": ["node", "picocolors"]
   },
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["tests/fixtures/"],
 }
