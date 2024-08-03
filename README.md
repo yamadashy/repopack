@@ -2,11 +2,12 @@
 
 [![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/test.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"test")
 [![npm](https://img.shields.io/npm/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
+[![npm](https://img.shields.io/npm/d18m/repopack)](https://www.npmjs.com/package/repopack)
 [![npm](https://img.shields.io/npm/l/repopack.svg?maxAge=1000)](https://github.com/yamadashy/repopack/blob/master/LICENSE.md)
 [![node](https://img.shields.io/node/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 
 Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file.  
-Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude or ChatGPT.
+Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
 
 
@@ -69,8 +70,47 @@ To exclude specific files or directories using .gitignore syntax:
 repopack --ignore "*.log,tmp/"
 ```
 
-Once you have generated the packed file, you can use it with Generative AI tools like Claude or ChatGPT.
+Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
 
+### Prompt Examples
+Once you have generated the packed file with Repopack, you can use it with AI tools like Claude, ChatGPT, and Gemini. Here are some example prompts to get you started:
+
+#### Code Review and Refactoring
+For a comprehensive code review and refactoring suggestions:
+
+```
+This file contains my entire codebase. Please review the overall structure and suggest any improvements or refactoring opportunities, focusing on maintainability and scalability.
+```
+
+#### Documentation Generation
+To generate project documentation:
+
+```
+Based on the codebase in this file, please generate a detailed README.md that includes an overview of the project, its main features, setup instructions, and usage examples.
+```
+
+#### Test Case Generation
+For generating test cases:
+
+```
+Analyze the code in this file and suggest a comprehensive set of unit tests for the main functions and classes. Include edge cases and potential error scenarios.
+```
+
+#### Code Quality Assessment
+Evaluate code quality and adherence to best practices:
+
+```
+Review the codebase for adherence to coding best practices and industry standards. Identify areas where the code could be improved in terms of readability, maintainability, and efficiency. Suggest specific changes to align the code with best practices.
+```
+
+#### Library Overview
+Get a high-level understanding of the library
+
+```
+This file contains the entire codebase of library. Please provide a comprehensive overview of the library, including its main purpose, key features, and overall architecture.
+```
+
+Feel free to modify these prompts based on your specific needs and the capabilities of the AI tool you're using.
 
 ### Output File Format
 
@@ -152,33 +192,6 @@ https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-
 > When your prompts involve multiple components like context, instructions, and examples, XML tags can be a game-changer. They help Claude parse your prompts more accurately, leading to higher-quality outputs.
 
 This means that the XML output from Repopack is not just a different format, but potentially a more effective way to feed your codebase into AI systems for analysis, code review, or other tasks.
-
-### Prompt Examples
-
-Once you have generated the packed file with Repopack, you can use it with AI tools like Claude or ChatGPT. Here are some example prompts to get you started:
-
-#### Code Review and Refactoring
-For a comprehensive code review and refactoring suggestions:
-
-```
-This file contains my entire codebase. Please review the overall structure and suggest any improvements or refactoring opportunities, focusing on maintainability and scalability.
-```
-
-#### Documentation Generation
-To generate project documentation:
-
-```
-Based on the codebase in this file, please generate a detailed README.md that includes an overview of the project, its main features, setup instructions, and usage examples.
-```
-
-#### Test Case Generation
-For generating test cases:
-
-```
-Analyze the code in this file and suggest a comprehensive set of unit tests for the main functions and classes. Include edge cases and potential error scenarios.
-```
-
-Feel free to modify these prompts based on your specific needs and the capabilities of the AI tool you're using.
 
 ### Command Line Options
 
