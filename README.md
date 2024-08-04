@@ -245,7 +245,7 @@ Example configuration:
     "removeComments": false,
     "removeEmptyLines": false,
     "showLineNumbers": false,
-    "topFilesLength": 5,
+    "topFilesLength": 5
   },
   "include": ["**/*"],
   "ignore": {
