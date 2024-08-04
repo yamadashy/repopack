@@ -1,47 +1,120 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { getIgnorePatterns, parseIgnoreContent, getAllIgnorePatterns } from '../../src/utils/filterUtils.js';
+import { getIgnorePatterns, parseIgnoreContent, getIgnoreFilePaths, filterFiles } from '../../src/utils/filterUtils.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { createMockConfig } from '../testing/testUtils.js';
+import { globby } from 'globby';
 
 vi.mock('fs/promises');
+vi.mock('globby');
 
-describe('ignoreUtils', () => {
+describe('filterUtils', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
+  describe('getIgnoreFilePaths', () => {
+    test('should return correct paths when .gitignore and .repopackignore exist', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
+
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+
+      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
+
+      expect(paths).toEqual([
+        path.join('/mock/root', '.gitignore'),
+        path.join('/mock/root', '.repopackignore'),
+      ]);
+    });
+
+    test('should not include .gitignore when useGitignore is false', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: false,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
+
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+
+      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
+
+      expect(paths).toEqual([path.join('/mock/root', '.repopackignore')]);
+    });
+
+    test('should handle missing .repopackignore', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
+
+      vi.mocked(fs.access).mockImplementation((path) => {
+        if (path.toString().includes('.repopackignore')) {
+          return Promise.reject(new Error('File not found'));
+        }
+        return Promise.resolve(undefined);
+      });
+
+      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
+
+      expect(paths).toEqual([path.join('/mock/root', '.gitignore')]);
+    });
+  });
+
   describe('getIgnorePatterns', () => {
-    test('should read and parse .gitignore file', async () => {
-      const mockContent = `
-# Comment
-node_modules
-*.log
-.DS_Store
-      `;
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+    test('should return default patterns when useDefaultPatterns is true', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
 
-      const patterns = await getIgnorePatterns('.gitignore', '/mock/root');
+      const patterns = await getIgnorePatterns(mockConfig);
 
-      expect(fs.readFile).toHaveBeenCalledWith(path.join('/mock/root', '.gitignore'), 'utf-8');
-      expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
+      expect(patterns.length).toBeGreaterThan(0);
+      expect(patterns).toContain('node_modules/**');
     });
 
-    test('should return empty array if ignore file is not found', async () => {
-      vi.mocked(fs.readFile).mockRejectedValue(new Error('File not found'));
+    test('should include custom patterns', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: false,
+          customPatterns: ['*.custom', 'temp/'],
+        },
+      });
 
-      const patterns = await getIgnorePatterns('.repopackignore', '/mock/root');
+      const patterns = await getIgnorePatterns(mockConfig);
 
-      expect(patterns).toEqual([]);
+      expect(patterns).toEqual(['*.custom', 'temp/']);
     });
 
-    test('should handle CRLF line endings', async () => {
-      const mockContent = 'node_modules\r\n*.log\r\n.DS_Store';
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
+    test('should combine default and custom patterns', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: ['*.custom', 'temp/'],
+        },
+      });
 
-      const patterns = await getIgnorePatterns('.gitignore', '/mock/root');
+      const patterns = await getIgnorePatterns(mockConfig);
 
-      expect(patterns).toEqual(['node_modules', '*.log', '.DS_Store']);
+      expect(patterns).toContain('node_modules/**');
+      expect(patterns).toContain('*.custom');
+      expect(patterns).toContain('temp/');
     });
   });
 
@@ -69,59 +142,37 @@ node_modules
     });
   });
 
-  describe('getAllIgnorePatterns', () => {
-    test('should merge patterns from .gitignore and .repopackignore when useGitignore is true', async () => {
+  describe('filterFiles', () => {
+    test('should call globby with correct parameters', async () => {
       const mockConfig = createMockConfig({
+        include: ['**/*.js'],
         ignore: {
           useGitignore: true,
-          useDefaultPatterns: false,
-          customPatterns: [],
+          useDefaultPatterns: true,
+          customPatterns: ['*.custom'],
         },
       });
 
-      vi.mocked(fs.readFile)
-        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore
-        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
+      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+      vi.mocked(fs.access).mockResolvedValue(undefined);
 
-      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
+      await filterFiles('/mock/root', mockConfig);
 
-      expect(patterns).toEqual(['node_modules', '*.log', 'dist', '*.tmp']);
-    });
-
-    test('should only use .repopackignore when useGitignore is false', async () => {
-      const mockConfig = createMockConfig({
-        ignore: {
-          useGitignore: false,
-          useDefaultPatterns: false,
-          customPatterns: [],
-        },
-      });
-
-      vi.mocked(fs.readFile)
-        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore (should be ignored)
-        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
-
-      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
-
-      expect(patterns).toEqual(['dist', '*.tmp']);
-    });
-
-    test('should include custom patterns when provided', async () => {
-      const mockConfig = createMockConfig({
-        ignore: {
-          useGitignore: true,
-          useDefaultPatterns: false,
-          customPatterns: ['*.custom', 'temp/'],
-        },
-      });
-
-      vi.mocked(fs.readFile)
-        .mockResolvedValueOnce('node_modules\n*.log') // .gitignore
-        .mockResolvedValueOnce('dist\n*.tmp'); // .repopackignore
-
-      const patterns = await getAllIgnorePatterns('/mock/root', mockConfig);
-
-      expect(patterns).toEqual(['node_modules', '*.log', 'dist', '*.tmp', '*.custom', 'temp/']);
+      expect(globby).toHaveBeenCalledWith(
+        ['**/*.js'],
+        expect.objectContaining({
+          cwd: '/mock/root',
+          ignore: expect.arrayContaining(['*.custom']),
+          ignoreFiles: expect.arrayContaining([
+            path.join('/mock/root', '.gitignore'),
+            path.join('/mock/root', '.repopackignore'),
+          ]),
+          onlyFiles: true,
+          absolute: false,
+          dot: true,
+          followSymbolicLinks: false,
+        })
+      );
     });
   });
 });
