@@ -64,10 +64,10 @@ To pack specific files or directories using glob patterns:
 repopack --include "src/**/*.ts,**/*.md"
 ```
 
-To exclude specific files or directories using .gitignore syntax:
+To exclude specific files or directories:
 
 ```bash
-repopack --ignore "*.log,tmp/"
+repopack --ignore "**/*.log,tmp/"
 ```
 
 Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
@@ -232,7 +232,7 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`include`| Patterns of files to include (using glob syntax) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
-|`ignore.customPatterns`| Additional patterns to ignore (using .gitignore syntax) |`[]`|
+|`ignore.customPatterns`| Additional patterns to ignore (using glob patterns) |`[]`|
 
 Example configuration:
 
@@ -250,7 +250,7 @@ Example configuration:
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
-    "customPatterns": ["additional-folder", "*.log"]
+    "customPatterns": ["additional-folder", "**/*.log"]
   }
 }
 ```

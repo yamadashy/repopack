@@ -8,21 +8,24 @@ import { defaultIgnoreList } from './defaultIgnore.js';
 export async function filterFiles(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
-  const ignorePatterns = await getAllIgnorePatterns(rootDir, config);
+  const ignorePatterns = await getIgnorePatterns(config);
+  const ignoreFilePaths = await getIgnoreFilePaths(rootDir, config);
 
   logger.trace('Include patterns:', includePatterns);
   logger.trace('Ignore patterns:', ignorePatterns);
+  logger.trace('Ignore files:', ignoreFilePaths);
 
   try {
     const filePaths = await globby(includePatterns, {
       cwd: rootDir,
       ignore: ignorePatterns,
-      // Ignore option is in accordance with .gitignore rules
-      gitignore: true,
-      dot: true,
+      ignoreFiles: ignoreFilePaths,
+      // result options
       onlyFiles: true,
-      followSymbolicLinks: false,
       absolute: false,
+      // glob options
+      dot: true,
+      followSymbolicLinks: false,
     });
 
     logger.trace(`Filtered ${filePaths.length} files`);
@@ -40,34 +43,31 @@ export function parseIgnoreContent(content: string): string[] {
     .filter((line) => line && !line.startsWith('#'));
 }
 
-export async function getIgnorePatterns(filename: string, rootDir: string, fsModule = fs): Promise<string[]> {
-  const ignorePath = path.join(rootDir, filename);
-  try {
-    const ignoreContent = await fsModule.readFile(ignorePath, 'utf-8');
-    return parseIgnoreContent(ignoreContent);
-  } catch (error) {
-    logger.debug(`No ${filename} file found or unable to read it.`);
-    return [];
+export async function getIgnoreFilePaths(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
+  let ignoreFilePaths: string[] = [];
+
+  if (config.ignore.useGitignore) {
+    ignoreFilePaths.push(path.join(rootDir, '.gitignore'));
   }
+
+  const existsRepopackIgnore = await fs
+    .access(path.join(rootDir, '.repopackignore'))
+    .then(() => true)
+    .catch(() => false);
+  if (existsRepopackIgnore) {
+    ignoreFilePaths.push(path.join(rootDir, '.repopackignore'));
+  }
+
+  return ignoreFilePaths;
 }
 
-export async function getAllIgnorePatterns(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
+export async function getIgnorePatterns(config: RepopackConfigMerged): Promise<string[]> {
   let ignorePatterns: string[] = [];
 
   // Add default ignore patterns
   if (config.ignore.useDefaultPatterns) {
     ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
   }
-
-  // Add .gitignore patterns
-  const gitignorePatterns = await getIgnorePatterns('.gitignore', rootDir);
-  if (config.ignore.useGitignore) {
-    ignorePatterns = [...ignorePatterns, ...gitignorePatterns];
-  }
-
-  // Add .repopackignore patterns
-  const repopackIgnorePatterns = await getIgnorePatterns('.repopackignore', rootDir);
-  ignorePatterns = [...ignorePatterns, ...repopackIgnorePatterns];
 
   // Add custom ignore patterns
   if (config.ignore.customPatterns) {
