@@ -1,25 +1,23 @@
-import path from 'path';
 import { globby } from 'globby';
 import { logger } from './logger.js';
 import type { RepopackConfigMerged } from '../config/configTypes.js';
-import * as fs from 'node:fs/promises';
 import { defaultIgnoreList } from './defaultIgnore.js';
 
 export async function filterFiles(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
   const ignorePatterns = await getIgnorePatterns(config);
-  const ignoreFilePaths = await getIgnoreFilePaths(rootDir, config);
+  const ignoreFilePatterns = await getIgnoreFilePatterns(rootDir, config);
 
   logger.trace('Include patterns:', includePatterns);
   logger.trace('Ignore patterns:', ignorePatterns);
-  logger.trace('Ignore files:', ignoreFilePaths);
+  logger.trace('Ignore file patterns: ', ignoreFilePatterns);
 
   try {
     const filePaths = await globby(includePatterns, {
       cwd: rootDir,
       ignore: ignorePatterns,
-      ignoreFiles: ignoreFilePaths,
+      ignoreFiles: ignoreFilePatterns,
       // result options
       onlyFiles: true,
       absolute: false,
@@ -27,6 +25,8 @@ export async function filterFiles(rootDir: string, config: RepopackConfigMerged)
       dot: true,
       followSymbolicLinks: false,
     });
+
+    // HACK: globby is not filtering sub directories correctly.
 
     logger.trace(`Filtered ${filePaths.length} files`);
     return filePaths;
@@ -43,22 +43,16 @@ export function parseIgnoreContent(content: string): string[] {
     .filter((line) => line && !line.startsWith('#'));
 }
 
-export async function getIgnoreFilePaths(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
-  let ignoreFilePaths: string[] = [];
+export async function getIgnoreFilePatterns(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
+  let ignoreFilePatterns: string[] = [];
 
   if (config.ignore.useGitignore) {
-    ignoreFilePaths.push(path.join(rootDir, '.gitignore'));
+    ignoreFilePatterns.push('**/.gitignore');
   }
 
-  const existsRepopackIgnore = await fs
-    .access(path.join(rootDir, '.repopackignore'))
-    .then(() => true)
-    .catch(() => false);
-  if (existsRepopackIgnore) {
-    ignoreFilePaths.push(path.join(rootDir, '.repopackignore'));
-  }
+  ignoreFilePatterns.push('**/.repopackignore');
 
-  return ignoreFilePaths;
+  return ignoreFilePatterns;
 }
 
 export async function getIgnorePatterns(config: RepopackConfigMerged): Promise<string[]> {

@@ -50,6 +50,9 @@ This repository is simple-project
 ================================================================
 Repository Structure
 ================================================================
+resources/
+  .repopackignore
+  data.txt
 src/
   index.js
   utils.js
@@ -112,6 +115,16 @@ File: repopack.config.json
     "customPatterns": []
   }
 }
+
+================
+File: resources/.repopackignore
+================
+ignored-data.txt
+
+================
+File: resources/data.txt
+================
+dummy data
 
 ================
 File: src/index.js
