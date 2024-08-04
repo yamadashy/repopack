@@ -25,9 +25,10 @@ jobs:
       run: npm ci
 
     - name: Lint
-      run: yarn lint
+      run: npm run lint && git diff --exit-code
 
   test:
+    needs: lint
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -48,6 +49,7 @@ jobs:
         CI_OS: ${{ runner.os }}
 
   build-and-run:
+    needs: lint
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -74,6 +76,7 @@ jobs:
         path: repopack-output.txt
 
   security:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

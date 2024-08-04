@@ -27,10 +27,7 @@ describe('filterUtils', () => {
 
       const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
 
-      expect(paths).toEqual([
-        path.join('/mock/root', '.gitignore'),
-        path.join('/mock/root', '.repopackignore'),
-      ]);
+      expect(paths).toEqual([path.join('/mock/root', '.gitignore'), path.join('/mock/root', '.repopackignore')]);
     });
 
     test('should not include .gitignore when useGitignore is false', async () => {
@@ -171,7 +168,7 @@ node_modules
           absolute: false,
           dot: true,
           followSymbolicLinks: false,
-        })
+        }),
       );
     });
   });
