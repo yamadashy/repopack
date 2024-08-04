@@ -1,9 +1,15 @@
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { getIgnorePatterns, parseIgnoreContent, getIgnoreFilePaths, filterFiles } from '../../src/utils/filterUtils.js';
+import {
+  getIgnorePatterns,
+  parseIgnoreContent,
+  getIgnoreFilePatterns,
+  filterFiles,
+} from '../../src/utils/filterUtils.js';
 import path from 'path';
 import * as fs from 'fs/promises';
-import { createMockConfig } from '../testing/testUtils.js';
+import { createMockConfig, isWindows } from '../testing/testUtils.js';
 import { globby } from 'globby';
+import { minimatch } from 'minimatch';
 
 vi.mock('fs/promises');
 vi.mock('globby');
@@ -15,6 +21,7 @@ describe('filterUtils', () => {
 
   describe('getIgnoreFilePaths', () => {
     test('should return correct paths when .gitignore and .repopackignore exist', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
       const mockConfig = createMockConfig({
         ignore: {
           useGitignore: true,
@@ -22,15 +29,12 @@ describe('filterUtils', () => {
           customPatterns: [],
         },
       });
-
-      vi.mocked(fs.access).mockResolvedValue(undefined);
-
-      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
-
-      expect(paths).toEqual([path.join('/mock/root', '.gitignore'), path.join('/mock/root', '.repopackignore')]);
+      const filePatterns = await getIgnoreFilePatterns('/mock/root', mockConfig);
+      expect(filePatterns).toEqual(['**/.gitignore', '**/.repopackignore']);
     });
 
     test('should not include .gitignore when useGitignore is false', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
       const mockConfig = createMockConfig({
         ignore: {
           useGitignore: false,
@@ -38,33 +42,8 @@ describe('filterUtils', () => {
           customPatterns: [],
         },
       });
-
-      vi.mocked(fs.access).mockResolvedValue(undefined);
-
-      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
-
-      expect(paths).toEqual([path.join('/mock/root', '.repopackignore')]);
-    });
-
-    test('should handle missing .repopackignore', async () => {
-      const mockConfig = createMockConfig({
-        ignore: {
-          useGitignore: true,
-          useDefaultPatterns: true,
-          customPatterns: [],
-        },
-      });
-
-      vi.mocked(fs.access).mockImplementation((path) => {
-        if (path.toString().includes('.repopackignore')) {
-          return Promise.reject(new Error('File not found'));
-        }
-        return Promise.resolve(undefined);
-      });
-
-      const paths = await getIgnoreFilePaths('/mock/root', mockConfig);
-
-      expect(paths).toEqual([path.join('/mock/root', '.gitignore')]);
+      const filePatterns = await getIgnoreFilePatterns('/mock/root', mockConfig);
+      expect(filePatterns).toEqual(['**/.repopackignore']);
     });
   });
 
@@ -140,12 +119,16 @@ node_modules
   });
 
   describe('filterFiles', () => {
+    beforeEach(() => {
+      vi.resetAllMocks();
+    });
+
     test('should call globby with correct parameters', async () => {
       const mockConfig = createMockConfig({
         include: ['**/*.js'],
         ignore: {
           useGitignore: true,
-          useDefaultPatterns: true,
+          useDefaultPatterns: false,
           customPatterns: ['*.custom'],
         },
       });
@@ -160,16 +143,83 @@ node_modules
         expect.objectContaining({
           cwd: '/mock/root',
           ignore: expect.arrayContaining(['*.custom']),
-          ignoreFiles: expect.arrayContaining([
-            path.join('/mock/root', '.gitignore'),
-            path.join('/mock/root', '.repopackignore'),
-          ]),
+          ignoreFiles: expect.arrayContaining(['**/.gitignore', '**/.repopackignore']),
           onlyFiles: true,
           absolute: false,
           dot: true,
           followSymbolicLinks: false,
         }),
       );
+    });
+
+    test.runIf(!isWindows)('Honor .gitignore files in subdirectories', async () => {
+      const mockConfig = createMockConfig({
+        include: ['**/*.js'],
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
+
+      const mockFileStructure = [
+        'root/file1.js',
+        'root/subdir/file2.js',
+        'root/subdir/ignored.js',
+        'root/another/file3.js',
+      ];
+
+      const mockGitignoreContent = {
+        '/mock/root/.gitignore': '*.log',
+        '/mock/root/subdir/.gitignore': 'ignored.js',
+      };
+
+      vi.mocked(globby).mockImplementation(async () => {
+        // Simulate filtering files based on .gitignore
+        return mockFileStructure.filter((file) => {
+          const relativePath = file.replace('root/', '');
+          const dir = path.dirname(relativePath);
+          const gitignorePath = path.join('/mock/root', dir, '.gitignore');
+          const gitignoreContent = mockGitignoreContent[gitignorePath as keyof typeof mockGitignoreContent];
+          if (gitignoreContent && minimatch(path.basename(file), gitignoreContent)) {
+            return false;
+          }
+          return true;
+        });
+      });
+
+      vi.mocked(fs.readFile).mockImplementation(async (filePath) => {
+        return mockGitignoreContent[filePath as keyof typeof mockGitignoreContent] || '';
+      });
+
+      const result = await filterFiles('/mock/root', mockConfig);
+      expect(result).toEqual(['root/file1.js', 'root/subdir/file2.js', 'root/another/file3.js']);
+      expect(result).not.toContain('root/subdir/ignored.js');
+    });
+
+    test('should not apply .gitignore when useGitignore is false', async () => {
+      const mockConfig = createMockConfig({
+        include: ['**/*.js'],
+        ignore: {
+          useGitignore: false,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
+
+      const mockFileStructure = [
+        'root/file1.js',
+        'root/subdir/file2.js',
+        'root/subdir/ignored.js',
+        'root/another/file3.js',
+      ];
+
+      vi.mocked(globby).mockResolvedValue(mockFileStructure);
+
+      const result = await filterFiles('/mock/root', mockConfig);
+
+      expect(result).toEqual(mockFileStructure);
+      expect(result).toContain('root/subdir/ignored.js');
     });
   });
 });
