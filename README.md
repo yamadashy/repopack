@@ -227,8 +227,8 @@ Create a `repopack.config.json` file in your project root for custom configurati
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
-|`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
+|`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`include`| Patterns of files to include (using glob syntax) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
@@ -239,12 +239,13 @@ Example configuration:
 ```json
 {
   "output": {
-    "filePath": "repopack-output.txt",
-    "style": "plain",
+    "filePath": "repopack-output.xml",
+    "style": "xml",
     "headerText": "Custom header information for the packed file.",
-    "removeComments": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "showLineNumbers": false,
     "topFilesLength": 5,
-    "showLineNumbers": false
   },
   "include": ["**/*"],
   "ignore": {
