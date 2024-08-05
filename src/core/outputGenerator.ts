@@ -7,13 +7,13 @@ import { generateTreeString } from '../utils/treeGenerator.js';
 const PLAIN_SEPARATOR = '='.repeat(16);
 const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
-export async function generateOutput(
+export const generateOutput = async (
   rootDir: string,
   config: RepopackConfigMerged,
   sanitizedFiles: SanitizedFile[],
   allFilePaths: string[],
   fsModule = fs,
-): Promise<void> {
+): Promise<void> => {
   const commonData = generateCommonData(config, allFilePaths, sanitizedFiles);
 
   let output: string;
@@ -25,7 +25,7 @@ export async function generateOutput(
 
   const outputPath = path.resolve(rootDir, config.output.filePath);
   await fsModule.writeFile(outputPath, output);
-}
+};
 
 interface CommonData {
   generationDate: string;
@@ -34,20 +34,18 @@ interface CommonData {
   config: RepopackConfigMerged;
 }
 
-export function generateCommonData(
+export const generateCommonData = (
   config: RepopackConfigMerged,
   allFilePaths: string[],
   sanitizedFiles: SanitizedFile[],
-): CommonData {
-  return {
-    generationDate: new Date().toISOString(),
-    treeString: generateTreeString(allFilePaths),
-    sanitizedFiles,
-    config,
-  };
-}
+): CommonData => ({
+  generationDate: new Date().toISOString(),
+  treeString: generateTreeString(allFilePaths),
+  sanitizedFiles,
+  config,
+});
 
-export function generatePlainOutput(data: CommonData): string {
+export const generatePlainOutput = (data: CommonData): string => {
   const { generationDate, treeString, sanitizedFiles, config } = data;
 
   let output = `${PLAIN_LONG_SEPARATOR}
@@ -126,9 +124,9 @@ ${file.content}
   }
 
   return output.trim() + '\n';
-}
+};
 
-export function generateXmlOutput(data: CommonData): string {
+export const generateXmlOutput = (data: CommonData): string => {
   const { generationDate, treeString, sanitizedFiles, config } = data;
 
   let xml = `<summary>
@@ -206,4 +204,4 @@ ${file.content}
 `;
 
   return xml.trim() + '\n';
-}
+};

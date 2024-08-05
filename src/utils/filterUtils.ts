@@ -3,7 +3,7 @@ import { logger } from './logger.js';
 import type { RepopackConfigMerged } from '../config/configTypes.js';
 import { defaultIgnoreList } from './defaultIgnore.js';
 
-export async function filterFiles(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
+export const filterFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
   const ignorePatterns = await getIgnorePatterns(config);
@@ -34,16 +34,15 @@ export async function filterFiles(rootDir: string, config: RepopackConfigMerged)
     logger.error('Error filtering files:', error);
     throw new Error('Failed to filter files');
   }
-}
+};
 
-export function parseIgnoreContent(content: string): string[] {
-  return content
+export const parseIgnoreContent = (content: string): string[] =>
+  content
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('#'));
-}
 
-export async function getIgnoreFilePatterns(rootDir: string, config: RepopackConfigMerged): Promise<string[]> {
+export const getIgnoreFilePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   let ignoreFilePatterns: string[] = [];
 
   if (config.ignore.useGitignore) {
@@ -53,9 +52,9 @@ export async function getIgnoreFilePatterns(rootDir: string, config: RepopackCon
   ignoreFilePatterns.push('**/.repopackignore');
 
   return ignoreFilePatterns;
-}
+};
 
-export async function getIgnorePatterns(config: RepopackConfigMerged): Promise<string[]> {
+export const getIgnorePatterns = async (config: RepopackConfigMerged): Promise<string[]> => {
   let ignorePatterns: string[] = [];
 
   // Add default ignore patterns
@@ -69,4 +68,4 @@ export async function getIgnorePatterns(config: RepopackConfigMerged): Promise<s
   }
 
   return ignorePatterns;
-}
+};

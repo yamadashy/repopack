@@ -8,7 +8,7 @@ import { RepopackConfigValidationError, validateConfig } from './configValidator
 
 const defaultConfigPath = 'repopack.config.json';
 
-export async function loadFileConfig(rootDir: string, configPath: string | null): Promise<RepopackConfigFile> {
+export const loadFileConfig = async (rootDir: string, configPath: string | null): Promise<RepopackConfigFile> => {
   let useDefaultConfig = false;
   if (!configPath) {
     useDefaultConfig = true;
@@ -51,25 +51,23 @@ export async function loadFileConfig(rootDir: string, configPath: string | null)
       throw new RepopackError(`Error loading config from ${configPath}`);
     }
   }
-}
+};
 
-export function mergeConfigs(fileConfig: RepopackConfigFile, cliConfig: RepopackConfigCli): RepopackConfigMerged {
-  return {
-    output: {
-      ...defaultConfig.output,
-      ...fileConfig.output,
-      ...cliConfig.output,
-    },
-    ignore: {
-      ...defaultConfig.ignore,
-      ...fileConfig.ignore,
-      ...cliConfig.ignore,
-      customPatterns: [
-        ...(defaultConfig.ignore.customPatterns || []),
-        ...(fileConfig.ignore?.customPatterns || []),
-        ...(cliConfig.ignore?.customPatterns || []),
-      ],
-    },
-    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
-  };
-}
+export const mergeConfigs = (fileConfig: RepopackConfigFile, cliConfig: RepopackConfigCli): RepopackConfigMerged => ({
+  output: {
+    ...defaultConfig.output,
+    ...fileConfig.output,
+    ...cliConfig.output,
+  },
+  ignore: {
+    ...defaultConfig.ignore,
+    ...fileConfig.ignore,
+    ...cliConfig.ignore,
+    customPatterns: [
+      ...(defaultConfig.ignore.customPatterns || []),
+      ...(fileConfig.ignore?.customPatterns || []),
+      ...(cliConfig.ignore?.customPatterns || []),
+    ],
+  },
+  include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
+});

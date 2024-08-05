@@ -5,9 +5,7 @@ interface FileManipulator {
   removeComments(content: string): string;
 }
 
-function rtrimLines(content: string): string {
-  return content.replace(/[ \t]+$/gm, '');
-}
+const rtrimLines = (content: string): string => content.replace(/[ \t]+$/gm, '');
 
 class StripCommentsManipulator implements FileManipulator {
   private language: string;
@@ -90,7 +88,7 @@ const manipulators: Record<string, FileManipulator> = {
   ),
 };
 
-export function getFileManipulator(filePath: string): FileManipulator | null {
+export const getFileManipulator = (filePath: string): FileManipulator | null => {
   const ext = path.extname(filePath);
   return manipulators[ext] || null;
-}
+};

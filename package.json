@@ -74,6 +74,7 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prefer-arrow-functions": "^3.3.2",
     "eslint-plugin-prettier": "^5.2.1",
     "rimraf": "^6.0.1",
     "secretlint": "^8.2.4",

@@ -12,11 +12,11 @@ export interface SanitizedFile {
   content: string;
 }
 
-export async function sanitizeFiles(
+export const sanitizeFiles = async (
   filePaths: string[],
   rootDir: string,
   config: RepopackConfigMerged,
-): Promise<SanitizedFile[]> {
+): Promise<SanitizedFile[]> => {
   const sanitizedFiles: SanitizedFile[] = [];
 
   for (const filePath of filePaths) {
@@ -28,13 +28,13 @@ export async function sanitizeFiles(
   }
 
   return sanitizedFiles;
-}
+};
 
-export async function sanitizeFile(
+export const sanitizeFile = async (
   filePath: string,
   config: RepopackConfigMerged,
   fsModule = fs,
-): Promise<string | null> {
+): Promise<string | null> => {
   if (isBinary(filePath)) {
     logger.debug(`Skipping binary by path. path: ${filePath}`);
     return null;
@@ -62,9 +62,9 @@ export async function sanitizeFile(
   content = postprocessContent(content, config);
 
   return content;
-}
+};
 
-export function postprocessContent(content: string, config: RepopackConfigMerged): string {
+export const postprocessContent = (content: string, config: RepopackConfigMerged): string => {
   content = content.trim();
 
   if (config.output.removeEmptyLines) {
@@ -72,11 +72,10 @@ export function postprocessContent(content: string, config: RepopackConfigMerged
   }
 
   return content;
-}
+};
 
-function removeEmptyLines(content: string): string {
-  return content
+const removeEmptyLines = (content: string): string =>
+  content
     .split('\n')
     .filter((line) => line.trim() !== '')
     .join('\n');
-}

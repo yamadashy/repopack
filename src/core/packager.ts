@@ -19,14 +19,14 @@ export interface PackResult {
   suspiciousFilesResults: SecretLintCoreResult[];
 }
 
-export async function pack(
+export const pack = async (
   rootDir: string,
   config: RepopackConfigMerged,
   deps: Dependencies = {
     generateOutput: defaultGenerateOutput,
     sanitizeFiles: defaultSanitizeFiles,
   },
-): Promise<PackResult> {
+): Promise<PackResult> => {
   // Get all file paths that should be processed
   const filteredPaths = await filterFiles(rootDir, config);
 
@@ -54,9 +54,9 @@ export async function pack(
     fileCharCounts,
     suspiciousFilesResults,
   };
-}
+};
 
-async function performSecurityCheck(filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> {
+const performSecurityCheck = async (filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> => {
   const secretLintConfig = createSecretLintConfig();
   const suspiciousFilesResults: SecretLintCoreResult[] = [];
 
@@ -71,4 +71,4 @@ async function performSecurityCheck(filePaths: string[], rootDir: string): Promi
   }
 
   return suspiciousFilesResults;
-}
+};
