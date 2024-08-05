@@ -2,7 +2,7 @@ import path from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as url from 'node:url';
 
-export async function getVersion(): Promise<string> {
+export const getVersion = async (): Promise<string> => {
   try {
     const packageJson = await getPackageJson();
     return packageJson.version;
@@ -10,15 +10,15 @@ export async function getVersion(): Promise<string> {
     console.error('Error reading package.json:', error);
     return 'unknown';
   }
-}
+};
 
-async function getPackageJson(): Promise<{
+const getPackageJson = async (): Promise<{
   name: string;
   version: string;
-}> {
+}> => {
   const dirName = url.fileURLToPath(new URL('.', import.meta.url));
   const packageJsonPath = path.join(dirName, '..', '..', 'package.json');
   const packageJsonFile = await fs.readFile(packageJsonPath, 'utf-8');
   const packageJson = JSON.parse(packageJsonFile);
   return packageJson;
-}
+};

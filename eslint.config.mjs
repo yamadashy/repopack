@@ -5,6 +5,7 @@ import importPlugin from 'eslint-plugin-import';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
+import preferAllowFunction from 'eslint-plugin-prefer-arrow-functions';
 
 export default [
   {
@@ -23,6 +24,7 @@ export default [
       '@typescript-eslint': typescriptEslint,
       'import': importPlugin,
       'prettier': eslintPluginPrettier,
+      'prefer-arrow-functions': preferAllowFunction,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -35,6 +37,17 @@ export default [
       ...importPlugin.configs.typescript.rules,
       'import/no-unresolved': 'off',
       'import/prefer-default-export': 'off',
+
+      "prefer-arrow-functions/prefer-arrow-functions": [
+        "warn",
+        {
+          "allowNamedFunctions": false,
+          "classPropertiesAllowed": false,
+          "disallowPrototype": false,
+          "returnStyle": "unchanged",
+          "singleReturnOnly": false
+        }
+      ],
 
       ...eslintPluginPrettierRecommended.rules,
       'prettier/prettier': 'warn',

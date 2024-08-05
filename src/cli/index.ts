@@ -28,7 +28,7 @@ interface CliOptions extends OptionValues {
   style?: RepopackOutputStyle;
 }
 
-async function executeAction(directory: string, rootDir: string, options: CliOptions) {
+const executeAction = async (directory: string, rootDir: string, options: CliOptions) => {
   const version = await getVersion();
 
   if (options.version) {
@@ -104,7 +104,7 @@ async function executeAction(directory: string, rootDir: string, options: CliOpt
     spinner.fail('Error during packing');
     throw error;
   }
-}
+};
 
 export async function run() {
   try {

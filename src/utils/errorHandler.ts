@@ -8,7 +8,7 @@ export class RepopackError extends Error {
   }
 }
 
-export function handleError(error: unknown): void {
+export const handleError = (error: unknown): void => {
   if (error instanceof RepopackError) {
     logger.error(`Error: ${error.message}`);
   } else if (error instanceof Error) {
@@ -20,4 +20,4 @@ export function handleError(error: unknown): void {
 
   logger.info('For more help, please visit: https://github.com/yamadashy/repopack/issues');
   process.exit(1);
-}
+};

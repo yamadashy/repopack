@@ -6,11 +6,9 @@ interface TreeNode {
   isDirectory: boolean;
 }
 
-function createTreeNode(name: string, isDirectory: boolean): TreeNode {
-  return { name, children: [], isDirectory };
-}
+const createTreeNode = (name: string, isDirectory: boolean): TreeNode => ({ name, children: [], isDirectory });
 
-export function generateFileTree(files: string[]): TreeNode {
+export const generateFileTree = (files: string[]): TreeNode => {
   const root: TreeNode = createTreeNode('root', true);
 
   for (const file of files) {
@@ -32,9 +30,9 @@ export function generateFileTree(files: string[]): TreeNode {
   }
 
   return root;
-}
+};
 
-function sortTreeNodes(node: TreeNode) {
+const sortTreeNodes = (node: TreeNode) => {
   node.children.sort((a, b) => {
     if (a.isDirectory === b.isDirectory) {
       return a.name.localeCompare(b.name);
@@ -45,9 +43,9 @@ function sortTreeNodes(node: TreeNode) {
   for (const child of node.children) {
     sortTreeNodes(child);
   }
-}
+};
 
-export function treeToString(node: TreeNode, prefix = ''): string {
+export const treeToString = (node: TreeNode, prefix = ''): string => {
   sortTreeNodes(node);
   let result = '';
 
@@ -59,9 +57,9 @@ export function treeToString(node: TreeNode, prefix = ''): string {
   }
 
   return result;
-}
+};
 
-export function generateTreeString(files: string[]): string {
+export const generateTreeString = (files: string[]): string => {
   const tree = generateFileTree(files);
   return treeToString(tree).trim();
-}
+};

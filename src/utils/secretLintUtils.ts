@@ -3,11 +3,11 @@ import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import { logger } from './logger.js';
 
-export async function checkFileWithSecretLint(
+export const checkFileWithSecretLint = async (
   filePath: string,
   content: string,
   config: SecretLintCoreConfig,
-): Promise<SecretLintCoreResult> {
+): Promise<SecretLintCoreResult> => {
   const result = await lintSource({
     source: {
       filePath: filePath,
@@ -26,15 +26,13 @@ export async function checkFileWithSecretLint(
   }
 
   return result;
-}
+};
 
-export function createSecretLintConfig(): SecretLintCoreConfig {
-  return {
-    rules: [
-      {
-        id: '@secretlint/secretlint-rule-preset-recommend',
-        rule: creator,
-      },
-    ],
-  };
-}
+export const createSecretLintConfig = (): SecretLintCoreConfig => ({
+  rules: [
+    {
+      id: '@secretlint/secretlint-rule-preset-recommend',
+      rule: creator,
+    },
+  ],
+});
