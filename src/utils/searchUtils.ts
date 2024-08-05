@@ -2,8 +2,9 @@ import { globby } from 'globby';
 import { logger } from './logger.js';
 import type { RepopackConfigMerged } from '../config/configTypes.js';
 import { defaultIgnoreList } from './defaultIgnore.js';
+import { sortPaths } from './sortPathsUtils.js';
 
-export const filterFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
+export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
   const ignorePatterns = await getIgnorePatterns(config);
@@ -26,10 +27,12 @@ export const filterFiles = async (rootDir: string, config: RepopackConfigMerged)
       followSymbolicLinks: false,
     });
 
-    // HACK: globby is not filtering sub directories correctly.
-
     logger.trace(`Filtered ${filePaths.length} files`);
-    return filePaths;
+
+    // Sort the filtered paths
+    const sortedPaths = sortPaths(filePaths);
+
+    return sortedPaths;
   } catch (error) {
     logger.error('Error filtering files:', error);
     throw new Error('Failed to filter files');
