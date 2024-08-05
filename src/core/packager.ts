@@ -5,7 +5,7 @@ import { RepopackConfigMerged } from '../config/configTypes.js';
 import { sanitizeFiles as defaultSanitizeFiles } from '../utils/fileHandler.js';
 import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
 import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
-import { filterFiles } from '../utils/filterUtils.js';
+import { searchFiles } from '../utils/searchUtils.js';
 
 export interface Dependencies {
   generateOutput: typeof defaultGenerateOutput;
@@ -28,11 +28,11 @@ export const pack = async (
   },
 ): Promise<PackResult> => {
   // Get all file paths that should be processed
-  const filteredPaths = await filterFiles(rootDir, config);
+  const filePaths = await searchFiles(rootDir, config);
 
   // Perform security check and filter out suspicious files
-  const suspiciousFilesResults = await performSecurityCheck(filteredPaths, rootDir);
-  const safeFilePaths = filteredPaths.filter(
+  const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
+  const safeFilePaths = filePaths.filter(
     (filePath) => !suspiciousFilesResults.some((result) => result.filePath === path.join(rootDir, filePath)),
   );
 

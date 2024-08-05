@@ -3,10 +3,10 @@ import { pack, Dependencies } from '../../src/core/packager.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { createMockConfig } from '../testing/testUtils.js';
-import { filterFiles } from '../../src/utils/filterUtils.js';
+import { searchFiles } from '../../src/utils/searchUtils.js';
 
 vi.mock('fs/promises');
-vi.mock('../../src/utils/filterUtils');
+vi.mock('../../src/utils/searchUtils');
 
 describe('packager', () => {
   let mockDeps: Dependencies;
@@ -23,7 +23,7 @@ describe('packager', () => {
     };
 
     // Mock filterFiles function
-    vi.mocked(filterFiles).mockResolvedValue(['file1.txt', file2Path]);
+    vi.mocked(searchFiles).mockResolvedValue(['file1.txt', file2Path]);
   });
 
   test('pack should process files and generate output', async () => {
@@ -32,7 +32,7 @@ describe('packager', () => {
     const file2Path = path.join('dir1', 'file2.txt');
     const result = await pack('root', mockConfig, mockDeps);
 
-    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(searchFiles).toHaveBeenCalledWith('root', mockConfig);
 
     expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
@@ -56,13 +56,13 @@ describe('packager', () => {
 
   test('pack should handle empty filtered files list', async () => {
     const mockConfig = createMockConfig();
-    vi.mocked(filterFiles).mockResolvedValue([]);
+    vi.mocked(searchFiles).mockResolvedValue([]);
 
     vi.mocked(mockDeps.sanitizeFiles).mockResolvedValue([]);
 
     const result = await pack('root', mockConfig, mockDeps);
 
-    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(searchFiles).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith([], 'root', mockConfig);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, [], []);
 
@@ -75,7 +75,7 @@ describe('packager', () => {
     const mockConfig = createMockConfig();
     const suspiciousFile = 'suspicious.txt';
     const file2Path = path.join('dir1', 'file2.txt');
-    vi.mocked(filterFiles).mockResolvedValue(['file1.txt', file2Path, suspiciousFile]);
+    vi.mocked(searchFiles).mockResolvedValue(['file1.txt', file2Path, suspiciousFile]);
 
     // Mock fs.readFile to return content for security check
     vi.mocked(fs.readFile).mockImplementation((filepath) => {
@@ -89,7 +89,7 @@ describe('packager', () => {
 
     const result = await pack('root', mockConfig, mockDeps);
 
-    expect(filterFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(searchFiles).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
 
     expect(result.suspiciousFilesResults).toHaveLength(1);

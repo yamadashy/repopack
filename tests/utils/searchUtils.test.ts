@@ -3,8 +3,8 @@ import {
   getIgnorePatterns,
   parseIgnoreContent,
   getIgnoreFilePatterns,
-  filterFiles,
-} from '../../src/utils/filterUtils.js';
+  searchFiles,
+} from '../../src/utils/searchUtils.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { createMockConfig, isWindows } from '../testing/testUtils.js';
@@ -136,7 +136,7 @@ node_modules
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
       vi.mocked(fs.access).mockResolvedValue(undefined);
 
-      await filterFiles('/mock/root', mockConfig);
+      await searchFiles('/mock/root', mockConfig);
 
       expect(globby).toHaveBeenCalledWith(
         ['**/*.js'],
@@ -192,8 +192,8 @@ node_modules
         return mockGitignoreContent[filePath as keyof typeof mockGitignoreContent] || '';
       });
 
-      const result = await filterFiles('/mock/root', mockConfig);
-      expect(result).toEqual(['root/file1.js', 'root/subdir/file2.js', 'root/another/file3.js']);
+      const result = await searchFiles('/mock/root', mockConfig);
+      expect(result).toEqual(['root/another/file3.js', 'root/subdir/file2.js', 'root/file1.js']);
       expect(result).not.toContain('root/subdir/ignored.js');
     });
 
@@ -209,14 +209,14 @@ node_modules
 
       const mockFileStructure = [
         'root/file1.js',
+        'root/another/file3.js',
         'root/subdir/file2.js',
         'root/subdir/ignored.js',
-        'root/another/file3.js',
       ];
 
       vi.mocked(globby).mockResolvedValue(mockFileStructure);
 
-      const result = await filterFiles('/mock/root', mockConfig);
+      const result = await searchFiles('/mock/root', mockConfig);
 
       expect(result).toEqual(mockFileStructure);
       expect(result).toContain('root/subdir/ignored.js');
