@@ -14,6 +14,7 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 ## 🌟 Features
 
 - **AI-Optimized**: Formats your codebase in a way that's easy for AI to understand and process.
+- **Token Counting**: Provides token counts for each file and the entire repository, useful for LLM context limits.
 - **Simple to Use**: Just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your .gitignore files.

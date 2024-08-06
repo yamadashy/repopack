@@ -6,6 +6,7 @@ export const printSummary = (
   rootDir: string,
   totalFiles: number,
   totalCharacters: number,
+  totalTokens: number,
   outputPath: string,
   suspiciousFilesResults: SecretLintCoreResult[],
 ) => {
@@ -20,10 +21,11 @@ export const printSummary = (
 
   console.log(pc.white('📊 Pack Summary:'));
   console.log(pc.dim('────────────────'));
-  console.log(`${pc.white('Total Files:')} ${pc.white(totalFiles.toString())}`);
-  console.log(`${pc.white('Total Chars:')} ${pc.white(totalCharacters.toString())}`);
-  console.log(`${pc.white('     Output:')} ${pc.white(relativeOutputPath)}`);
-  console.log(`${pc.white('   Security:')} ${pc.white(securityCheckMessage)}`);
+  console.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toString())}`);
+  console.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toString())}`);
+  console.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toString())}`);
+  console.log(`${pc.white('       Output:')} ${pc.white(relativeOutputPath)}`);
+  console.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
 
 export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: SecretLintCoreResult[]) => {
@@ -46,17 +48,24 @@ export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: Secr
   }
 };
 
-export const printTopFiles = (fileCharCounts: Record<string, number>, topFilesLength: number) => {
-  console.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count:`));
-  console.log(pc.dim('──────────────────────────────────'));
+export const printTopFiles = (
+  fileCharCounts: Record<string, number>,
+  fileTokenCounts: Record<string, number>,
+  topFilesLength: number,
+) => {
+  console.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count and Token Count:`));
+  console.log(pc.dim('──────────────────────────────────────────────────────'));
 
   const topFiles = Object.entries(fileCharCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, topFilesLength);
 
-  topFiles.forEach(([filePath, count], index) => {
+  topFiles.forEach(([filePath, charCount], index) => {
+    const tokenCount = fileTokenCounts[filePath];
     const indexString = `${index + 1}.`.padEnd(3, ' ');
-    console.log(`${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${count} chars)`)}`);
+    console.log(
+      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount} chars, ${tokenCount} tokens)`)}`,
+    );
   });
 };
 

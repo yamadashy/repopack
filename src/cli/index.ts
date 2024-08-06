@@ -83,7 +83,7 @@ const executeAction = async (directory: string, rootDir: string, options: CliOpt
     console.log('');
 
     if (config.output.topFilesLength > 0) {
-      printTopFiles(packResult.fileCharCounts, config.output.topFilesLength);
+      printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
       console.log('');
     }
 
@@ -94,6 +94,7 @@ const executeAction = async (directory: string, rootDir: string, options: CliOpt
       rootDir,
       packResult.totalFiles,
       packResult.totalCharacters,
+      packResult.totalTokens,
       config.output.filePath,
       packResult.suspiciousFilesResults,
     );
