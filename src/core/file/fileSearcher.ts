@@ -46,7 +46,7 @@ export const parseIgnoreContent = (content: string): string[] =>
     .filter((line) => line && !line.startsWith('#'));
 
 export const getIgnoreFilePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
-  let ignoreFilePatterns: string[] = [];
+  const ignoreFilePatterns: string[] = [];
 
   if (config.ignore.useGitignore) {
     ignoreFilePatterns.push('**/.gitignore');

@@ -1,7 +1,7 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
 import { expect, test, describe, beforeEach, afterEach } from 'vitest';
-import fs from 'fs/promises';
-import path from 'path';
-import os from 'os';
 import { pack } from '../../src/core/packager.js';
 import { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';

@@ -1,7 +1,7 @@
 import path from 'node:path';
+import * as fs from 'node:fs/promises';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { sanitizeFile, postprocessContent, sanitizeFiles } from '../../../src/core/file/fileSanitizer.js';
-import * as fs from 'fs/promises';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('fs/promises');

@@ -1,7 +1,7 @@
-import { RepopackConfigMerged } from '../../config/configTypes.js';
-import { SanitizedFile } from '../file/fileSanitizer.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import { RepopackConfigMerged } from '../../config/configTypes.js';
+import { SanitizedFile } from '../file/fileSanitizer.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
 import { generateXmlStyle } from './xmlStyleGenerator.js';
 import { generatePlainStyle } from './plainStyleGenerator.js';

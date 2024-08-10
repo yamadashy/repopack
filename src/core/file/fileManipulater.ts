@@ -15,7 +15,7 @@ class StripCommentsManipulator implements FileManipulator {
   }
 
   removeComments(content: string): string {
-    let result = strip(content, { language: this.language, preserveNewlines: true });
+    const result = strip(content, { language: this.language, preserveNewlines: true });
     return rtrimLines(result);
   }
 }

@@ -1,5 +1,5 @@
-import pc from 'picocolors';
 import util from 'node:util';
+import pc from 'picocolors';
 
 class Logger {
   private isVerbose = false;

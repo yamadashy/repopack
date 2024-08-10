@@ -1,5 +1,5 @@
-import pc from 'picocolors';
 import path from 'node:path';
+import pc from 'picocolors';
 import type { SecretLintCoreResult } from '@secretlint/types';
 
 export const printSummary = (

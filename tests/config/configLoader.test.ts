@@ -1,8 +1,8 @@
+import * as fs from 'node:fs/promises';
+import { Stats } from 'node:fs';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
 import { RepopackConfigFile, RepopackConfigCli } from '../../src/config/configTypes.js';
-import * as fs from 'fs/promises';
-import { Stats } from 'fs';
 
 vi.mock('fs/promises');
 vi.mock('../../src/utils/logger', () => ({

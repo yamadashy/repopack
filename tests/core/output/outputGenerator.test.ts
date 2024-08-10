@@ -1,7 +1,7 @@
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { generateOutput } from '../../../src/core/output/outputGenerator.js';
-import * as fs from 'fs/promises';
-import path from 'path';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('fs/promises');

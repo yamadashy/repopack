@@ -1,8 +1,8 @@
+import * as fs from 'node:fs/promises';
+import * as url from 'node:url';
+import path from 'node:path';
 import { expect, test, describe, vi, beforeEach, afterEach } from 'vitest';
 import { getVersion } from '../../../src/core/file/packageJsonParser.js';
-import * as fs from 'fs/promises';
-import * as url from 'url';
-import path from 'path';
 
 vi.mock('fs/promises');
 vi.mock('url');

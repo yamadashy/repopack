@@ -1,6 +1,6 @@
+import path from 'node:path';
 import { expect, test, describe } from 'vitest';
 import { sortPaths } from '../../../src/core/file/filePathSorter.js';
-import path from 'node:path';
 
 describe('filePathSorter', () => {
   const sep = path.sep;

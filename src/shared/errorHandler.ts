@@ -1,5 +1,5 @@
-import { logger } from './logger.js';
 import process from 'node:process';
+import { logger } from './logger.js';
 
 export class RepopackError extends Error {
   constructor(message: string) {
