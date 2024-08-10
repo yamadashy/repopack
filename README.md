@@ -45,6 +45,8 @@ repopack
 
 That's it! Repopack will generate an `repopack-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
+
+
 ## 📊 Usage
 
 To pack your entire repository:
@@ -214,6 +216,20 @@ repopack -c ./custom-config.json
 repopack --style xml
 npx repopack src
 ```
+
+### Updating Repopack
+
+To update a globally installed Repopack:
+
+```bash
+# Using npm
+npm update -g repopack
+
+# Using yarn
+yarn global upgrade repopack
+```
+
+Using `npx repopack` is generally more convenient as it always uses the latest version.
 
 
 
