@@ -1,15 +1,15 @@
 import { expect, test, describe, beforeAll, afterAll } from 'vitest';
-import { Tiktoken, get_encoding } from 'tiktoken';
+import { TokenCounter } from '../../../src/core/tokenCounter/tokenCounter.js';
 
-describe('tiktoken', () => {
-  let encoding: Tiktoken;
+describe('tokenCounter', () => {
+  let tokenCounter: TokenCounter;
 
   beforeAll(() => {
-    encoding = get_encoding('cl100k_base');
+    tokenCounter = new TokenCounter();
   });
 
   afterAll(() => {
-    encoding.free();
+    tokenCounter.free();
   });
 
   test('should correctly count tokens', () => {
@@ -22,19 +22,19 @@ describe('tiktoken', () => {
     ];
 
     testCases.forEach(({ input, expectedTokens }) => {
-      const tokenCount = encoding.encode(input).length;
+      const tokenCount = tokenCounter.countTokens(input);
       expect(tokenCount).toBe(expectedTokens);
     });
   });
 
   test('should handle empty input', () => {
-    const tokenCount = encoding.encode('').length;
+    const tokenCount = tokenCounter.countTokens('');
     expect(tokenCount).toBe(0);
   });
 
   test('should handle very long input', () => {
     const longText = 'a'.repeat(1000);
-    const tokenCount = encoding.encode(longText).length;
+    const tokenCount = tokenCounter.countTokens(longText);
     expect(tokenCount).toBeGreaterThan(0);
   });
 });
