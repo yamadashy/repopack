@@ -1,6 +1,6 @@
 import { program, OptionValues } from 'commander';
 import path from 'node:path';
-import { pack } from '../core/packager.js';
+import { PackResult, pack } from '../core/packager.js';
 import {
   RepopackConfigCli,
   RepopackConfigFile,
@@ -8,12 +8,12 @@ import {
   RepopackOutputStyle,
 } from '../config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../config/configLoader.js';
-import { logger } from '../utils/logger.js';
-import { getVersion } from '../utils/packageJsonUtils.js';
-import Spinner from '../utils/spinner.js';
+import { logger } from '../shared/logger.js';
+import { getVersion } from '../core/file/packageJsonParser.js';
+import Spinner from './cliSpinner.js';
 import pc from 'picocolors';
-import { handleError } from '../utils/errorHandler.js';
-import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './cliOutput.js';
+import { handleError } from '../shared/errorHandler.js';
+import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './cliPrinter.js';
 import process from 'node:process';
 
 interface CliOptions extends OptionValues {
@@ -27,85 +27,6 @@ interface CliOptions extends OptionValues {
   outputShowLineNumbers?: boolean;
   style?: RepopackOutputStyle;
 }
-
-const executeAction = async (directory: string, rootDir: string, options: CliOptions) => {
-  const version = await getVersion();
-
-  if (options.version) {
-    console.log(version);
-    return;
-  }
-
-  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
-
-  logger.setVerbose(options.verbose || false);
-  logger.trace('Loaded CLI options:', options);
-
-  const fileConfig: RepopackConfigFile = await loadFileConfig(rootDir, options.config ?? null);
-  logger.trace('Loaded file config:', fileConfig);
-
-  const cliConfig: RepopackConfigCli = {};
-  if (options.output) {
-    cliConfig.output = { filePath: options.output };
-  }
-  if (options.include) {
-    cliConfig.include = options.include.split(',');
-  }
-  if (options.ignore) {
-    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
-  }
-  if (options.topFilesLen !== undefined) {
-    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
-  }
-  if (options.outputShowLineNumbers !== undefined) {
-    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
-  }
-  if (options.style) {
-    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
-  }
-  logger.trace('CLI config:', cliConfig);
-
-  const config: RepopackConfigMerged = mergeConfigs(fileConfig, cliConfig);
-
-  logger.trace('Merged config:', config);
-
-  // Ensure the output file is always in the current working directory
-  config.output.filePath = path.resolve(rootDir, path.basename(config.output.filePath));
-
-  const targetPath = path.resolve(directory);
-
-  const spinner = new Spinner('Packing files...');
-  spinner.start();
-
-  try {
-    const packResult = await pack(targetPath, config);
-    spinner.succeed('Packing completed successfully!');
-    console.log('');
-
-    if (config.output.topFilesLength > 0) {
-      printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
-      console.log('');
-    }
-
-    printSecurityCheck(rootDir, packResult.suspiciousFilesResults);
-    console.log('');
-
-    printSummary(
-      rootDir,
-      packResult.totalFiles,
-      packResult.totalCharacters,
-      packResult.totalTokens,
-      config.output.filePath,
-      packResult.suspiciousFilesResults,
-    );
-    console.log('');
-
-    printCompletion();
-  } catch (error) {
-    spinner.fail('Error during packing');
-    throw error;
-  }
-};
 
 export async function run() {
   try {
@@ -131,3 +52,88 @@ export async function run() {
     handleError(error);
   }
 }
+
+const executeAction = async (directory: string, rootDir: string, options: CliOptions) => {
+  const version = await getVersion();
+
+  if (options.version) {
+    console.log(version);
+    return;
+  }
+
+  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
+
+  logger.setVerbose(options.verbose || false);
+  logger.trace('Loaded CLI options:', options);
+
+  // Load the config file
+  const fileConfig: RepopackConfigFile = await loadFileConfig(rootDir, options.config ?? null);
+  logger.trace('Loaded file config:', fileConfig);
+
+  // Parse the CLI options
+  const cliConfig: RepopackConfigCli = {};
+  if (options.output) {
+    cliConfig.output = { filePath: options.output };
+  }
+  if (options.include) {
+    cliConfig.include = options.include.split(',');
+  }
+  if (options.ignore) {
+    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
+  }
+  if (options.topFilesLen !== undefined) {
+    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
+  }
+  if (options.outputShowLineNumbers !== undefined) {
+    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
+  }
+  if (options.style) {
+    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
+  }
+  logger.trace('CLI config:', cliConfig);
+
+  // Merge default, file, and CLI configs
+  const config: RepopackConfigMerged = mergeConfigs(fileConfig, cliConfig);
+
+  logger.trace('Merged config:', config);
+
+  // Ensure the output file is always in the current working directory
+  config.output.filePath = path.resolve(rootDir, path.basename(config.output.filePath));
+
+  const targetPath = path.resolve(directory);
+
+  const spinner = new Spinner('Packing files...');
+  spinner.start();
+
+  let packResult: PackResult;
+
+  try {
+    packResult = await pack(targetPath, config);
+  } catch (error) {
+    spinner.fail('Error during packing');
+    throw error;
+  }
+
+  spinner.succeed('Packing completed successfully!');
+  console.log('');
+
+  if (config.output.topFilesLength > 0) {
+    printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
+    console.log('');
+  }
+
+  printSecurityCheck(rootDir, packResult.suspiciousFilesResults);
+  console.log('');
+
+  printSummary(
+    rootDir,
+    packResult.totalFiles,
+    packResult.totalCharacters,
+    packResult.totalTokens,
+    config.output.filePath,
+    packResult.suspiciousFilesResults,
+  );
+  console.log('');
+
+  printCompletion();
+};

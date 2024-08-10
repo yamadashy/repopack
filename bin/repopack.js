@@ -9,6 +9,6 @@ This file should only used for development.
 
 'use strict';
 
-import { run } from '../lib/cli/index.js';
+import { run } from '../lib/cli/cliRunner.js';
 
 run();

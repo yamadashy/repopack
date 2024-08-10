@@ -1,12 +1,12 @@
 import path from 'node:path';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { sanitizeFile, postprocessContent, sanitizeFiles } from '../../src/utils/fileHandler.js';
+import { sanitizeFile, postprocessContent, sanitizeFiles } from '../../../src/core/file/fileSanitizer.js';
 import * as fs from 'fs/promises';
-import { createMockConfig } from '../testing/testUtils.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('fs/promises');
 
-describe('fileHandler', () => {
+describe('fileSanitizer', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });

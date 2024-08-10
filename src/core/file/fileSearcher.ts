@@ -1,8 +1,8 @@
 import { globby } from 'globby';
-import { logger } from './logger.js';
-import type { RepopackConfigMerged } from '../config/configTypes.js';
-import { defaultIgnoreList } from './defaultIgnore.js';
-import { sortPaths } from './sortPathsUtils.js';
+import { logger } from '../../shared/logger.js';
+import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import { defaultIgnoreList } from '../../config/defaultIgnore.js';
+import { sortPaths } from './filePathSorter.js';
 
 export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];

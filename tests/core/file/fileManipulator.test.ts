@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { getFileManipulator } from '../../src/utils/fileManipulator.js';
+import { getFileManipulator } from '../../../src/core/file/fileManipulater.js';
 
 describe('fileManipulator', () => {
   const testCases = [

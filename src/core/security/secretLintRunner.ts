@@ -1,9 +1,9 @@
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
-import { logger } from './logger.js';
+import { logger } from '../../shared/logger.js';
 
-export const checkFileWithSecretLint = async (
+export const runSecretLint = async (
   filePath: string,
   content: string,
   config: SecretLintCoreConfig,

@@ -4,17 +4,17 @@ import {
   parseIgnoreContent,
   getIgnoreFilePatterns,
   searchFiles,
-} from '../../src/utils/searchUtils.js';
+} from '../../../src/core/file/fileSearcher.js';
 import path from 'path';
 import * as fs from 'fs/promises';
-import { createMockConfig, isWindows } from '../testing/testUtils.js';
+import { createMockConfig, isWindows } from '../../testing/testUtils.js';
 import { globby } from 'globby';
 import { minimatch } from 'minimatch';
 
 vi.mock('fs/promises');
 vi.mock('globby');
 
-describe('filterUtils', () => {
+describe('fileSearcher', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });

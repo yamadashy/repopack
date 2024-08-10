@@ -3,16 +3,24 @@ import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
 import { pack } from '../../src/core/packager.js';
-import { RepopackConfigFile, RepopackConfigMerged } from '../../src/config/configTypes.js';
+import { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
 import { isWindows } from '../testing/testUtils.js';
 
-const fixturesDir = path.join(__dirname, '..', 'fixtures', 'packager');
+const fixturesDir = path.join(__dirname, 'fixtures', 'packager');
 const inputsDir = path.join(fixturesDir, 'inputs');
 const outputsDir = path.join(fixturesDir, 'outputs');
 
 describe.runIf(!isWindows)('packager integration', () => {
-  const testCases = [{ name: 'simple-project', config: {} }];
+  const testCases = [
+    { desc: 'simple plain style', input: 'simple-project', output: 'simple-project-output.txt', config: {} },
+    {
+      desc: 'simple xml style',
+      input: 'simple-project',
+      output: 'simple-project-output.xml',
+      config: { output: { style: 'xml', filePath: 'simple-project-output.xml' } },
+    },
+  ];
 
   let tempDir: string;
 
@@ -26,16 +34,17 @@ describe.runIf(!isWindows)('packager integration', () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  testCases.forEach(({ name }) => {
-    test(`should correctly pack ${name}`, async () => {
-      const inputDir = path.join(inputsDir, name);
-      const expectedOutputPath = path.join(outputsDir, `${name}-output.txt`);
-      const actualOutputPath = path.join(tempDir, 'repopack-output.txt');
+  testCases.forEach(({ desc, input, output, config }) => {
+    test(`should correctly pack ${desc}`, async () => {
+      const inputDir = path.join(inputsDir, input);
+      const expectedOutputPath = path.join(outputsDir, output);
+      const actualOutputPath = path.join(tempDir, output);
 
       const fileConfig: RepopackConfigFile = await loadFileConfig(inputDir, null);
       const mergedConfig: RepopackConfigMerged = mergeConfigs(fileConfig, {
         output: {
           filePath: actualOutputPath,
+          style: (config.output?.style || 'plain') as RepopackOutputStyle,
         },
       });
 
@@ -55,7 +64,7 @@ describe.runIf(!isWindows)('packager integration', () => {
       // Optionally, update the expected output if explicitly requested
       if (process.env.UPDATE_EXPECTED_OUTPUT) {
         await fs.writeFile(expectedOutputPath, actualOutput);
-        console.log(`Updated expected output for ${name}`);
+        console.log(`Updated expected output for ${desc}`);
       }
     });
   });

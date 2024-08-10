@@ -1,5 +1,5 @@
 import { RepopackConfigFile } from './configTypes.js';
-import { RepopackError } from '../utils/errorHandler.js';
+import { RepopackError } from '../shared/errorHandler.js';
 
 export class RepopackConfigValidationError extends RepopackError {
   constructor(message: string) {

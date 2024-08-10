@@ -269,7 +269,7 @@ Repopack now supports specifying files to include using glob patterns. This allo
 Repopack offers multiple methods to set ignore patterns for excluding specific files or directories during the packing process:
 
 - **.gitignore**: By default, patterns listed in your project's `.gitignore` file are used. This behavior can be controlled with the `ignore.useGitignore` setting.
-- **Default patterns**: Repopack includes a default list of commonly excluded files and directories (e.g., node_modules, .git, binary files). This feature can be controlled with the `ignore.useDefaultPatterns` setting. Please see [defaultIgnore.ts](src/utils/defaultIgnore.ts) for more details.
+- **Default patterns**: Repopack includes a default list of commonly excluded files and directories (e.g., node_modules, .git, binary files). This feature can be controlled with the `ignore.useDefaultPatterns` setting. Please see [defaultIgnore.ts](src/config/defaultIgnore.ts) for more details.
 - **.repopackignore**: You can create a `.repopackignore` file in your project root to define Repopack-specific ignore patterns. This file follows the same format as `.gitignore`.
 - **Custom patterns**: Additional ignore patterns can be specified using the `ignore.customPatterns` option in the configuration file. You can overwrite this setting with the `-i, --ignore` command line option.
 

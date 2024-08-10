@@ -4,7 +4,7 @@ import * as url from 'node:url';
 
 export const getVersion = async (): Promise<string> => {
   try {
-    const packageJson = await getPackageJson();
+    const packageJson = await parsePackageJson();
     return packageJson.version;
   } catch (error) {
     console.error('Error reading package.json:', error);
@@ -12,12 +12,12 @@ export const getVersion = async (): Promise<string> => {
   }
 };
 
-const getPackageJson = async (): Promise<{
+const parsePackageJson = async (): Promise<{
   name: string;
   version: string;
 }> => {
   const dirName = url.fileURLToPath(new URL('.', import.meta.url));
-  const packageJsonPath = path.join(dirName, '..', '..', 'package.json');
+  const packageJsonPath = path.join(dirName, '..', '..', '..', 'package.json');
   const packageJsonFile = await fs.readFile(packageJsonPath, 'utf-8');
   const packageJson = JSON.parse(packageJsonFile);
   return packageJson;

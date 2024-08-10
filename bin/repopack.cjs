@@ -2,6 +2,6 @@
 'use strict';
 
 (async () => {
-  const { run } = await import('../lib/cli/index.js');
+  const { run } = await import('../lib/cli/cliRunner.js');
   run();
 })();

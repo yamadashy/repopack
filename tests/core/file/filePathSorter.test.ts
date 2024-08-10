@@ -1,8 +1,8 @@
 import { expect, test, describe } from 'vitest';
-import { sortPaths } from '../../src/utils/sortPathsUtils.js';
+import { sortPaths } from '../../../src/core/file/filePathSorter.js';
 import path from 'node:path';
 
-describe('sortFilePaths', () => {
+describe('filePathSorter', () => {
   const sep = path.sep;
 
   test('should sort directories before files', () => {

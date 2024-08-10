@@ -3,10 +3,10 @@ import { pack, Dependencies } from '../../src/core/packager.js';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { createMockConfig } from '../testing/testUtils.js';
-import { searchFiles } from '../../src/utils/searchUtils.js';
+import { searchFiles } from '../../src/core/file/fileSearcher.js';
 
 vi.mock('fs/promises');
-vi.mock('../../src/utils/searchUtils');
+vi.mock('../../src/core/file/fileSearcher');
 
 describe('packager', () => {
   let mockDeps: Dependencies;

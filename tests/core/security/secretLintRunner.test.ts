@@ -1,8 +1,8 @@
 import { expect, test, describe } from 'vitest';
-import { checkFileWithSecretLint, createSecretLintConfig } from '../../src/utils/secretLintUtils.js';
+import { runSecretLint, createSecretLintConfig } from '../../../src/core/security/secretLintRunner.js';
 import type { SecretLintCoreConfig } from '@secretlint/types';
 
-describe('secretLintUtils', () => {
+describe('secretLintRunner', () => {
   const config: SecretLintCoreConfig = createSecretLintConfig();
 
   test('should detect sensitive information', async () => {
@@ -44,7 +44,7 @@ H4PSJT5bvaEhxRj7QCwonoX4ZpV0beTnzloS55Z65g==
     `;
     // secretlint-enable
 
-    const secretLintResult = await checkFileWithSecretLint('test.md', sensitiveContent, config);
+    const secretLintResult = await runSecretLint('test.md', sensitiveContent, config);
     const isSuspicious = secretLintResult.messages.length > 0;
     expect(isSuspicious).toBe(true);
   });
@@ -72,7 +72,7 @@ And here's a list:
 That's all!
     `;
 
-    const secretLintResult = await checkFileWithSecretLint('normal.md', normalContent, config);
+    const secretLintResult = await runSecretLint('normal.md', normalContent, config);
     const isSuspicious = secretLintResult.messages.length > 0;
     expect(isSuspicious).toBe(false);
   });

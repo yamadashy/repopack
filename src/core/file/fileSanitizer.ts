@@ -3,9 +3,9 @@ import path from 'node:path';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';
-import { RepopackConfigMerged } from '../config/configTypes.js';
-import { getFileManipulator } from './fileManipulator.js';
-import { logger } from './logger.js';
+import { RepopackConfigMerged } from '../../config/configTypes.js';
+import { getFileManipulator } from './fileManipulater.js';
+import { logger } from '../../shared/logger.js';
 
 export interface SanitizedFile {
   path: string;
