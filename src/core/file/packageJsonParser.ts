@@ -5,6 +5,12 @@ import * as url from 'node:url';
 export const getVersion = async (): Promise<string> => {
   try {
     const packageJson = await parsePackageJson();
+
+    if (!packageJson.version) {
+      console.warn('No version found in package.json');
+      return 'unknown';
+    }
+
     return packageJson.version;
   } catch (error) {
     console.error('Error reading package.json:', error);
