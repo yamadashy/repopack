@@ -1,12 +1,12 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { Tiktoken, get_encoding } from 'tiktoken';
 import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../config/configTypes.js';
-import { sanitizeFiles as defaultSanitizeFiles } from '../utils/fileHandler.js';
-import { generateOutput as defaultGenerateOutput } from './outputGenerator.js';
-import { checkFileWithSecretLint, createSecretLintConfig } from '../utils/secretLintUtils.js';
-import { searchFiles } from '../utils/searchUtils.js';
+import { sanitizeFiles as defaultSanitizeFiles } from './file/fileSanitizer.js';
+import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
+import { runSecretLint, createSecretLintConfig } from './security/secretLintRunner.js';
+import { searchFiles } from './file/fileSearcher.js';
+import { TokenCounter } from './tokenCounter/tokenCounter.js';
 
 export interface Dependencies {
   generateOutput: typeof defaultGenerateOutput;
@@ -43,20 +43,20 @@ export const pack = async (
   const sanitizedFiles = await deps.sanitizeFiles(safeFilePaths, rootDir, config);
   await deps.generateOutput(rootDir, config, sanitizedFiles, safeFilePaths);
 
-  // Setup encoding
-  const encoding: Tiktoken = get_encoding('cl100k_base');
+  // Setup token counter
+  const tokenCounter = new TokenCounter();
 
   // Metrics
   const totalFiles = sanitizedFiles.length;
   const totalCharacters = sanitizedFiles.reduce((sum, file) => sum + file.content.length, 0);
-  const totalTokens = sanitizedFiles.reduce((sum, file) => sum + encoding.encode(file.content).length, 0);
+  const totalTokens = sanitizedFiles.reduce((sum, file) => sum + tokenCounter.countTokens(file.content), 0);
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
   sanitizedFiles.forEach((file) => {
     fileCharCounts[file.path] = file.content.length;
-    fileTokenCounts[file.path] = encoding.encode(file.content).length;
+    fileTokenCounts[file.path] = tokenCounter.countTokens(file.content);
   });
-  encoding.free();
+  tokenCounter.free();
 
   return {
     totalFiles,
@@ -75,7 +75,7 @@ const performSecurityCheck = async (filePaths: string[], rootDir: string): Promi
   for (const filePath of filePaths) {
     const fullPath = path.join(rootDir, filePath);
     const content = await fs.readFile(fullPath, 'utf-8');
-    const secretLintResult = await checkFileWithSecretLint(fullPath, content, secretLintConfig);
+    const secretLintResult = await runSecretLint(fullPath, content, secretLintConfig);
     const isSuspicious = secretLintResult.messages.length > 0;
     if (isSuspicious) {
       suspiciousFilesResults.push(secretLintResult);

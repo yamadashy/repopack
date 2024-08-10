@@ -1,0 +1,140 @@
+<summary>
+
+<header>
+Repopack Output File
+</header>
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository structure
+3. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+1. This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+2. When processing this file, use the file path attributes to distinguish
+  between different files in the repository.
+3. Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repopack's
+  configuration.
+- Binary files are not included in this packed representation.
+
+
+</notes>
+
+<additional_info>
+For more information about Repopack, visit: https://github.com/yamadashy/repopack
+</additional_info>
+
+<user_provided_header>
+This repository is simple-project
+</user_provided_header>
+
+</summary>
+
+<repository_structure>
+resources/
+  .repopackignore
+  data.txt
+src/
+  index.js
+  utils.js
+package.json
+README.md
+repopack.config.json
+</repository_structure>
+
+<repository_files>
+
+<file path="resources/.repopackignore">
+ignored-data.txt
+</file>
+
+<file path="resources/data.txt">
+dummy data
+</file>
+
+<file path="src/index.js">
+const { greet } = require('./utils');
+
+function main() {
+  console.log(greet('World'));
+}
+
+main();
+</file>
+
+<file path="src/utils.js">
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+module.exports = {
+  greet,
+};
+</file>
+
+<file path="package.json">
+{
+  "name": "simple-project",
+  "version": "1.0.0",
+  "description": "A simple project for testing Repopack",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": ["simple", "test"],
+  "author": "Test Author",
+  "license": "MIT"
+}
+</file>
+
+<file path="README.md">
+# Simple Project
+
+This is a simple project used for testing Repopack.
+
+## Usage
+
+To run the project:
+
+```
+npm start
+```
+
+This will output a greeting message to the console.
+</file>
+
+<file path="repopack.config.json">
+{
+  "output": {
+    "filePath": "repopack-output.txt",
+    "headerText": "This repository is simple-project",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false
+  },
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  }
+}
+</file>
+
+</repository_files>

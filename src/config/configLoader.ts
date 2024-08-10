@@ -1,9 +1,9 @@
 import path from 'node:path';
+import * as fs from 'node:fs/promises';
+import { logger } from '../shared/logger.js';
+import { RepopackError } from '../shared/errorHandler.js';
 import { RepopackConfigCli as RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
 import { defaultConfig } from './defaultConfig.js';
-import { logger } from '../utils/logger.js';
-import * as fs from 'node:fs/promises';
-import { RepopackError } from '../utils/errorHandler.js';
 import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
 
 const defaultConfigPath = 'repopack.config.json';

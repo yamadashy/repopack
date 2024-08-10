@@ -1,5 +1,5 @@
+import { RepopackError } from '../shared/errorHandler.js';
 import { RepopackConfigFile } from './configTypes.js';
-import { RepopackError } from '../utils/errorHandler.js';
 
 export class RepopackConfigValidationError extends RepopackError {
   constructor(message: string) {
@@ -9,7 +9,7 @@ export class RepopackConfigValidationError extends RepopackError {
 }
 
 export function validateConfig(config: unknown): asserts config is RepopackConfigFile {
-  if (typeof config !== 'object' || config === null) {
+  if (typeof config !== 'object' || config == null) {
     throw new RepopackConfigValidationError('Configuration must be an object');
   }
 
@@ -17,7 +17,7 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
 
   // Validate output
   if (output !== undefined) {
-    if (typeof output !== 'object' || output === null) {
+    if (typeof output !== 'object' || output == null) {
       throw new RepopackConfigValidationError('output must be an object');
     }
 
@@ -40,7 +40,7 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
 
   // Validate ignore (existing code remains unchanged)
   if (ignore !== undefined) {
-    if (typeof ignore !== 'object' || ignore === null) {
+    if (typeof ignore !== 'object' || ignore == null) {
       throw new RepopackConfigValidationError('ignore must be an object');
     }
 
