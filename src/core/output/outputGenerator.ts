@@ -1,5 +1,3 @@
-import * as fs from 'node:fs/promises';
-import path from 'node:path';
 import { RepopackConfigMerged } from '../../config/configTypes.js';
 import { SanitizedFile } from '../file/fileSanitizer.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
@@ -8,12 +6,10 @@ import { generatePlainStyle } from './plainStyleGenerator.js';
 import { OutputGeneratorContext } from './outputGeneratorTypes.js';
 
 export const generateOutput = async (
-  rootDir: string,
   config: RepopackConfigMerged,
   sanitizedFiles: SanitizedFile[],
   allFilePaths: string[],
-  fsModule = fs,
-): Promise<void> => {
+): Promise<string> => {
   const outputGeneratorContext = buildOutputGeneratorContext(config, allFilePaths, sanitizedFiles);
 
   let output: string;
@@ -25,8 +21,7 @@ export const generateOutput = async (
       output = generatePlainStyle(outputGeneratorContext);
   }
 
-  const outputPath = path.resolve(rootDir, config.output.filePath);
-  await fsModule.writeFile(outputPath, output);
+  return output;
 };
 
 export const buildOutputGeneratorContext = (

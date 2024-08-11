@@ -1,7 +1,26 @@
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import { logger } from '../../shared/logger.js';
+
+export const runSecurityCheck = async (filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> => {
+  const secretLintConfig = createSecretLintConfig();
+  const suspiciousFilesResults: SecretLintCoreResult[] = [];
+
+  for (const filePath of filePaths) {
+    const fullPath = path.join(rootDir, filePath);
+    const content = await fs.readFile(fullPath, 'utf-8');
+    const secretLintResult = await runSecretLint(fullPath, content, secretLintConfig);
+    const isSuspicious = secretLintResult.messages.length > 0;
+    if (isSuspicious) {
+      suspiciousFilesResults.push(secretLintResult);
+    }
+  }
+
+  return suspiciousFilesResults;
+};
 
 export const runSecretLint = async (
   filePath: string,
