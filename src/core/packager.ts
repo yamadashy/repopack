@@ -68,7 +68,7 @@ export const pack = async (
 
   // Generate output
   progressCallback('Generating output...');
-  const output = await deps.generateOutput(config, processedFiles, safeFilePaths);
+  const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);
 
   // Write output to file. path is relative to the cwd
   progressCallback('Writing output file...');

@@ -47,6 +47,36 @@ describe('packager', () => {
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(fs.writeFile).toHaveBeenCalled();
 
+    expect(mockDeps.processFiles).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          content: 'raw content 1',
+          path: 'file1.txt',
+        }),
+        expect.objectContaining({
+          content: 'raw content 2',
+          path: file2Path,
+        }),
+      ],
+      mockConfig,
+    );
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
+      'root',
+      mockConfig,
+      [
+        expect.objectContaining({
+          content: 'processed content 1',
+          path: 'file1.txt',
+        }),
+        expect.objectContaining({
+          content: 'processed content 2',
+          path: file2Path,
+        }),
+      ],
+      ['file1.txt', file2Path],
+    );
+
+    // Check the result of pack function
     expect(result.totalFiles).toBe(2);
     expect(result.totalCharacters).toBe(38);
     expect(result.totalTokens).toBe(20);

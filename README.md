@@ -137,8 +137,10 @@ To enhance AI comprehension, the output file begins with an AI-oriented explanat
 #### Plain Text Format (default)
 
 ```text
+This file is a merged representation of the entire codebase, combining all repository files into a single document.
+
 ================================================================
-REPOPACK OUTPUT FILE
+File Summary
 ================================================================
 (Metadata and usage AI instructions)
 
@@ -169,6 +171,11 @@ File: src/utils.js
 // File contents here
 
 (...remaining files)
+
+================================================================
+Instruction
+================================================================
+(Custom instructions from `output.instructionFilePath`)
 ```
 
 #### XML Format
@@ -181,9 +188,11 @@ repopack --style xml
 The XML format structures the content in a hierarchical manner:
 
 ```xml
-<summary>
+This file is a merged representation of the entire codebase, combining all repository files into a single document.
+
+<file_summary>
 (Metadata and usage AI instructions)
-</summary>
+</file_summary>
 
 <repository_structure>
 src/
@@ -201,6 +210,10 @@ src/
 
 (...remaining files)
 </repository_files>
+
+<instruction>
+(Custom instructions from `output.instructionFilePath`)
+</instruction>
 ```
 
 For those interested in the potential of XML tags in AI contexts:  
@@ -279,6 +292,7 @@ Here's an explanation of the configuration options:
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
 |`output.style`| The style of the output (`plain`, `xml`) |`"plain"`|
 |`output.headerText`| Custom text to include in the file header |`null`|
+|`output.instructionFilePath`| Path to a file containing detailed custom instructions |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
@@ -348,6 +362,45 @@ Priority Order (from highest to lowest):
 This approach allows for flexible file exclusion configuration based on your project's needs. It helps optimize the size of the generated pack file by ensuring the exclusion of security-sensitive files and large binary files, while preventing the leakage of confidential information.
 
 Note: Binary files are not included in the packed output by default, but their paths are listed in the "Repository Structure" section of the output file. This provides a complete overview of the repository structure while keeping the packed file efficient and text-based.
+
+### Custom Instruction
+
+The `output.instructionFilePath` option allows you to specify a separate file containing detailed instructions or context about your project. This allows AI systems to understand the specific context and requirements of your project, potentially leading to more relevant and tailored analysis or suggestions.
+
+Here's an example of how you might use this feature:
+
+1. Create a file named `repopack-instruction.md` in your project root:
+
+```markdown
+# Coding Guidelines
+- Follow the Airbnb JavaScript Style Guide
+- Suggest splitting files into smaller, focused units when appropriate
+- Add comments for non-obvious logic. Keep all text in English
+- All new features should have corresponding unit tests
+
+# Generate Comprehensive Output
+- Include all content without abbreviation, unless specified otherwise
+- Optimize for handling large codebases while maintaining output quality
+```
+
+2. In your `repopack.config.json`, add the `instructionFilePath` option:
+
+```json5
+{
+  "output": {
+    "instructionFilePath": "repopack-instruction.md",
+    // other options...
+  }
+}
+```
+
+When Repopack generates the output, it will include the contents of `repopack-instruction.md` in a dedicated section.
+
+Note: The instruction content is appended at the end of the output file. This placement can be particularly effective for AI systems. For those interested in understanding why this might be beneficial, Anthropic provides some insights in their documentation:  
+https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips
+
+> Put longform data at the top: Place your long documents and inputs (~20K+ tokens) near the top of your prompt, above your query, instructions, and examples. This can significantly improve Claude's performance across all models.
+> Queries at the end can improve response quality by up to 30% in tests, especially with complex, multi-document inputs.
 
 ### Comment Removal
 

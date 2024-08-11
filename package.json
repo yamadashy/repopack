@@ -55,6 +55,7 @@
     "cli-spinners": "^2.9.2",
     "commander": "^11.1.0",
     "globby": "^14.0.2",
+    "handlebars": "^4.7.8",
     "iconv-lite": "^0.6.3",
     "istextorbinary": "^9.5.0",
     "jschardet": "^3.1.3",

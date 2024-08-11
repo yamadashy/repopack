@@ -5,6 +5,7 @@ interface RepopackConfigBase {
     filePath?: string;
     style?: RepopackOutputStyle;
     headerText?: string;
+    instructionFilePath?: string;
     removeComments?: boolean;
     removeEmptyLines?: boolean;
     topFilesLength?: number;
@@ -23,6 +24,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     filePath: string;
     style: RepopackOutputStyle;
     headerText?: string;
+    instructionFilePath?: string;
     removeComments: boolean;
     removeEmptyLines: boolean;
     topFilesLength: number;
