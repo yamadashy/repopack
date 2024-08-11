@@ -73,6 +73,12 @@ To exclude specific files or directories:
 repopack --ignore "**/*.log,tmp/"
 ```
 
+To initialize a new configuration file (`repopack.config.json`):
+
+```bash
+repopack --init
+```
+
 Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
 
 ### Prompt Examples
@@ -235,7 +241,12 @@ Using `npx repopack` is generally more convenient as it always uses the latest v
 
 ## ⚙️ Configuration
 
-Create a `repopack.config.json` file in your project root for custom configurations. Here's an explanation of the configuration options:
+Create a `repopack.config.json` file in your project root for custom configurations.
+```bash
+repopack --init
+```
+
+Here's an explanation of the configuration options:
 
 | Option | Description | Default |
 |--------|-------------|---------|
