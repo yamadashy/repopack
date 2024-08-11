@@ -49,6 +49,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@clack/prompts": "^0.7.0",
     "@secretlint/core": "^8.2.4",
     "@secretlint/secretlint-rule-preset-recommend": "^8.2.4",
     "cli-spinners": "^2.9.2",
@@ -65,8 +66,8 @@
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@types/eslint": "~8.56.10",
-    "@types/eslint-config-prettier": "~6.11.3",
     "@types/eslint__js": "~8.42.3",
+    "@types/eslint-config-prettier": "~6.11.3",
     "@types/node": "^20.14.12",
     "@types/strip-comments": "^2.0.4",
     "@vitest/coverage-v8": "^2.0.4",
