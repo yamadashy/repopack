@@ -4,11 +4,12 @@ import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../config/configTypes.js';
 import { sanitizeFiles as defaultSanitizeFiles } from './file/fileSanitizer.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
-import { runSecretLint, createSecretLintConfig } from './security/secretLintRunner.js';
-import { searchFiles } from './file/fileSearcher.js';
+import { runSecurityCheck } from './security/securityCheckRunner.js';
+import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
 import { TokenCounter } from './tokenCounter/tokenCounter.js';
 
-export interface Dependencies {
+export interface PackDependencies {
+  searchFiles: typeof defaultSearchFiles;
   generateOutput: typeof defaultGenerateOutput;
   sanitizeFiles: typeof defaultSanitizeFiles;
 }
@@ -25,23 +26,28 @@ export interface PackResult {
 export const pack = async (
   rootDir: string,
   config: RepopackConfigMerged,
-  deps: Dependencies = {
+  deps: PackDependencies = {
+    searchFiles: defaultSearchFiles,
     generateOutput: defaultGenerateOutput,
     sanitizeFiles: defaultSanitizeFiles,
   },
 ): Promise<PackResult> => {
   // Get all file paths that should be processed
-  const filePaths = await searchFiles(rootDir, config);
+  const filePaths = await deps.searchFiles(rootDir, config);
 
   // Perform security check and filter out suspicious files
-  const suspiciousFilesResults = await performSecurityCheck(filePaths, rootDir);
+  const suspiciousFilesResults = await runSecurityCheck(filePaths, rootDir);
   const safeFilePaths = filePaths.filter(
     (filePath) => !suspiciousFilesResults.some((result) => result.filePath === path.join(rootDir, filePath)),
   );
 
   // Sanitize files and generate output
   const sanitizedFiles = await deps.sanitizeFiles(safeFilePaths, rootDir, config);
-  await deps.generateOutput(rootDir, config, sanitizedFiles, safeFilePaths);
+  const output = await deps.generateOutput(config, sanitizedFiles, safeFilePaths);
+
+  // Write output to file
+  const outputPath = path.resolve(rootDir, config.output.filePath);
+  await fs.writeFile(outputPath, output);
 
   // Setup token counter
   const tokenCounter = new TokenCounter();
@@ -66,21 +72,4 @@ export const pack = async (
     fileTokenCounts,
     suspiciousFilesResults,
   };
-};
-
-const performSecurityCheck = async (filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> => {
-  const secretLintConfig = createSecretLintConfig();
-  const suspiciousFilesResults: SecretLintCoreResult[] = [];
-
-  for (const filePath of filePaths) {
-    const fullPath = path.join(rootDir, filePath);
-    const content = await fs.readFile(fullPath, 'utf-8');
-    const secretLintResult = await runSecretLint(fullPath, content, secretLintConfig);
-    const isSuspicious = secretLintResult.messages.length > 0;
-    if (isSuspicious) {
-      suspiciousFilesResults.push(secretLintResult);
-    }
-  }
-
-  return suspiciousFilesResults;
 };
