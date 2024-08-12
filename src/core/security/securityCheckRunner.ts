@@ -1,6 +1,8 @@
+import os from 'node:os';
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
+import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
 import { RawFile } from '../file/fileTypes.js';
 
@@ -11,20 +13,25 @@ export interface SuspiciousFileResult {
 
 export const runSecurityCheck = async (rawFiles: RawFile[]): Promise<SuspiciousFileResult[]> => {
   const secretLintConfig = createSecretLintConfig();
-  const suspiciousFilesResults: SuspiciousFileResult[] = [];
 
-  for (const rawFile of rawFiles) {
-    const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
-    const isSuspicious = secretLintResult.messages.length > 0;
-    if (isSuspicious) {
-      suspiciousFilesResults.push({
-        filePath: rawFile.path,
-        messages: secretLintResult.messages.map((message) => message.message),
-      });
-    }
-  }
+  const results = await pMap(
+    rawFiles,
+    async (rawFile) => {
+      const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
+      if (secretLintResult.messages.length > 0) {
+        return {
+          filePath: rawFile.path,
+          messages: secretLintResult.messages.map((message) => message.message),
+        };
+      }
+      return null;
+    },
+    {
+      concurrency: os.cpus().length,
+    },
+  );
 
-  return suspiciousFilesResults;
+  return results.filter((result): result is SuspiciousFileResult => result != null);
 };
 
 export const runSecretLint = async (

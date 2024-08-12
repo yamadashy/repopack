@@ -8,7 +8,7 @@ vi.mock('../../../src/core/file/fileManipulater');
 
 describe('fileProcessor', () => {
   describe('processFiles', () => {
-    it('should process multiple files', () => {
+    it('should process multiple files', async () => {
       const mockRawFiles: RawFile[] = [
         { path: 'file1.js', content: '// comment\nconst a = 1;' },
         { path: 'file2.js', content: '/* comment */\nconst b = 2;' },
@@ -25,7 +25,7 @@ describe('fileProcessor', () => {
         removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
-      const result = processFiles(mockRawFiles, mockConfig);
+      const result = await processFiles(mockRawFiles, mockConfig);
 
       expect(result).toEqual([
         { path: 'file1.js', content: 'const a = 1;' },
@@ -35,7 +35,7 @@ describe('fileProcessor', () => {
   });
 
   describe('processContent', () => {
-    it('should remove comments and empty lines when configured', () => {
+    it('should remove comments and empty lines when configured', async () => {
       const content = '// comment\nconst a = 1;\n\n/* multi-line\ncomment */\nconst b = 2;';
       const filePath = 'test.js';
       const config: RepopackConfigMerged = {
@@ -50,12 +50,12 @@ describe('fileProcessor', () => {
         removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
-      const result = processContent(content, filePath, config);
+      const result = await processContent(content, filePath, config);
 
       expect(result).toBe('const a = 1;\nconst b = 2;');
     });
 
-    it('should not remove comments or empty lines when not configured', () => {
+    it('should not remove comments or empty lines when not configured', async () => {
       const content = '// comment\nconst a = 1;\n\n/* multi-line\ncomment */\nconst b = 2;';
       const filePath = 'test.js';
       const config: RepopackConfigMerged = {
@@ -65,12 +65,12 @@ describe('fileProcessor', () => {
         },
       } as RepopackConfigMerged;
 
-      const result = processContent(content, filePath, config);
+      const result = await processContent(content, filePath, config);
 
       expect(result).toBe(content.trim());
     });
 
-    it('should handle files without a manipulator', () => {
+    it('should handle files without a manipulator', async () => {
       const content = 'Some content';
       const filePath = 'unknown.ext';
       const config: RepopackConfigMerged = {
@@ -82,7 +82,7 @@ describe('fileProcessor', () => {
 
       vi.mocked(getFileManipulator).mockReturnValue(null);
 
-      const result = processContent(content, filePath, config);
+      const result = await processContent(content, filePath, config);
 
       expect(result).toBe(content);
     });

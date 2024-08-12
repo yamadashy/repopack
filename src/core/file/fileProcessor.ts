@@ -1,15 +1,27 @@
+import os from 'node:os';
+import pMap from 'p-map';
 import { RepopackConfigMerged } from '../../config/configTypes.js';
 import { getFileManipulator } from './fileManipulater.js';
 import { ProcessedFile, RawFile } from './fileTypes.js';
 
-export const processFiles = (rawFiles: RawFile[], config: RepopackConfigMerged): ProcessedFile[] => {
-  return rawFiles.map((rawFile) => ({
-    path: rawFile.path,
-    content: processContent(rawFile.content, rawFile.path, config),
-  }));
+export const processFiles = async (rawFiles: RawFile[], config: RepopackConfigMerged): Promise<ProcessedFile[]> => {
+  return pMap(
+    rawFiles,
+    async (rawFile) => ({
+      path: rawFile.path,
+      content: await processContent(rawFile.content, rawFile.path, config),
+    }),
+    {
+      concurrency: os.cpus().length,
+    },
+  );
 };
 
-export const processContent = (content: string, filePath: string, config: RepopackConfigMerged): string => {
+export const processContent = async (
+  content: string,
+  filePath: string,
+  config: RepopackConfigMerged,
+): Promise<string> => {
   let processedContent = content;
   const manipulator = getFileManipulator(filePath);
 

@@ -1,23 +1,30 @@
 import * as fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import iconv from 'iconv-lite';
+import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
 import { RawFile } from './fileTypes.js';
 
 export const collectFiles = async (filePaths: string[], rootDir: string): Promise<RawFile[]> => {
-  const rawFiles: RawFile[] = [];
+  const rawFiles = await pMap(
+    filePaths,
+    async (filePath) => {
+      const fullPath = path.resolve(rootDir, filePath);
+      const content = await readRawFile(fullPath);
+      if (content) {
+        return { path: filePath, content };
+      }
+      return null;
+    },
+    {
+      concurrency: os.cpus().length,
+    },
+  );
 
-  for (const filePath of filePaths) {
-    const fullPath = path.resolve(rootDir, filePath);
-    const content = await readRawFile(fullPath);
-    if (content) {
-      rawFiles.push({ path: filePath, content });
-    }
-  }
-
-  return rawFiles;
+  return rawFiles.filter((file): file is RawFile => file != null);
 };
 
 const readRawFile = async (filePath: string): Promise<string | null> => {

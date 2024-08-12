@@ -1,5 +1,7 @@
+import os from 'node:os';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import pMap from 'p-map';
 import { RepopackConfigMerged } from '../config/configTypes.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
 import { SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheckRunner.js';
@@ -50,7 +52,7 @@ export const pack = async (
   const safeFilePaths = safeRawFiles.map((file) => file.path);
 
   // Process files (remove comments, etc.)
-  const processedFiles = deps.processFiles(safeRawFiles, config);
+  const processedFiles = await deps.processFiles(safeRawFiles, config);
 
   // Generate output
   const output = await deps.generateOutput(config, processedFiles, safeFilePaths);
@@ -63,16 +65,30 @@ export const pack = async (
   const tokenCounter = new TokenCounter();
 
   // Metrics
+  const fileMetrics = await pMap(
+    processedFiles,
+    async (file) => {
+      const charCount = file.content.length;
+      const tokenCount = tokenCounter.countTokens(file.content);
+      return { path: file.path, charCount, tokenCount };
+    },
+    {
+      concurrency: os.cpus().length,
+    },
+  );
+
+  tokenCounter.free();
+
   const totalFiles = processedFiles.length;
-  const totalCharacters = processedFiles.reduce((sum, file) => sum + file.content.length, 0);
-  const totalTokens = processedFiles.reduce((sum, file) => sum + tokenCounter.countTokens(file.content), 0);
+  const totalCharacters = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.charCount, 0);
+  const totalTokens = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.tokenCount, 0);
+
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
-  processedFiles.forEach((file) => {
-    fileCharCounts[file.path] = file.content.length;
-    fileTokenCounts[file.path] = tokenCounter.countTokens(file.content);
+  fileMetrics.forEach((file) => {
+    fileCharCounts[file.path] = file.charCount;
+    fileTokenCounts[file.path] = file.tokenCount;
   });
-  tokenCounter.free();
 
   return {
     totalFiles,
