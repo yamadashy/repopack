@@ -38,8 +38,10 @@ describe('packager', () => {
 
     const result = await pack('root', mockConfig, mockDeps);
 
+    const file2Path = path.join('dir1', 'file2.txt');
+
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
-    expect(mockDeps.collectFiles).toHaveBeenCalledWith(['file1.txt', 'dir1/file2.txt'], 'root');
+    expect(mockDeps.collectFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root');
     expect(mockDeps.runSecurityCheck).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
@@ -50,11 +52,11 @@ describe('packager', () => {
     expect(result.totalTokens).toBe(20);
     expect(result.fileCharCounts).toEqual({
       'file1.txt': 19,
-      'dir1/file2.txt': 19,
+      [file2Path]: 19,
     });
     expect(result.fileTokenCounts).toEqual({
       'file1.txt': 10,
-      'dir1/file2.txt': 10,
+      [file2Path]: 10,
     });
   });
 

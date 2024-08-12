@@ -7,7 +7,7 @@ import { RepopackConfigFile, RepopackOutputStyle } from '../../config/configType
 import { defaultConfig } from '../../config/defaultConfig.js';
 
 export const runInitAction = async (rootDir: string): Promise<void> => {
-  const configPath = path.join(rootDir, 'repopack.config.json');
+  const configPath = path.resolve(rootDir, 'repopack.config.json');
 
   try {
     // Check if the config file already exists

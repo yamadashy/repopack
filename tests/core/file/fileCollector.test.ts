@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
@@ -50,7 +51,7 @@ describe('fileCollector', () => {
     const result = await collectFiles(mockFilePaths, mockRootDir);
 
     expect(result).toEqual([{ path: 'text.txt', content: 'decoded content' }]);
-    expect(logger.debug).toHaveBeenCalledWith('Skipping binary file: /root/binary.bin');
+    expect(logger.debug).toHaveBeenCalledWith('Skipping binary file: ' + path.resolve('/root/binary.bin'));
   });
 
   it('should handle file read errors', async () => {
@@ -63,6 +64,9 @@ describe('fileCollector', () => {
     const result = await collectFiles(mockFilePaths, mockRootDir);
 
     expect(result).toEqual([]);
-    expect(logger.warn).toHaveBeenCalledWith('Failed to read file: /root/error.txt', expect.any(Error));
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Failed to read file: ' + path.resolve('/root/error.txt'),
+      expect.any(Error),
+    );
   });
 });

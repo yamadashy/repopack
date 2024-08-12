@@ -10,7 +10,7 @@ export const collectFiles = async (filePaths: string[], rootDir: string): Promis
   const rawFiles: RawFile[] = [];
 
   for (const filePath of filePaths) {
-    const fullPath = path.join(rootDir, filePath);
+    const fullPath = path.resolve(rootDir, filePath);
     const content = await readRawFile(fullPath);
     if (content) {
       rawFiles.push({ path: filePath, content });

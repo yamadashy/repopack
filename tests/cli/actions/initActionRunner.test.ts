@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
 import * as prompts from '@clack/prompts';
 import { runInitAction } from '../../../src/cli/actions/initActionRunner.js';
@@ -25,14 +26,10 @@ describe('initActionRunner', () => {
 
     await runInitAction('/test/dir');
 
-    expect(fs.writeFile).toHaveBeenCalledWith(
-      '/test/dir/repopack.config.json',
-      expect.stringContaining('"filePath": "custom-output.txt"'),
-    );
-    expect(fs.writeFile).toHaveBeenCalledWith(
-      '/test/dir/repopack.config.json',
-      expect.stringContaining('"style": "xml"'),
-    );
+    const configPath = path.resolve('/test/dir/repopack.config.json');
+
+    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "custom-output.txt"'));
+    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "xml"'));
   });
 
   it('should not create a new config file when one already exists', async () => {
