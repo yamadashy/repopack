@@ -1,6 +1,7 @@
 import { expect, test, describe } from 'vitest';
 import { generateOutput } from '../../../src/core/output/outputGenerator.js';
 import { createMockConfig } from '../../testing/testUtils.js';
+import { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 
 describe('outputGenerator', () => {
   test('generateOutput should write correct content to file', async () => {
@@ -14,12 +15,12 @@ describe('outputGenerator', () => {
         removeEmptyLines: false,
       },
     });
-    const mockSanitizedFiles = [
+    const mockProcessedFiles: ProcessedFile[] = [
       { path: 'file1.txt', content: 'content1' },
       { path: 'dir/file2.txt', content: 'content2' },
     ];
 
-    const output = await generateOutput(mockConfig, mockSanitizedFiles, []);
+    const output = await generateOutput(mockConfig, mockProcessedFiles, []);
 
     expect(output).toContain('Repopack Output File');
     expect(output).toContain('File: file1.txt');

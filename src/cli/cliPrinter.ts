@@ -1,7 +1,7 @@
 import path from 'node:path';
 import pc from 'picocolors';
-import type { SecretLintCoreResult } from '@secretlint/types';
 import { logger } from '../shared/logger.js';
+import { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 
 export const printSummary = (
   rootDir: string,
@@ -9,7 +9,7 @@ export const printSummary = (
   totalCharacters: number,
   totalTokens: number,
   outputPath: string,
-  suspiciousFilesResults: SecretLintCoreResult[],
+  suspiciousFilesResults: SuspiciousFileResult[],
 ) => {
   const relativeOutputPath = path.relative(rootDir, outputPath);
 
@@ -29,7 +29,7 @@ export const printSummary = (
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
 
-export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: SecretLintCoreResult[]) => {
+export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: SuspiciousFileResult[]) => {
   logger.log(pc.white('🔎 Security Check:'));
   logger.log(pc.dim('──────────────────'));
 
@@ -40,7 +40,7 @@ export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: Secr
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
       const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
       logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
-      logger.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
+      logger.log(pc.dim('   - ' + suspiciousFilesResult.messages.join('\n   - ')));
     });
     logger.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
     logger.log(pc.yellow('Please review these files for potential sensitive information.'));

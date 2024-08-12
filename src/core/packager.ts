@@ -1,17 +1,19 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import type { SecretLintCoreResult } from '@secretlint/types';
 import { RepopackConfigMerged } from '../config/configTypes.js';
-import { sanitizeFiles as defaultSanitizeFiles } from './file/fileSanitizer.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
-import { runSecurityCheck } from './security/securityCheckRunner.js';
+import { SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheckRunner.js';
 import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
 import { TokenCounter } from './tokenCounter/tokenCounter.js';
+import { collectFiles as defaultCollectFiles } from './file/fileCollector.js';
+import { processFiles as defaultProcessFiles } from './file/fileProcessor.js';
 
 export interface PackDependencies {
   searchFiles: typeof defaultSearchFiles;
+  collectFiles: typeof defaultCollectFiles;
+  processFiles: typeof defaultProcessFiles;
+  runSecurityCheck: typeof defaultRunSecurityCheck;
   generateOutput: typeof defaultGenerateOutput;
-  sanitizeFiles: typeof defaultSanitizeFiles;
 }
 
 export interface PackResult {
@@ -20,7 +22,7 @@ export interface PackResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
-  suspiciousFilesResults: SecretLintCoreResult[];
+  suspiciousFilesResults: SuspiciousFileResult[];
 }
 
 export const pack = async (
@@ -28,22 +30,30 @@ export const pack = async (
   config: RepopackConfigMerged,
   deps: PackDependencies = {
     searchFiles: defaultSearchFiles,
+    collectFiles: defaultCollectFiles,
+    processFiles: defaultProcessFiles,
+    runSecurityCheck: defaultRunSecurityCheck,
     generateOutput: defaultGenerateOutput,
-    sanitizeFiles: defaultSanitizeFiles,
   },
 ): Promise<PackResult> => {
-  // Get all file paths that should be processed
+  // Get all file paths considering the config
   const filePaths = await deps.searchFiles(rootDir, config);
 
-  // Perform security check and filter out suspicious files
-  const suspiciousFilesResults = await runSecurityCheck(filePaths, rootDir);
-  const safeFilePaths = filePaths.filter(
-    (filePath) => !suspiciousFilesResults.some((result) => result.filePath === path.join(rootDir, filePath)),
-  );
+  // Collect raw files
+  const rawFiles = await deps.collectFiles(filePaths, rootDir);
 
-  // Sanitize files and generate output
-  const sanitizedFiles = await deps.sanitizeFiles(safeFilePaths, rootDir, config);
-  const output = await deps.generateOutput(config, sanitizedFiles, safeFilePaths);
+  // Perform security check and filter out suspicious files
+  const suspiciousFilesResults = await deps.runSecurityCheck(rawFiles);
+  const safeRawFiles = rawFiles.filter(
+    (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
+  );
+  const safeFilePaths = safeRawFiles.map((file) => file.path);
+
+  // Process files (remove comments, etc.)
+  const processedFiles = deps.processFiles(safeRawFiles, config);
+
+  // Generate output
+  const output = await deps.generateOutput(config, processedFiles, safeFilePaths);
 
   // Write output to file
   const outputPath = path.resolve(rootDir, config.output.filePath);
@@ -53,12 +63,12 @@ export const pack = async (
   const tokenCounter = new TokenCounter();
 
   // Metrics
-  const totalFiles = sanitizedFiles.length;
-  const totalCharacters = sanitizedFiles.reduce((sum, file) => sum + file.content.length, 0);
-  const totalTokens = sanitizedFiles.reduce((sum, file) => sum + tokenCounter.countTokens(file.content), 0);
+  const totalFiles = processedFiles.length;
+  const totalCharacters = processedFiles.reduce((sum, file) => sum + file.content.length, 0);
+  const totalTokens = processedFiles.reduce((sum, file) => sum + tokenCounter.countTokens(file.content), 0);
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
-  sanitizedFiles.forEach((file) => {
+  processedFiles.forEach((file) => {
     fileCharCounts[file.path] = file.content.length;
     fileTokenCounts[file.path] = tokenCounter.countTokens(file.content);
   });

@@ -3,8 +3,12 @@ import * as fs from 'node:fs/promises';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { pack, PackDependencies } from '../../src/core/packager.js';
 import { createMockConfig } from '../testing/testUtils.js';
+import { TokenCounter } from '../../src/core/tokenCounter/tokenCounter.js';
 
+vi.mock('node:fs/promises');
 vi.mock('fs/promises');
+vi.mock('../../src/core/security/securityCheckRunner');
+vi.mock('../../src/core/tokenCounter/tokenCounter');
 
 describe('packager', () => {
   let mockDeps: PackDependencies;
@@ -14,56 +18,44 @@ describe('packager', () => {
     const file2Path = path.join('dir1', 'file2.txt');
     mockDeps = {
       searchFiles: vi.fn().mockResolvedValue(['file1.txt', file2Path]),
-      generateOutput: vi.fn().mockResolvedValue(undefined),
-      sanitizeFiles: vi.fn().mockResolvedValue([
+      collectFiles: vi.fn().mockResolvedValue([
+        { path: 'file1.txt', content: 'raw content 1' },
+        { path: file2Path, content: 'raw content 2' },
+      ]),
+      processFiles: vi.fn().mockReturnValue([
         { path: 'file1.txt', content: 'processed content 1' },
         { path: file2Path, content: 'processed content 2' },
       ]),
+      runSecurityCheck: vi.fn().mockResolvedValue([]),
+      generateOutput: vi.fn().mockResolvedValue('mock output'),
     };
+
+    vi.mocked(TokenCounter.prototype.countTokens).mockReturnValue(10);
   });
 
   test('pack should process files and generate output', async () => {
     const mockConfig = createMockConfig();
 
-    const file2Path = path.join('dir1', 'file2.txt');
     const result = await pack('root', mockConfig, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(mockDeps.collectFiles).toHaveBeenCalledWith(['file1.txt', 'dir1/file2.txt'], 'root');
+    expect(mockDeps.runSecurityCheck).toHaveBeenCalled();
+    expect(mockDeps.processFiles).toHaveBeenCalled();
+    expect(mockDeps.generateOutput).toHaveBeenCalled();
+    expect(fs.writeFile).toHaveBeenCalled();
 
-    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
-      mockConfig,
-      [
-        { path: 'file1.txt', content: 'processed content 1' },
-        { path: file2Path, content: 'processed content 2' },
-      ],
-      ['file1.txt', file2Path],
-    );
-
-    // Check the result of pack function
     expect(result.totalFiles).toBe(2);
-    expect(result.totalCharacters).toBe(38); // 'processed content 1' + 'processed content 2'
+    expect(result.totalCharacters).toBe(38);
+    expect(result.totalTokens).toBe(20);
     expect(result.fileCharCounts).toEqual({
       'file1.txt': 19,
-      [file2Path]: 19,
+      'dir1/file2.txt': 19,
     });
-  });
-
-  test('pack should handle empty filtered files list', async () => {
-    const mockConfig = createMockConfig();
-    vi.mocked(mockDeps.searchFiles).mockResolvedValue([]);
-
-    vi.mocked(mockDeps.sanitizeFiles).mockResolvedValue([]);
-
-    const result = await pack('root', mockConfig, mockDeps);
-
-    expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
-    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith([], 'root', mockConfig);
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith(mockConfig, [], []);
-
-    expect(result.totalFiles).toBe(0);
-    expect(result.totalCharacters).toBe(0);
-    expect(result.fileCharCounts).toEqual({});
+    expect(result.fileTokenCounts).toEqual({
+      'file1.txt': 10,
+      'dir1/file2.txt': 10,
+    });
   });
 
   test('pack should handle security check and filter out suspicious files', async () => {
@@ -71,23 +63,43 @@ describe('packager', () => {
     const suspiciousFile = 'suspicious.txt';
     const file2Path = path.join('dir1', 'file2.txt');
     vi.mocked(mockDeps.searchFiles).mockResolvedValue(['file1.txt', file2Path, suspiciousFile]);
+    vi.mocked(mockDeps.collectFiles).mockResolvedValue([
+      { path: 'file1.txt', content: 'raw content 1' },
+      { path: file2Path, content: 'raw content 2' },
+      { path: suspiciousFile, content: 'suspicious content' },
+    ]);
 
-    // Mock fs.readFile to return content for security check
-    vi.mocked(fs.readFile).mockImplementation((filepath) => {
-      if (filepath.toString().includes(suspiciousFile)) {
-        // secretlint-disable
-        return Promise.resolve('URL: https://user:pass@example.com');
-        // secretlint-enable
-      }
-      return Promise.resolve('normal content');
-    });
+    // Mock the runSecurityCheck to return a suspicious file result
+    vi.mocked(mockDeps.runSecurityCheck).mockResolvedValue([
+      {
+        filePath: path.join('root', suspiciousFile),
+        messages: ['Suspicious content detected'],
+      },
+    ]);
 
     const result = await pack('root', mockConfig, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
-    expect(mockDeps.sanitizeFiles).toHaveBeenCalledWith(['file1.txt', file2Path], 'root', mockConfig);
+    expect(mockDeps.processFiles).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          content: 'raw content 1',
+          path: 'file1.txt',
+        }),
+        expect.objectContaining({
+          content: 'raw content 2',
+          path: file2Path,
+        }),
+        expect.objectContaining({
+          content: 'suspicious content',
+          path: 'suspicious.txt',
+        }),
+      ],
+      mockConfig,
+    );
 
     expect(result.suspiciousFilesResults).toHaveLength(1);
     expect(result.suspiciousFilesResults[0].filePath).toContain(suspiciousFile);
+    expect(result.totalFiles).toBe(2); // Only safe files should be counted
   });
 });

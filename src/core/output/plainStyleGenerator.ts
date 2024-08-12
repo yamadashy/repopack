@@ -4,7 +4,7 @@ const PLAIN_SEPARATOR = '='.repeat(16);
 const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
 export const generatePlainStyle = (data: OutputGeneratorContext): string => {
-  const { generationDate, treeString, sanitizedFiles, config } = data;
+  const { generationDate, treeString, processedFiles, config } = data;
 
   let output = `${PLAIN_LONG_SEPARATOR}
 Repopack Output File
@@ -72,7 +72,7 @@ ${PLAIN_LONG_SEPARATOR}
 
 `;
 
-  for (const file of sanitizedFiles) {
+  for (const file of processedFiles) {
     output += `${PLAIN_SEPARATOR}
 File: ${file.path}
 ${PLAIN_SEPARATOR}

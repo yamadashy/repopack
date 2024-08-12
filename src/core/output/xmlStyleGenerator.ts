@@ -1,7 +1,7 @@
 import { OutputGeneratorContext } from './outputGeneratorTypes.js';
 
 export const generateXmlStyle = (data: OutputGeneratorContext): string => {
-  const { generationDate, treeString, sanitizedFiles, config } = data;
+  const { generationDate, treeString, processedFiles, config } = data;
 
   let xml = `<summary>
 
@@ -65,7 +65,7 @@ ${treeString}
 <repository_files>
 `;
 
-  for (const file of sanitizedFiles) {
+  for (const file of processedFiles) {
     xml += `
 <file path="${file.path}">
 ${file.content}

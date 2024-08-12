@@ -1,9 +1,9 @@
 import { RepopackConfigMerged } from '../../config/configTypes.js';
-import { SanitizedFile } from '../file/fileSanitizer.js';
+import { ProcessedFile } from '../file/fileTypes.js';
 
 export interface OutputGeneratorContext {
   generationDate: string;
   treeString: string;
-  sanitizedFiles: SanitizedFile[];
+  processedFiles: ProcessedFile[];
   config: RepopackConfigMerged;
 }
