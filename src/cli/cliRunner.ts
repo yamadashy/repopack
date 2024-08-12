@@ -3,9 +3,9 @@ import { program, OptionValues } from 'commander';
 import { RepopackOutputStyle } from '../config/configTypes.js';
 import { getVersion } from '../core/file/packageJsonParser.js';
 import { handleError } from '../shared/errorHandler.js';
-import { runInitCommand } from './commands/initCommandRunner.js';
-import { runVersionCommand } from './commands/versionCommandRunner.js';
-import { runDefaultCommand } from './commands/defaultCommandRunner.js';
+import { runInitAction } from './actions/initActionRunner.js';
+import { runVersionAction } from './actions/versionActionRunner.js';
+import { runDefaultAction } from './actions/defaultActionRunner.js';
 
 export interface CliOptions extends OptionValues {
   version?: boolean;
@@ -48,14 +48,14 @@ export async function run() {
 
 const executeAction = async (directory: string, cwd: string, options: CliOptions) => {
   if (options.version) {
-    await runVersionCommand();
+    await runVersionAction();
     return;
   }
 
   if (options.init) {
-    await runInitCommand(cwd);
+    await runInitAction(cwd);
     return;
   }
 
-  await runDefaultCommand(directory, cwd, options);
+  await runDefaultAction(directory, cwd, options);
 };

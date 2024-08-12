@@ -1,21 +1,26 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import { logger } from '../../shared/logger.js';
+import { RawFile } from '../file/fileTypes.js';
 
-export const runSecurityCheck = async (filePaths: string[], rootDir: string): Promise<SecretLintCoreResult[]> => {
+export interface SuspiciousFileResult {
+  filePath: string;
+  messages: string[];
+}
+
+export const runSecurityCheck = async (rawFiles: RawFile[]): Promise<SuspiciousFileResult[]> => {
   const secretLintConfig = createSecretLintConfig();
-  const suspiciousFilesResults: SecretLintCoreResult[] = [];
+  const suspiciousFilesResults: SuspiciousFileResult[] = [];
 
-  for (const filePath of filePaths) {
-    const fullPath = path.join(rootDir, filePath);
-    const content = await fs.readFile(fullPath, 'utf-8');
-    const secretLintResult = await runSecretLint(fullPath, content, secretLintConfig);
+  for (const rawFile of rawFiles) {
+    const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
     const isSuspicious = secretLintResult.messages.length > 0;
     if (isSuspicious) {
-      suspiciousFilesResults.push(secretLintResult);
+      suspiciousFilesResults.push({
+        filePath: rawFile.path,
+        messages: secretLintResult.messages.map((message) => message.message),
+      });
     }
   }
 

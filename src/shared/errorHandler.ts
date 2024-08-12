@@ -1,4 +1,3 @@
-import process from 'node:process';
 import { logger } from './logger.js';
 
 export class RepopackError extends Error {
@@ -19,5 +18,4 @@ export const handleError = (error: unknown): void => {
   }
 
   logger.info('For more help, please visit: https://github.com/yamadashy/repopack/issues');
-  process.exit(1);
 };

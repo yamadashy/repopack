@@ -6,14 +6,14 @@ import { logger } from '../../shared/logger.js';
 import { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
 import { defaultConfig } from '../../config/defaultConfig.js';
 
-export const runInitCommand = async (rootDir: string): Promise<void> => {
-  const configPath = path.join(rootDir, 'repopack.config.json');
+export const runInitAction = async (rootDir: string): Promise<void> => {
+  const configPath = path.resolve(rootDir, 'repopack.config.json');
 
   try {
     // Check if the config file already exists
     await fs.access(configPath);
-    console.log(pc.yellow('A repopack.config.json file already exists in this directory.'));
-    console.log(pc.yellow('If you want to create a new one, please delete or rename the existing file first.'));
+    logger.warn('A repopack.config.json file already exists in this directory.');
+    logger.warn('If you want to create a new one, please delete or rename the existing file first.');
     return;
   } catch {
     // File doesn't exist, so we can proceed
@@ -22,6 +22,8 @@ export const runInitCommand = async (rootDir: string): Promise<void> => {
   intro(pc.bold(pc.cyan('Welcome to Repopack!')));
 
   try {
+    let isCancelled = false;
+
     const options = await group(
       {
         outputFilePath: () =>
@@ -44,10 +46,14 @@ export const runInitCommand = async (rootDir: string): Promise<void> => {
       {
         onCancel: () => {
           cancel('Configuration cancelled.');
-          process.exit(0);
+          isCancelled = true;
         },
       },
     );
+
+    if (isCancelled) {
+      return;
+    }
 
     const config: RepopackConfigFile = {
       ...defaultConfig,

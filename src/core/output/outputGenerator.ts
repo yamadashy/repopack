@@ -1,16 +1,16 @@
 import { RepopackConfigMerged } from '../../config/configTypes.js';
-import { SanitizedFile } from '../file/fileSanitizer.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
+import { ProcessedFile } from '../file/fileTypes.js';
 import { generateXmlStyle } from './xmlStyleGenerator.js';
 import { generatePlainStyle } from './plainStyleGenerator.js';
 import { OutputGeneratorContext } from './outputGeneratorTypes.js';
 
 export const generateOutput = async (
   config: RepopackConfigMerged,
-  sanitizedFiles: SanitizedFile[],
+  processedFiles: ProcessedFile[],
   allFilePaths: string[],
 ): Promise<string> => {
-  const outputGeneratorContext = buildOutputGeneratorContext(config, allFilePaths, sanitizedFiles);
+  const outputGeneratorContext = buildOutputGeneratorContext(config, allFilePaths, processedFiles);
 
   let output: string;
   switch (config.output.style) {
@@ -27,10 +27,10 @@ export const generateOutput = async (
 export const buildOutputGeneratorContext = (
   config: RepopackConfigMerged,
   allFilePaths: string[],
-  sanitizedFiles: SanitizedFile[],
+  processedFiles: ProcessedFile[],
 ): OutputGeneratorContext => ({
   generationDate: new Date().toISOString(),
   treeString: generateTreeString(allFilePaths),
-  sanitizedFiles,
+  processedFiles,
   config,
 });

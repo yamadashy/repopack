@@ -58,6 +58,8 @@ export default tseslint.config(
       'import-x/no-duplicates': 'error',
       'import-x/order': 'error',
 
+      'no-process-exit': 'error',
+
       "prefer-arrow-functions/prefer-arrow-functions": [
         "warn",
         {

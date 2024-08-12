@@ -11,13 +11,13 @@ import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
 import { logger } from '../../shared/logger.js';
 import { CliOptions } from '../cliRunner.js';
 import { getVersion } from '../../core/file/packageJsonParser.js';
-import Spinner from './../cliSpinner.js';
-import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './../cliPrinter.js';
+import Spinner from '../cliSpinner.js';
+import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from '../cliPrinter.js';
 
-export const runDefaultCommand = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
+export const runDefaultAction = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
   const version = await getVersion();
 
-  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
+  logger.log(pc.dim(`\n📦 Repopack v${version}\n`));
 
   logger.setVerbose(options.verbose || false);
   logger.trace('Loaded CLI options:', options);
@@ -71,15 +71,15 @@ export const runDefaultCommand = async (directory: string, cwd: string, options:
   }
 
   spinner.succeed('Packing completed successfully!');
-  console.log('');
+  logger.log('');
 
   if (config.output.topFilesLength > 0) {
     printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
-    console.log('');
+    logger.log('');
   }
 
   printSecurityCheck(cwd, packResult.suspiciousFilesResults);
-  console.log('');
+  logger.log('');
 
   printSummary(
     cwd,
@@ -89,7 +89,7 @@ export const runDefaultCommand = async (directory: string, cwd: string, options:
     config.output.filePath,
     packResult.suspiciousFilesResults,
   );
-  console.log('');
+  logger.log('');
 
   printCompletion();
 };

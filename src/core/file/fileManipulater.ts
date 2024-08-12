@@ -3,14 +3,29 @@ import strip from 'strip-comments';
 
 interface FileManipulator {
   removeComments(content: string): string;
+  removeEmptyLines(content: string): string;
 }
 
 const rtrimLines = (content: string): string => content.replace(/[ \t]+$/gm, '');
 
-class StripCommentsManipulator implements FileManipulator {
+class BaseManipulator implements FileManipulator {
+  removeComments(content: string): string {
+    return content;
+  }
+
+  removeEmptyLines(content: string): string {
+    return content
+      .split('\n')
+      .filter((line) => line.trim() !== '')
+      .join('\n');
+  }
+}
+
+class StripCommentsManipulator extends BaseManipulator {
   private language: string;
 
   constructor(language: string) {
+    super();
     this.language = language;
   }
 
@@ -20,7 +35,7 @@ class StripCommentsManipulator implements FileManipulator {
   }
 }
 
-class PythonManipulator implements FileManipulator {
+class PythonManipulator extends BaseManipulator {
   removeComments(content: string): string {
     // First, use strip-comments to remove standard comments
     let result = strip(content, { language: 'python', preserveNewlines: true });
@@ -36,10 +51,11 @@ class PythonManipulator implements FileManipulator {
   }
 }
 
-class CompositeManipulator implements FileManipulator {
+class CompositeManipulator extends BaseManipulator {
   private manipulators: FileManipulator[];
 
   constructor(...manipulators: FileManipulator[]) {
+    super();
     this.manipulators = manipulators;
   }
 

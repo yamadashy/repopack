@@ -1,19 +1,20 @@
 import path from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as url from 'node:url';
+import { logger } from '../../shared/logger.js';
 
 export const getVersion = async (): Promise<string> => {
   try {
     const packageJson = await parsePackageJson();
 
     if (!packageJson.version) {
-      console.warn('No version found in package.json');
+      logger.warn('No version found in package.json');
       return 'unknown';
     }
 
     return packageJson.version;
   } catch (error) {
-    console.error('Error reading package.json:', error);
+    logger.error('Error reading package.json:', error);
     return 'unknown';
   }
 };

@@ -8,47 +8,43 @@ class Logger {
     this.isVerbose = value;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error(...args: any[]) {
+  error(...args: unknown[]) {
     console.error(pc.red(this.formatArgs(args)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  warn(...args: any[]) {
+  warn(...args: unknown[]) {
     console.log(pc.yellow(this.formatArgs(args)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  success(...args: any[]) {
+  success(...args: unknown[]) {
     console.log(pc.green(this.formatArgs(args)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  info(...args: any[]) {
+  info(...args: unknown[]) {
     console.log(pc.cyan(this.formatArgs(args)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  note(...args: string[]) {
+  note(...args: unknown[]) {
     console.log(pc.dim(this.formatArgs(args)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug(...args: unknown[]) {
     if (this.isVerbose) {
       console.log(pc.blue(this.formatArgs(args)));
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  trace(...args: any[]) {
+  trace(...args: unknown[]) {
     if (this.isVerbose) {
       console.log(pc.gray(this.formatArgs(args)));
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private formatArgs(args: any[]): string {
+  log(...args: unknown[]) {
+    console.log(...args);
+  }
+
+  private formatArgs(args: unknown[]): string {
     return args
       .map((arg) => (typeof arg === 'object' ? util.inspect(arg, { depth: null, colors: true }) : arg))
       .join(' ');
