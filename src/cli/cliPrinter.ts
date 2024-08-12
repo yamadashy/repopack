@@ -1,6 +1,7 @@
 import path from 'node:path';
 import pc from 'picocolors';
 import type { SecretLintCoreResult } from '@secretlint/types';
+import { logger } from '../shared/logger.js';
 
 export const printSummary = (
   rootDir: string,
@@ -19,32 +20,30 @@ export const printSummary = (
     securityCheckMessage = pc.white('✔ No suspicious files detected');
   }
 
-  console.log(pc.white('📊 Pack Summary:'));
-  console.log(pc.dim('────────────────'));
-  console.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toString())}`);
-  console.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toString())}`);
-  console.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toString())}`);
-  console.log(`${pc.white('       Output:')} ${pc.white(relativeOutputPath)}`);
-  console.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
+  logger.log(pc.white('📊 Pack Summary:'));
+  logger.log(pc.dim('────────────────'));
+  logger.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toString())}`);
+  logger.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toString())}`);
+  logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toString())}`);
+  logger.log(`${pc.white('       Output:')} ${pc.white(relativeOutputPath)}`);
+  logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
 
 export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: SecretLintCoreResult[]) => {
-  console.log(pc.white('🔎 Security Check:'));
-  console.log(pc.dim('──────────────────'));
+  logger.log(pc.white('🔎 Security Check:'));
+  logger.log(pc.dim('──────────────────'));
 
   if (suspiciousFilesResults.length === 0) {
-    console.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
+    logger.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
   } else {
-    console.log(
-      pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded from the output:`),
-    );
+    logger.log(pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded from the output:`));
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
       const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
-      console.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
-      console.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
+      logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
+      logger.log(pc.dim('   - ' + suspiciousFilesResult.messages.map((message) => message.message).join('\n   - ')));
     });
-    console.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
-    console.log(pc.yellow('Please review these files for potential sensitive information.'));
+    logger.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
+    logger.log(pc.yellow('Please review these files for potential sensitive information.'));
   }
 };
 
@@ -53,8 +52,8 @@ export const printTopFiles = (
   fileTokenCounts: Record<string, number>,
   topFilesLength: number,
 ) => {
-  console.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count and Token Count:`));
-  console.log(pc.dim('──────────────────────────────────────────────────────'));
+  logger.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count and Token Count:`));
+  logger.log(pc.dim('──────────────────────────────────────────────────────'));
 
   const topFiles = Object.entries(fileCharCounts)
     .sort((a, b) => b[1] - a[1])
@@ -63,13 +62,13 @@ export const printTopFiles = (
   topFiles.forEach(([filePath, charCount], index) => {
     const tokenCount = fileTokenCounts[filePath];
     const indexString = `${index + 1}.`.padEnd(3, ' ');
-    console.log(
+    logger.log(
       `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount} chars, ${tokenCount} tokens)`)}`,
     );
   });
 };
 
 export const printCompletion = () => {
-  console.log(pc.green('🎉 All Done!'));
-  console.log(pc.white('Your repository has been successfully packed.'));
+  logger.log(pc.green('🎉 All Done!'));
+  logger.log(pc.white('Your repository has been successfully packed.'));
 };

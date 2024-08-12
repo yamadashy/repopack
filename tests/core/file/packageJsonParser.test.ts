@@ -3,6 +3,7 @@ import * as url from 'node:url';
 import path from 'node:path';
 import { expect, test, describe, vi, beforeEach, afterEach } from 'vitest';
 import { getVersion } from '../../../src/core/file/packageJsonParser.js';
+import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('fs/promises');
 vi.mock('url');
@@ -40,10 +41,14 @@ describe('packageJsonParser', () => {
       name: 'repopack',
     };
 
+    const loggerSpy = vi.spyOn(logger, 'warn').mockImplementation(vi.fn());
+
     vi.mocked(url.fileURLToPath).mockReturnValue('/mock/path/to/src/core/file2');
     vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockPackageJson));
 
     const version = await getVersion();
+
+    expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('No version found in package.json'));
 
     expect(version).toBe('unknown');
   });

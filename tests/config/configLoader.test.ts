@@ -3,6 +3,7 @@ import { Stats } from 'node:fs';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
 import { RepopackConfigFile, RepopackConfigCli } from '../../src/config/configTypes.js';
+import { logger } from '../../src/shared/logger.js';
 
 vi.mock('fs/promises');
 vi.mock('../../src/utils/logger', () => ({
@@ -31,10 +32,14 @@ describe('configLoader', () => {
     });
 
     test('should return an empty object if no config file is found', async () => {
+      const loggerSpy = vi.spyOn(logger, 'note').mockImplementation(vi.fn());
+
       vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
 
       const result = await loadFileConfig(process.cwd(), null);
       expect(result).toEqual({});
+
+      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('No custom config found'));
     });
 
     test('should throw an error for invalid JSON', async () => {

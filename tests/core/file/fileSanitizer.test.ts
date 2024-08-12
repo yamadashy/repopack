@@ -15,6 +15,9 @@ describe('fileSanitizer', () => {
     const mockContent = '  Some file content  \n';
     vi.mocked(fs.readFile).mockResolvedValue(mockContent);
 
+    // Suppress iconv-lite error
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
+
     const mockConfig = createMockConfig();
     const result = await sanitizeFile('/path/to/file.txt', mockConfig);
 
@@ -35,7 +38,6 @@ describe('fileSanitizer', () => {
       },
     });
     const result = postprocessContent(content, config);
-
     expect(result).toBe('Some content with whitespace');
   });
 
@@ -88,11 +90,11 @@ describe('fileSanitizer', () => {
   test('sanitizeFiles should process multiple files', async () => {
     const mockConfig = createMockConfig();
     const mockFilePaths = ['file1.txt', 'dir/file2.txt'];
-    const mockRootDir = '/mock/root';
+    const mockCwd = '/mock/root';
 
     vi.mocked(fs.readFile).mockResolvedValueOnce('content1').mockResolvedValueOnce('content2');
 
-    const result = await sanitizeFiles(mockFilePaths, mockRootDir, mockConfig);
+    const result = await sanitizeFiles(mockFilePaths, mockCwd, mockConfig);
 
     expect(result).toEqual([
       { path: 'file1.txt', content: 'content1' },
@@ -100,7 +102,7 @@ describe('fileSanitizer', () => {
     ]);
 
     expect(fs.readFile).toHaveBeenCalledTimes(2);
-    expect(vi.mocked(fs.readFile).mock.calls[0][0]).toBe(path.join(mockRootDir, 'file1.txt'));
-    expect(vi.mocked(fs.readFile).mock.calls[1][0]).toBe(path.join(mockRootDir, 'dir/file2.txt'));
+    expect(vi.mocked(fs.readFile).mock.calls[0][0]).toBe(path.join(mockCwd, 'file1.txt'));
+    expect(vi.mocked(fs.readFile).mock.calls[1][0]).toBe(path.join(mockCwd, 'dir/file2.txt'));
   });
 });

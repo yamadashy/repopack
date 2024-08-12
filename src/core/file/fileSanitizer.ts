@@ -49,8 +49,15 @@ export const sanitizeFile = async (
     return null;
   }
 
-  const encoding = jschardet.detect(buffer).encoding || 'utf-8';
-  let content = iconv.decode(buffer, encoding);
+  let content: string;
+
+  try {
+    const encoding = jschardet.detect(buffer).encoding || 'utf-8';
+    content = iconv.decode(buffer, encoding);
+  } catch (error) {
+    logger.warn(`Failed to decode file: ${filePath}`, error);
+    return null;
+  }
 
   if (config.output.removeComments) {
     const manipulator = getFileManipulator(filePath);

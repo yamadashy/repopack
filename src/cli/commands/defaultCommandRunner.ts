@@ -17,7 +17,7 @@ import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from
 export const runDefaultCommand = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
   const version = await getVersion();
 
-  console.log(pc.dim(`\n📦 Repopack v${version}\n`));
+  logger.log(pc.dim(`\n📦 Repopack v${version}\n`));
 
   logger.setVerbose(options.verbose || false);
   logger.trace('Loaded CLI options:', options);
@@ -71,15 +71,15 @@ export const runDefaultCommand = async (directory: string, cwd: string, options:
   }
 
   spinner.succeed('Packing completed successfully!');
-  console.log('');
+  logger.log('');
 
   if (config.output.topFilesLength > 0) {
     printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
-    console.log('');
+    logger.log('');
   }
 
   printSecurityCheck(cwd, packResult.suspiciousFilesResults);
-  console.log('');
+  logger.log('');
 
   printSummary(
     cwd,
@@ -89,7 +89,7 @@ export const runDefaultCommand = async (directory: string, cwd: string, options:
     config.output.filePath,
     packResult.suspiciousFilesResults,
   );
-  console.log('');
+  logger.log('');
 
   printCompletion();
 };
