@@ -1,13 +1,13 @@
 import * as fs from 'node:fs/promises';
 import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
 import * as prompts from '@clack/prompts';
-import { runInitCommand } from '../../../src/cli/commands/initCommandRunner.js';
+import { runInitAction } from '../../../src/cli/actions/initActionRunner.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
 vi.mock('@clack/prompts');
 
-describe('initCommandRunner', () => {
+describe('initActionRunner', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -23,7 +23,7 @@ describe('initCommandRunner', () => {
       outputStyle: 'xml',
     });
 
-    await runInitCommand('/test/dir');
+    await runInitAction('/test/dir');
 
     expect(fs.writeFile).toHaveBeenCalledWith(
       '/test/dir/repopack.config.json',
@@ -39,7 +39,7 @@ describe('initCommandRunner', () => {
     vi.mocked(fs.access).mockResolvedValue(undefined);
 
     const loggerSpy = vi.spyOn(logger, 'warn').mockImplementation(vi.fn());
-    await runInitCommand('/test/dir');
+    await runInitAction('/test/dir');
 
     expect(fs.writeFile).not.toHaveBeenCalled();
     expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('already exists'));
@@ -53,7 +53,7 @@ describe('initCommandRunner', () => {
 
     const loggerSpy = vi.spyOn(logger, 'error').mockImplementation(vi.fn());
 
-    await runInitCommand('/test/dir');
+    await runInitAction('/test/dir');
 
     expect(fs.writeFile).not.toHaveBeenCalled();
 
@@ -68,6 +68,6 @@ describe('initCommandRunner', () => {
     });
     vi.mocked(fs.writeFile).mockRejectedValue(new Error('Write error'));
 
-    await runInitCommand('/test/dir');
+    await runInitAction('/test/dir');
   });
 });

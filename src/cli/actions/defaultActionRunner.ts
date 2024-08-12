@@ -11,10 +11,10 @@ import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
 import { logger } from '../../shared/logger.js';
 import { CliOptions } from '../cliRunner.js';
 import { getVersion } from '../../core/file/packageJsonParser.js';
-import Spinner from './../cliSpinner.js';
-import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from './../cliPrinter.js';
+import Spinner from '../cliSpinner.js';
+import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from '../cliPrinter.js';
 
-export const runDefaultCommand = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
+export const runDefaultAction = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
   const version = await getVersion();
 
   logger.log(pc.dim(`\n📦 Repopack v${version}\n`));

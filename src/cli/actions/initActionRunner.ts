@@ -6,7 +6,7 @@ import { logger } from '../../shared/logger.js';
 import { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
 import { defaultConfig } from '../../config/defaultConfig.js';
 
-export const runInitCommand = async (rootDir: string): Promise<void> => {
+export const runInitAction = async (rootDir: string): Promise<void> => {
   const configPath = path.join(rootDir, 'repopack.config.json');
 
   try {

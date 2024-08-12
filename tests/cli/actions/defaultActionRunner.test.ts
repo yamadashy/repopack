@@ -1,5 +1,5 @@
 import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
-import { runDefaultCommand } from '../../../src/cli/commands/defaultCommandRunner.js';
+import { runDefaultAction } from '../../../src/cli/actions/defaultActionRunner.js';
 import * as packager from '../../../src/core/packager.js';
 import * as configLoader from '../../../src/config/configLoader.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParser.js';
@@ -11,7 +11,7 @@ vi.mock('../../../src/config/configLoader');
 vi.mock('../../../src/core/file/packageJsonParser');
 vi.mock('../../../src/shared/logger');
 
-describe('defaultCommandRunner', () => {
+describe('defaultActionRunner', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(packageJsonParser.getVersion).mockResolvedValue('1.0.0');
@@ -52,7 +52,7 @@ describe('defaultCommandRunner', () => {
       verbose: true,
     };
 
-    await runDefaultCommand('.', process.cwd(), options);
+    await runDefaultAction('.', process.cwd(), options);
 
     expect(packageJsonParser.getVersion).toHaveBeenCalled();
     expect(logger.logger.setVerbose).toHaveBeenCalledWith(true);
@@ -66,7 +66,7 @@ describe('defaultCommandRunner', () => {
       include: '*.js,*.ts',
     };
 
-    await runDefaultCommand('.', process.cwd(), options);
+    await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       expect.anything(),
@@ -81,7 +81,7 @@ describe('defaultCommandRunner', () => {
       ignore: 'node_modules,*.log',
     };
 
-    await runDefaultCommand('.', process.cwd(), options);
+    await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       expect.anything(),
@@ -98,7 +98,7 @@ describe('defaultCommandRunner', () => {
       style: 'xml',
     };
 
-    await runDefaultCommand('.', process.cwd(), options);
+    await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       expect.anything(),
@@ -115,6 +115,6 @@ describe('defaultCommandRunner', () => {
 
     const options: CliOptions = {};
 
-    await expect(runDefaultCommand('.', process.cwd(), options)).rejects.toThrow('Test error');
+    await expect(runDefaultAction('.', process.cwd(), options)).rejects.toThrow('Test error');
   });
 });
