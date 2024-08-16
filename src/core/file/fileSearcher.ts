@@ -7,8 +7,8 @@ import { sortPaths } from './filePathSorter.js';
 export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
-  const ignorePatterns = await getIgnorePatterns(config);
-  const ignoreFilePatterns = await getIgnoreFilePatterns(rootDir, config);
+  const ignorePatterns = await getIgnorePatterns(rootDir, config);
+  const ignoreFilePatterns = await getIgnoreFilePatterns(config);
 
   logger.trace('Include patterns:', includePatterns);
   logger.trace('Ignore patterns:', ignorePatterns);
@@ -45,7 +45,7 @@ export const parseIgnoreContent = (content: string): string[] =>
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('#'));
 
-export const getIgnoreFilePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
+export const getIgnoreFilePatterns = async (config: RepopackConfigMerged): Promise<string[]> => {
   const ignoreFilePatterns: string[] = [];
 
   if (config.ignore.useGitignore) {
@@ -57,12 +57,21 @@ export const getIgnoreFilePatterns = async (rootDir: string, config: RepopackCon
   return ignoreFilePatterns;
 };
 
-export const getIgnorePatterns = async (config: RepopackConfigMerged): Promise<string[]> => {
+export const getIgnorePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   let ignorePatterns: string[] = [];
 
   // Add default ignore patterns
   if (config.ignore.useDefaultPatterns) {
     ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
+  }
+
+  // Add repopack output file
+  if (config.output.filePath) {
+    let relativeOutputPath = config.output.filePath.replace(rootDir, '');
+    if (relativeOutputPath.startsWith('/')) {
+      relativeOutputPath = relativeOutputPath.slice(1);
+    }
+    ignorePatterns.push(relativeOutputPath);
   }
 
   // Add custom ignore patterns

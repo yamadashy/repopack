@@ -1,5 +1,6 @@
 import path from 'node:path';
 import * as fs from 'node:fs/promises';
+import process from 'node:process';
 import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { globby } from 'globby';
 import { minimatch } from 'minimatch';
@@ -29,7 +30,7 @@ describe('fileSearcher', () => {
           customPatterns: [],
         },
       });
-      const filePatterns = await getIgnoreFilePatterns('/mock/root', mockConfig);
+      const filePatterns = await getIgnoreFilePatterns(mockConfig);
       expect(filePatterns).toEqual(['**/.gitignore', '**/.repopackignore']);
     });
 
@@ -42,7 +43,7 @@ describe('fileSearcher', () => {
           customPatterns: [],
         },
       });
-      const filePatterns = await getIgnoreFilePatterns('/mock/root', mockConfig);
+      const filePatterns = await getIgnoreFilePatterns(mockConfig);
       expect(filePatterns).toEqual(['**/.repopackignore']);
     });
   });
@@ -57,7 +58,7 @@ describe('fileSearcher', () => {
         },
       });
 
-      const patterns = await getIgnorePatterns(mockConfig);
+      const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
       expect(patterns.length).toBeGreaterThan(0);
       expect(patterns).toContain('node_modules/**');
@@ -72,9 +73,9 @@ describe('fileSearcher', () => {
         },
       });
 
-      const patterns = await getIgnorePatterns(mockConfig);
+      const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
-      expect(patterns).toEqual(['*.custom', 'temp/']);
+      expect(patterns).toEqual(['repopack-output.txt', '*.custom', 'temp/']);
     });
 
     test('should combine default and custom patterns', async () => {
@@ -86,7 +87,7 @@ describe('fileSearcher', () => {
         },
       });
 
-      const patterns = await getIgnorePatterns(mockConfig);
+      const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
       expect(patterns).toContain('node_modules/**');
       expect(patterns).toContain('*.custom');
