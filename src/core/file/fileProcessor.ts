@@ -35,5 +35,12 @@ export const processContent = async (
 
   processedContent = processedContent.trim();
 
+  if (config.output.showLineNumbers) {
+    const lines = processedContent.split('\n');
+    const padding = lines.length.toString().length;
+    const numberedLines = lines.map((line, index) => `${(index + 1).toString().padStart(padding)}: ${line}`);
+    processedContent = numberedLines.join('\n');
+  }
+
   return processedContent;
 };
