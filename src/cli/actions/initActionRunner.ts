@@ -1,25 +1,33 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { intro, outro, text, select, cancel, group } from '@clack/prompts';
+import { intro, outro, text, select, confirm, cancel, group } from '@clack/prompts';
 import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
 import { defaultConfig } from '../../config/defaultConfig.js';
+import { getGlobalDirectory } from '../../config/globalDirectory.js';
 
-export const runInitAction = async (rootDir: string): Promise<void> => {
-  const configPath = path.resolve(rootDir, 'repopack.config.json');
+export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise<void> => {
+  const configPath = isGlobal
+    ? path.resolve(getGlobalDirectory(), 'repopack.config.json')
+    : path.resolve(rootDir, 'repopack.config.json');
 
   try {
     // Check if the config file already exists
     await fs.access(configPath);
-    logger.warn('A repopack.config.json file already exists in this directory.');
-    logger.warn('If you want to create a new one, please delete or rename the existing file first.');
-    return;
+    const overwrite = await confirm({
+      message: `A ${isGlobal ? 'global ' : ''}repopack.config.json file already exists. Do you want to overwrite it?`,
+    });
+
+    if (!overwrite) {
+      logger.info('Configuration cancelled. Existing file will not be modified.');
+      return;
+    }
   } catch {
     // File doesn't exist, so we can proceed
   }
 
-  intro(pc.bold(pc.cyan('Welcome to Repopack!')));
+  intro(pc.bold(pc.cyan(`Welcome to Repopack ${isGlobal ? 'Global ' : ''}Configuration!`)));
 
   try {
     let isCancelled = false;
@@ -64,10 +72,13 @@ export const runInitAction = async (rootDir: string): Promise<void> => {
       },
     };
 
+    await fs.mkdir(path.dirname(configPath), { recursive: true });
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     outro(
-      pc.cyan('Configuration complete! repopack.config.json has been created.\n') +
+      pc.cyan(
+        `Configuration complete! ${isGlobal ? 'Global r' : 'r'}epopack.config.json has been created at ${configPath}.\n`,
+      ) +
         'You can now run ' +
         pc.bold('repopack') +
         ' to pack your repository.\n\n' +
@@ -75,6 +86,6 @@ export const runInitAction = async (rootDir: string): Promise<void> => {
         'You can always edit repopack.config.json manually for more advanced configurations.',
     );
   } catch (error) {
-    logger.error('Failed to create repopack.config.json:', error);
+    logger.error(`Failed to create ${isGlobal ? 'global ' : ''}repopack.config.json:`, error);
   }
 };
