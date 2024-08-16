@@ -1,25 +1,31 @@
 import * as fs from 'node:fs/promises';
 import { Stats } from 'node:fs';
+import path from 'node:path';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
 import { RepopackConfigFile, RepopackConfigCli } from '../../src/config/configTypes.js';
 import { logger } from '../../src/shared/logger.js';
+import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
 
-vi.mock('fs/promises');
-vi.mock('../../src/utils/logger', () => ({
+vi.mock('node:fs/promises');
+vi.mock('../../src/shared/logger', () => ({
   logger: {
     trace: vi.fn(),
     note: vi.fn(),
   },
 }));
+vi.mock('../../src/config/globalDirectory', () => ({
+  getGlobalDirectory: vi.fn(),
+}));
 
 describe('configLoader', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    process.env = {};
   });
 
   describe('loadFileConfig', () => {
-    test('should load and parse a valid config file', async () => {
+    test('should load and parse a valid local config file', async () => {
       const mockConfig = {
         output: { filePath: 'test-output.txt' },
         ignore: { useDefaultPatterns: true },
@@ -31,9 +37,25 @@ describe('configLoader', () => {
       expect(result).toEqual(mockConfig);
     });
 
+    test('should load global config when local config is not found', async () => {
+      const mockGlobalConfig = {
+        output: { filePath: 'global-output.txt' },
+        ignore: { useDefaultPatterns: false },
+      };
+      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repopack');
+      vi.mocked(fs.stat)
+        .mockRejectedValueOnce(new Error('File not found')) // Local config
+        .mockResolvedValueOnce({ isFile: () => true } as Stats); // Global config
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockGlobalConfig));
+
+      const result = await loadFileConfig(process.cwd(), null);
+      expect(result).toEqual(mockGlobalConfig);
+      expect(fs.readFile).toHaveBeenCalledWith(path.join('/global/repopack', 'repopack.config.json'), 'utf-8');
+    });
+
     test('should return an empty object if no config file is found', async () => {
       const loggerSpy = vi.spyOn(logger, 'note').mockImplementation(vi.fn());
-
+      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repopack');
       vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
 
       const result = await loadFileConfig(process.cwd(), null);

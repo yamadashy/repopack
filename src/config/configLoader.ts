@@ -2,11 +2,16 @@ import path from 'node:path';
 import * as fs from 'node:fs/promises';
 import { logger } from '../shared/logger.js';
 import { RepopackError } from '../shared/errorHandler.js';
-import { RepopackConfigCli as RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
+import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
 import { defaultConfig } from './defaultConfig.js';
 import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
+import { getGlobalDirectory } from './globalDirectory.js';
 
 const defaultConfigPath = 'repopack.config.json';
+
+const getGlobalConfigPath = () => {
+  return path.join(getGlobalDirectory(), 'repopack.config.json');
+};
 
 export const loadFileConfig = async (rootDir: string, configPath: string | null): Promise<RepopackConfigFile> => {
   let useDefaultConfig = false;
@@ -17,38 +22,56 @@ export const loadFileConfig = async (rootDir: string, configPath: string | null)
 
   const fullPath = path.resolve(rootDir, configPath);
 
-  logger.trace('Loading config from:', fullPath);
+  logger.trace('Loading local config from:', fullPath);
 
-  // Check file existence
-  const isFileExists = await fs
+  // Check local file existence
+  const isLocalFileExists = await fs
     .stat(fullPath)
     .then((stats) => stats.isFile())
     .catch(() => false);
-  if (!isFileExists) {
-    if (useDefaultConfig) {
-      logger.note(
-        `No custom config found at ${configPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
-      );
-      return {};
-    } else {
-      throw new RepopackError(`Config file not found at ${configPath}`);
-    }
+
+  if (isLocalFileExists) {
+    return await loadAndValidateConfig(fullPath);
   }
 
+  if (useDefaultConfig) {
+    // Try to load global config
+    const globalConfigPath = getGlobalConfigPath();
+    logger.trace('Loading global config from:', globalConfigPath);
+
+    const isGlobalFileExists = await fs
+      .stat(globalConfigPath)
+      .then((stats) => stats.isFile())
+      .catch(() => false);
+
+    if (isGlobalFileExists) {
+      return await loadAndValidateConfig(globalConfigPath);
+    }
+
+    logger.note(
+      `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
+    );
+    return {};
+  } else {
+    throw new RepopackError(`Config file not found at ${configPath}`);
+  }
+};
+
+const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFile> => {
   try {
-    const fileContent = await fs.readFile(fullPath, 'utf-8');
+    const fileContent = await fs.readFile(filePath, 'utf-8');
     const config = JSON.parse(fileContent);
     validateConfig(config);
     return config;
   } catch (error) {
     if (error instanceof RepopackConfigValidationError) {
-      throw new RepopackError(`Invalid configuration in ${configPath}: ${error.message}`);
+      throw new RepopackError(`Invalid configuration in ${filePath}: ${error.message}`);
     } else if (error instanceof SyntaxError) {
-      throw new RepopackError(`Invalid JSON in config file ${configPath}: ${error.message}`);
+      throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
     } else if (error instanceof Error) {
-      throw new RepopackError(`Error loading config from ${configPath}: ${error.message}`);
+      throw new RepopackError(`Error loading config from ${filePath}: ${error.message}`);
     } else {
-      throw new RepopackError(`Error loading config from ${configPath}`);
+      throw new RepopackError(`Error loading config from ${filePath}`);
     }
   }
 };

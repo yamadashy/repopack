@@ -284,6 +284,19 @@ Example configuration:
 }
 ```
 
+### Global Configuration
+To create a global configuration file:
+  
+```bash
+repopack --init --global
+```
+
+The global configuration file will be created in:
+- Windows: `%LOCALAPPDATA%\Repopack\repopack.config.json`
+- macOS/Linux: `$XDG_CONFIG_HOME/repopack/repopack.config.json` or `~/.config/repopack/repopack.config.json`
+
+Note: Local configuration (if present) takes precedence over global configuration.
+
 ### Include and Ignore
 #### Include Patterns
 Repopack now supports specifying files to include using glob patterns. This allows for more flexible and powerful file selection:

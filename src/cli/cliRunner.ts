@@ -18,6 +18,7 @@ export interface CliOptions extends OptionValues {
   outputShowLineNumbers?: boolean;
   style?: RepopackOutputStyle;
   init?: boolean;
+  global?: boolean;
 }
 
 export async function run() {
@@ -38,6 +39,7 @@ export async function run() {
       .option('--style <type>', 'specify the output style (plain or xml)')
       .option('--verbose', 'enable verbose logging for detailed output')
       .option('--init', 'initialize a new repopack.config.json file')
+      .option('--global', 'use global configuration (only applicable with --init)')
       .action((directory = '.', options: CliOptions) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);
@@ -53,7 +55,7 @@ const executeAction = async (directory: string, cwd: string, options: CliOptions
   }
 
   if (options.init) {
-    await runInitAction(cwd);
+    await runInitAction(cwd, options.global || false);
     return;
   }
 
