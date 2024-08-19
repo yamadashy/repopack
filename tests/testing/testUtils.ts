@@ -2,11 +2,28 @@ import os from 'node:os';
 import { RepopackConfigMerged } from '../../src/config/configTypes.js';
 import { defaultConfig } from '../../src/config/defaultConfig.js';
 
-export const createMockConfig = (config: Partial<RepopackConfigMerged> = {}): RepopackConfigMerged => {
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? DeepPartial<U>[]
+    : T[P] extends readonly (infer U)[]
+      ? readonly DeepPartial<U>[]
+      : T[P] extends object
+        ? DeepPartial<T[P]>
+        : T[P];
+};
+
+export const createMockConfig = (config: DeepPartial<RepopackConfigMerged> = {}): RepopackConfigMerged => {
   return {
-    output: config.output || defaultConfig.output,
-    ignore: config.ignore || defaultConfig.ignore,
-    include: config.include || defaultConfig.include,
+    output: {
+      ...defaultConfig.output,
+      ...config.output,
+    },
+    ignore: {
+      ...defaultConfig.ignore,
+      ...config.ignore,
+      customPatterns: [...(defaultConfig.ignore.customPatterns || []), ...(config.ignore?.customPatterns || [])],
+    },
+    include: [...(defaultConfig.include || []), ...(config.include || [])],
   };
 };
 
