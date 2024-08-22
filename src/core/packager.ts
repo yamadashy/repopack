@@ -1,8 +1,8 @@
-import os from 'node:os';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import pMap from 'p-map';
 import { RepopackConfigMerged } from '../config/configTypes.js';
+import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
 import { SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheckRunner.js';
 import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
@@ -73,7 +73,7 @@ export const pack = async (
       return { path: file.path, charCount, tokenCount };
     },
     {
-      concurrency: os.cpus().length,
+      concurrency: getProcessConcurrency(),
     },
   );
 

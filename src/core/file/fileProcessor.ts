@@ -1,6 +1,6 @@
-import os from 'node:os';
 import pMap from 'p-map';
 import { RepopackConfigMerged } from '../../config/configTypes.js';
+import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 import { getFileManipulator } from './fileManipulater.js';
 import { ProcessedFile, RawFile } from './fileTypes.js';
 
@@ -12,7 +12,7 @@ export const processFiles = async (rawFiles: RawFile[], config: RepopackConfigMe
       content: await processContent(rawFile.content, rawFile.path, config),
     }),
     {
-      concurrency: os.cpus().length,
+      concurrency: getProcessConcurrency(),
     },
   );
 };

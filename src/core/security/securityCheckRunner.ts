@@ -1,10 +1,10 @@
-import os from 'node:os';
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
 import { RawFile } from '../file/fileTypes.js';
+import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 
 export interface SuspiciousFileResult {
   filePath: string;
@@ -27,7 +27,7 @@ export const runSecurityCheck = async (rawFiles: RawFile[]): Promise<SuspiciousF
       return null;
     },
     {
-      concurrency: os.cpus().length,
+      concurrency: getProcessConcurrency(),
     },
   );
 
