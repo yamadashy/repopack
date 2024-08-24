@@ -37,15 +37,8 @@ class StripCommentsManipulator extends BaseManipulator {
 
 class PythonManipulator extends BaseManipulator {
   removeComments(content: string): string {
-    // First, use strip-comments to remove standard comments
-    let result = strip(content, { language: 'python', preserveNewlines: true });
-
-    // Then, remove triple-quote comments
-    result = result.replace(/'''[\s\S]*?'''/g, '');
-    result = result.replace(/"""[\s\S]*?"""/g, '');
-
-    // Then, remove inline comments
-    result = result.replace(/(?<!\\)#.*$/gm, '');
+    // Remove single-line comments
+    const result = content.replace(/(?<!\\)#.*$/gm, '');
 
     return rtrimLines(result);
   }

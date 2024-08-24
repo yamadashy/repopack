@@ -1,7 +1,7 @@
 import pMap from 'p-map';
 import { RepopackConfigMerged } from '../../config/configTypes.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
-import { getFileManipulator } from './fileManipulater.js';
+import { getFileManipulator } from './fileManipulator.js';
 import { ProcessedFile, RawFile } from './fileTypes.js';
 
 export const processFiles = async (rawFiles: RawFile[], config: RepopackConfigMerged): Promise<ProcessedFile[]> => {

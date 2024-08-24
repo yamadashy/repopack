@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { getFileManipulator } from '../../../src/core/file/fileManipulater.js';
+import { getFileManipulator } from '../../../src/core/file/fileManipulator.js';
 
 describe('fileManipulator', () => {
   const testCases = [
@@ -156,21 +156,23 @@ describe('fileManipulator', () => {
         # Single line comment
         def test():
           '''
-          Multi-line comment
+          docstring
           '''
           return True
         """
-        Another multi-line comment
+        Another docstring
         """
       `,
       expected: `
 
         def test():
-
+          '''
+          docstring
+          '''
           return True
-
-
-
+        """
+        Another docstring
+        """
 `,
     },
     {
