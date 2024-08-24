@@ -1,10 +1,10 @@
 import { expect, describe, it, vi } from 'vitest';
 import { processFiles, processContent } from '../../../src/core/file/fileProcessor.js';
-import { getFileManipulator } from '../../../src/core/file/fileManipulater.js';
+import { getFileManipulator } from '../../../src/core/file/fileManipulator.js';
 import { RawFile } from '../../../src/core/file/fileTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
-vi.mock('../../../src/core/file/fileManipulater');
+vi.mock('../../../src/core/file/fileManipulator');
 
 describe('fileProcessor', () => {
   describe('processFiles', () => {
