@@ -4,15 +4,12 @@ import { logger } from '../shared/logger.js';
 import { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 
 export const printSummary = (
-  rootDir: string,
   totalFiles: number,
   totalCharacters: number,
   totalTokens: number,
   outputPath: string,
   suspiciousFilesResults: SuspiciousFileResult[],
 ) => {
-  const relativeOutputPath = path.relative(rootDir, outputPath);
-
   let securityCheckMessage = '';
   if (suspiciousFilesResults.length > 0) {
     securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded`);
@@ -25,7 +22,7 @@ export const printSummary = (
   logger.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toString())}`);
   logger.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toString())}`);
   logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toString())}`);
-  logger.log(`${pc.white('       Output:')} ${pc.white(relativeOutputPath)}`);
+  logger.log(`${pc.white('       Output:')} ${pc.white(outputPath)}`);
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
 

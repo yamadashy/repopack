@@ -1,5 +1,4 @@
 import path from 'node:path';
-import pc from 'picocolors';
 import { PackResult, pack } from '../../core/packager.js';
 import {
   RepopackConfigCli,
@@ -10,16 +9,19 @@ import {
 import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
 import { logger } from '../../shared/logger.js';
 import { CliOptions } from '../cliRunner.js';
-import { getVersion } from '../../core/file/packageJsonParser.js';
 import Spinner from '../cliSpinner.js';
 import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from '../cliPrinter.js';
 
-export const runDefaultAction = async (directory: string, cwd: string, options: CliOptions): Promise<void> => {
-  const version = await getVersion();
+export interface DefaultActionRunnerResult {
+  packResult: PackResult;
+  config: RepopackConfigMerged;
+}
 
-  logger.log(pc.dim(`\n📦 Repopack v${version}\n`));
-
-  logger.setVerbose(options.verbose || false);
+export const runDefaultAction = async (
+  directory: string,
+  cwd: string,
+  options: CliOptions,
+): Promise<DefaultActionRunnerResult> => {
   logger.trace('Loaded CLI options:', options);
 
   // Load the config file
@@ -49,12 +51,9 @@ export const runDefaultAction = async (directory: string, cwd: string, options: 
   logger.trace('CLI config:', cliConfig);
 
   // Merge default, file, and CLI configs
-  const config: RepopackConfigMerged = mergeConfigs(fileConfig, cliConfig);
+  const config: RepopackConfigMerged = mergeConfigs(cwd, fileConfig, cliConfig);
 
   logger.trace('Merged config:', config);
-
-  // Ensure the output file is always in the current working directory
-  config.output.filePath = path.resolve(cwd, path.basename(config.output.filePath));
 
   const targetPath = path.resolve(directory);
 
@@ -82,7 +81,6 @@ export const runDefaultAction = async (directory: string, cwd: string, options: 
   logger.log('');
 
   printSummary(
-    cwd,
     packResult.totalFiles,
     packResult.totalCharacters,
     packResult.totalTokens,
@@ -92,4 +90,9 @@ export const runDefaultAction = async (directory: string, cwd: string, options: 
   logger.log('');
 
   printCompletion();
+
+  return {
+    packResult,
+    config,
+  };
 };

@@ -76,7 +76,12 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFi
   }
 };
 
-export const mergeConfigs = (fileConfig: RepopackConfigFile, cliConfig: RepopackConfigCli): RepopackConfigMerged => ({
+export const mergeConfigs = (
+  cwd: string,
+  fileConfig: RepopackConfigFile,
+  cliConfig: RepopackConfigCli,
+): RepopackConfigMerged => ({
+  cwd,
   output: {
     ...defaultConfig.output,
     ...fileConfig.output,

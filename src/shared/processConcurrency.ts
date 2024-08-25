@@ -9,5 +9,6 @@ export const getProcessConcurrency = () => {
     return 1;
   }
 
-  return cpuCount;
+  // Use all available CPUs except one
+  return Math.max(1, cpuCount - 1);
 };

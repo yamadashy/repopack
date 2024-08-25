@@ -73,6 +73,14 @@ To exclude specific files or directories:
 repopack --ignore "**/*.log,tmp/"
 ```
 
+To pack a remote repository:
+```bash
+repopack --remote https://github.com/yamadashy/repopack
+
+# You can also use GitHub shorthand:
+repopack --remote yamadashy/repopack
+```
+
 To initialize a new configuration file (`repopack.config.json`):
 
 ```bash
@@ -212,6 +220,7 @@ This means that the XML output from Repopack is not just a different format, but
 - `--style <style>`: Specify the output style (`plain` or `xml`)
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
+- `--remote <url>`: Process a remote Git repository
 - `--verbose`: Enable verbose logging
 
 Examples:
@@ -220,6 +229,7 @@ repopack -o custom-output.txt
 repopack -i "*.log,tmp" -v
 repopack -c ./custom-config.json
 repopack --style xml
+repopack --remote https://github.com/user/repo.git
 npx repopack src
 ```
 
@@ -237,6 +247,22 @@ yarn global upgrade repopack
 
 Using `npx repopack` is generally more convenient as it always uses the latest version.
 
+
+### Remote Repository Processing
+
+Repopack supports processing remote Git repositories without the need for manual cloning. This feature allows you to quickly analyze any public Git repository with a single command.
+
+To process a remote repository, use the `--remote` option followed by the repository URL:
+
+```bash
+repopack --remote https://github.com/user/repo.git
+```
+
+You can also use GitHub's shorthand format:
+
+```bash
+repopack --remote user/repo
+```
 
 
 ## ⚙️ Configuration

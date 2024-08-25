@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import process from 'node:process';
 import { expect, test, describe, beforeEach, afterEach } from 'vitest';
 import { pack } from '../../src/core/packager.js';
 import { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
@@ -41,7 +42,7 @@ describe.runIf(!isWindows)('packager integration', () => {
       const actualOutputPath = path.join(tempDir, output);
 
       const fileConfig: RepopackConfigFile = await loadFileConfig(inputDir, null);
-      const mergedConfig: RepopackConfigMerged = mergeConfigs(fileConfig, {
+      const mergedConfig: RepopackConfigMerged = mergeConfigs(process.cwd(), fileConfig, {
         output: {
           filePath: actualOutputPath,
           style: (config.output?.style || 'plain') as RepopackOutputStyle,

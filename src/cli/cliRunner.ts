@@ -1,11 +1,14 @@
 import process from 'node:process';
+import pc from 'picocolors';
 import { program, OptionValues } from 'commander';
 import { RepopackOutputStyle } from '../config/configTypes.js';
 import { getVersion } from '../core/file/packageJsonParser.js';
 import { handleError } from '../shared/errorHandler.js';
+import { logger } from '../shared/logger.js';
 import { runInitAction } from './actions/initActionRunner.js';
 import { runVersionAction } from './actions/versionActionRunner.js';
 import { runDefaultAction } from './actions/defaultActionRunner.js';
+import { runRemoteAction } from './actions/remoteActionRunner.js';
 
 export interface CliOptions extends OptionValues {
   version?: boolean;
@@ -19,6 +22,7 @@ export interface CliOptions extends OptionValues {
   style?: RepopackOutputStyle;
   init?: boolean;
   global?: boolean;
+  remote?: string;
 }
 
 export async function run() {
@@ -40,6 +44,7 @@ export async function run() {
       .option('--verbose', 'enable verbose logging for detailed output')
       .option('--init', 'initialize a new repopack.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
+      .option('--remote <url>', 'process a remote Git repository')
       .action((directory = '.', options: CliOptions) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);
@@ -49,13 +54,23 @@ export async function run() {
 }
 
 const executeAction = async (directory: string, cwd: string, options: CliOptions) => {
+  logger.setVerbose(options.verbose || false);
+
   if (options.version) {
     await runVersionAction();
     return;
   }
 
+  const version = await getVersion();
+  logger.log(pc.dim(`\n📦 Repopack v${version}\n`));
+
   if (options.init) {
     await runInitAction(cwd, options.global || false);
+    return;
+  }
+
+  if (options.remote) {
+    await runRemoteAction(options.remote, options);
     return;
   }
 
