@@ -37,7 +37,6 @@ class StripCommentsManipulator extends BaseManipulator {
 
 class PythonManipulator extends BaseManipulator {
   removeComments(content: string): string {
-
     // Remove single-line comments
     let result = content.replace(/(?<!\\)#.*$/gm, '');
 
@@ -49,7 +48,10 @@ class PythonManipulator extends BaseManipulator {
   }
 
   private rtrimLines(content: string): string {
-    return content.split('\n').map(line => line.trimEnd()).join('\n');
+    return content
+      .split('\n')
+      .map((line) => line.trimEnd())
+      .join('\n');
   }
 }
 
