@@ -3,6 +3,7 @@ import path from 'node:path';
 import pMap from 'p-map';
 import { RepopackConfigMerged } from '../config/configTypes.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
+import { logger } from '../shared/logger.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
 import { SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheckRunner.js';
 import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
@@ -57,8 +58,9 @@ export const pack = async (
   // Generate output
   const output = await deps.generateOutput(config, processedFiles, safeFilePaths);
 
-  // Write output to file
-  const outputPath = path.resolve(rootDir, config.output.filePath);
+  // Write output to file. path is relative to the cwd
+  const outputPath = path.resolve(config.cwd, config.output.filePath);
+  logger.trace(`Writing output to: ${outputPath}`);
   await fs.writeFile(outputPath, output);
 
   // Setup token counter

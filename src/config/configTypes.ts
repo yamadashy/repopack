@@ -40,4 +40,8 @@ export type RepopackConfigFile = RepopackConfigBase;
 
 export type RepopackConfigCli = RepopackConfigBase;
 
-export type RepopackConfigMerged = RepopackConfigDefault & RepopackConfigFile & RepopackConfigCli;
+export type RepopackConfigMerged = RepopackConfigDefault &
+  RepopackConfigFile &
+  RepopackConfigCli & {
+    cwd: string;
+  };

@@ -62,20 +62,19 @@ export const getIgnorePatterns = async (rootDir: string, config: RepopackConfigM
 
   // Add default ignore patterns
   if (config.ignore.useDefaultPatterns) {
+    logger.trace('Adding default ignore patterns');
     ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
   }
 
   // Add repopack output file
   if (config.output.filePath) {
-    let relativeOutputPath = config.output.filePath.replace(rootDir, '');
-    if (relativeOutputPath.startsWith('/')) {
-      relativeOutputPath = relativeOutputPath.slice(1);
-    }
-    ignorePatterns.push(relativeOutputPath);
+    logger.trace('Adding output file to ignore patterns:', config.output.filePath);
+    ignorePatterns.push(config.output.filePath);
   }
 
   // Add custom ignore patterns
   if (config.ignore.customPatterns) {
+    logger.trace('Adding default custom ignore patterns: ', config.ignore.customPatterns);
     ignorePatterns = [...ignorePatterns, ...config.ignore.customPatterns];
   }
 

@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import process from 'node:process';
 import { Stats } from 'node:fs';
 import path from 'node:path';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
@@ -83,7 +84,7 @@ describe('configLoader', () => {
         ignore: { customPatterns: ['cli-ignore'] },
       };
 
-      const result = mergeConfigs(fileConfig, cliConfig);
+      const result = mergeConfigs(process.cwd(), fileConfig, cliConfig);
 
       expect(result.output.filePath).toBe('cli-output.txt');
       expect(result.ignore.useDefaultPatterns).toBe(true);

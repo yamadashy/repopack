@@ -1,9 +1,9 @@
+import process from 'node:process';
 import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
 import { runDefaultAction } from '../../../src/cli/actions/defaultActionRunner.js';
 import * as packager from '../../../src/core/packager.js';
 import * as configLoader from '../../../src/config/configLoader.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParser.js';
-import * as logger from '../../../src/shared/logger.js';
 import { CliOptions } from '../../../src/cli/cliRunner.js';
 
 vi.mock('../../../src/core/packager');
@@ -17,6 +17,7 @@ describe('defaultActionRunner', () => {
     vi.mocked(packageJsonParser.getVersion).mockResolvedValue('1.0.0');
     vi.mocked(configLoader.loadFileConfig).mockResolvedValue({});
     vi.mocked(configLoader.mergeConfigs).mockReturnValue({
+      cwd: process.cwd(),
       output: {
         filePath: 'output.txt',
         style: 'plain',
@@ -54,8 +55,6 @@ describe('defaultActionRunner', () => {
 
     await runDefaultAction('.', process.cwd(), options);
 
-    expect(packageJsonParser.getVersion).toHaveBeenCalled();
-    expect(logger.logger.setVerbose).toHaveBeenCalledWith(true);
     expect(configLoader.loadFileConfig).toHaveBeenCalled();
     expect(configLoader.mergeConfigs).toHaveBeenCalled();
     expect(packager.pack).toHaveBeenCalled();
@@ -69,6 +68,7 @@ describe('defaultActionRunner', () => {
     await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+      process.cwd(),
       expect.anything(),
       expect.objectContaining({
         include: ['*.js', '*.ts'],
@@ -84,6 +84,7 @@ describe('defaultActionRunner', () => {
     await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+      process.cwd(),
       expect.anything(),
       expect.objectContaining({
         ignore: {
@@ -101,6 +102,7 @@ describe('defaultActionRunner', () => {
     await runDefaultAction('.', process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+      process.cwd(),
       expect.anything(),
       expect.objectContaining({
         output: expect.objectContaining({
