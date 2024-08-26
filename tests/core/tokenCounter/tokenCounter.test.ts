@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { TokenCounter } from '../../../src/core/tokenCounter/tokenCounter.js';
 
 describe('tokenCounter', () => {
@@ -21,10 +21,10 @@ describe('tokenCounter', () => {
       { input: 'Multi-line\ntext\nshould\nwork\ntoo.', expectedTokens: 11 },
     ];
 
-    testCases.forEach(({ input, expectedTokens }) => {
+    for (const { input, expectedTokens } of testCases) {
       const tokenCount = tokenCounter.countTokens(input);
       expect(tokenCount).toBe(expectedTokens);
-    });
+    }
   });
 
   test('should handle empty input', () => {

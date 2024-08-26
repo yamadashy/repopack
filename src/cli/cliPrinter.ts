@@ -1,7 +1,7 @@
 import path from 'node:path';
 import pc from 'picocolors';
+import type { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 import { logger } from '../shared/logger.js';
-import { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 
 export const printSummary = (
   totalFiles: number,
@@ -31,13 +31,13 @@ export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: Susp
   logger.log(pc.dim('──────────────────'));
 
   if (suspiciousFilesResults.length === 0) {
-    logger.log(pc.green('✔') + ' ' + pc.white('No suspicious files detected.'));
+    logger.log(`${pc.green('✔')} ${pc.white('No suspicious files detected.')}`);
   } else {
     logger.log(pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded from the output:`));
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
       const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
       logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
-      logger.log(pc.dim('   - ' + suspiciousFilesResult.messages.join('\n   - ')));
+      logger.log(pc.dim(`   - ${suspiciousFilesResult.messages.join('\n   - ')}`));
     });
     logger.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
     logger.log(pc.yellow('Please review these files for potential sensitive information.'));

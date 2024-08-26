@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { intro, outro, text, select, confirm, cancel, group } from '@clack/prompts';
+import { cancel, confirm, group, intro, outro, select, text } from '@clack/prompts';
 import pc from 'picocolors';
-import { logger } from '../../shared/logger.js';
-import { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
+import type { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
 import { defaultConfig } from '../../config/defaultConfig.js';
 import { getGlobalDirectory } from '../../config/globalDirectory.js';
+import { logger } from '../../shared/logger.js';
 
 export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise<void> => {
   const configPath = isGlobal
@@ -76,14 +76,9 @@ export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     outro(
-      pc.cyan(
-        `Configuration complete! ${isGlobal ? 'Global r' : 'r'}epopack.config.json has been created at ${configPath}.\n`,
-      ) +
-        'You can now run ' +
-        pc.bold('repopack') +
-        ' to pack your repository.\n\n' +
-        pc.yellow('Tip: ') +
-        'You can always edit repopack.config.json manually for more advanced configurations.',
+      `${pc.cyan(
+        `Configuration complete! ${isGlobal ? 'Global ' : ''}repopack.config.json has been created at ${configPath}.\n`,
+      )}You can now run ${pc.bold('repopack')} to pack your repository.\n\n${pc.yellow('Tip: ')}You can always edit repopack.config.json manually for more advanced configurations.`,
     );
   } catch (error) {
     logger.error(`Failed to create ${isGlobal ? 'global ' : ''}repopack.config.json:`, error);

@@ -1,6 +1,6 @@
-import { expect, test, describe } from 'vitest';
 import type { SecretLintCoreConfig } from '@secretlint/types';
-import { runSecretLint, createSecretLintConfig } from '../../../src/core/security/securityCheckRunner.js';
+import { describe, expect, test } from 'vitest';
+import { createSecretLintConfig, runSecretLint } from '../../../src/core/security/securityCheckRunner.js';
 
 describe('secretLintRunner', () => {
   const config: SecretLintCoreConfig = createSecretLintConfig();

@@ -1,6 +1,6 @@
 import os from 'node:os';
 import process from 'node:process';
-import { RepopackConfigMerged } from '../../src/config/configTypes.js';
+import type { RepopackConfigMerged } from '../../src/config/configTypes.js';
 import { defaultConfig } from '../../src/config/defaultConfig.js';
 
 type DeepPartial<T> = {

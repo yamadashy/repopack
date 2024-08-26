@@ -1,16 +1,16 @@
 import path from 'node:path';
-import { PackResult, pack } from '../../core/packager.js';
-import {
+import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
+import type {
   RepopackConfigCli,
   RepopackConfigFile,
   RepopackConfigMerged,
   RepopackOutputStyle,
 } from '../../config/configTypes.js';
-import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
+import { type PackResult, pack } from '../../core/packager.js';
 import { logger } from '../../shared/logger.js';
-import { CliOptions } from '../cliRunner.js';
+import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrinter.js';
+import type { CliOptions } from '../cliRunner.js';
 import Spinner from '../cliSpinner.js';
-import { printSummary, printTopFiles, printCompletion, printSecurityCheck } from '../cliPrinter.js';
 
 export interface DefaultActionRunnerResult {
   packResult: PackResult;

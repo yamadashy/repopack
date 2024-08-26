@@ -1,7 +1,7 @@
 import { globby } from 'globby';
-import { logger } from '../../shared/logger.js';
 import type { RepopackConfigMerged } from '../../config/configTypes.js';
 import { defaultIgnoreList } from '../../config/defaultIgnore.js';
+import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSorter.js';
 
 export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {

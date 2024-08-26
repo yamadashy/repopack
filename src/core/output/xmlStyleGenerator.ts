@@ -1,4 +1,4 @@
-import { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
 
 export const generateXmlStyle = (data: OutputGeneratorContext): string => {
   const { generationDate, treeString, processedFiles, config } = data;
@@ -77,5 +77,5 @@ ${file.content}
 </repository_files>
 `;
 
-  return xml.trim() + '\n';
+  return `${xml.trim()}\n`;
 };

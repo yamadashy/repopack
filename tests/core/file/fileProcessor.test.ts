@@ -1,7 +1,7 @@
-import { expect, describe, it, vi } from 'vitest';
-import { processFiles, processContent } from '../../../src/core/file/fileProcessor.js';
+import { describe, expect, it, vi } from 'vitest';
 import { getFileManipulator } from '../../../src/core/file/fileManipulator.js';
-import { RawFile } from '../../../src/core/file/fileTypes.js';
+import { processContent, processFiles } from '../../../src/core/file/fileProcessor.js';
+import type { RawFile } from '../../../src/core/file/fileTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('../../../src/core/file/fileManipulator');

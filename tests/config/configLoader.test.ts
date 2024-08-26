@@ -1,12 +1,12 @@
+import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
-import process from 'node:process';
-import { Stats } from 'node:fs';
 import path from 'node:path';
-import { expect, test, describe, vi, beforeEach } from 'vitest';
+import process from 'node:process';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
-import { RepopackConfigFile, RepopackConfigCli } from '../../src/config/configTypes.js';
-import { logger } from '../../src/shared/logger.js';
+import type { RepopackConfigCli, RepopackConfigFile } from '../../src/config/configTypes.js';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
+import { logger } from '../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
 vi.mock('../../src/shared/logger', () => ({

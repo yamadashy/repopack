@@ -1,16 +1,16 @@
-import path from 'node:path';
 import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import process from 'node:process';
-import { expect, test, vi, describe, beforeEach } from 'vitest';
 import { globby } from 'globby';
 import { minimatch } from 'minimatch';
-import { createMockConfig, isWindows } from '../../testing/testUtils.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  getIgnoreFilePatterns,
   getIgnorePatterns,
   parseIgnoreContent,
-  getIgnoreFilePatterns,
   searchFiles,
 } from '../../../src/core/file/fileSearcher.js';
+import { createMockConfig, isWindows } from '../../testing/testUtils.js';
 
 vi.mock('fs/promises');
 vi.mock('globby');

@@ -1,4 +1,4 @@
-import { Tiktoken, get_encoding } from 'tiktoken';
+import { type Tiktoken, get_encoding } from 'tiktoken';
 
 export class TokenCounter {
   private encoding: Tiktoken;

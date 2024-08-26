@@ -1,12 +1,12 @@
+import { exec } from 'node:child_process';
+import * as fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import * as fs from 'node:fs/promises';
 import pc from 'picocolors';
-import { CliOptions } from '../cliRunner.js';
-import { logger } from '../../shared/logger.js';
 import { RepopackError } from '../../shared/errorHandler.js';
+import { logger } from '../../shared/logger.js';
+import type { CliOptions } from '../cliRunner.js';
 import Spinner from '../cliSpinner.js';
 import { runDefaultAction } from './defaultActionRunner.js';
 
@@ -57,7 +57,7 @@ const createTempDirectory = async (): Promise<string> => {
 };
 
 const cloneRepository = async (url: string, directory: string): Promise<void> => {
-  logger.log(`Clone repository: ${url} to temporary directory. ${pc.dim('path: ' + directory)}`);
+  logger.log(`Clone repository: ${url} to temporary directory. ${pc.dim(`path: ${directory}`)}`);
   logger.log('');
 
   try {

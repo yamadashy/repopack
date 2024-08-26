@@ -1,4 +1,4 @@
-import { RepopackConfigDefault } from './configTypes.js';
+import type { RepopackConfigDefault } from './configTypes.js';
 
 export const defaultConfig: RepopackConfigDefault = {
   output: {

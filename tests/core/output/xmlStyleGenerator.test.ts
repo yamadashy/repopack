@@ -1,7 +1,7 @@
-import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { createMockConfig } from '../../testing/testUtils.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { buildOutputGeneratorContext } from '../../../src/core/output/outputGenerator.js';
 import { generateXmlStyle } from '../../../src/core/output/xmlStyleGenerator.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('fs/promises');
 

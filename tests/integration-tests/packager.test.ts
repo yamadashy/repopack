@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises';
-import path from 'node:path';
 import os from 'node:os';
+import path from 'node:path';
 import process from 'node:process';
-import { expect, test, describe, beforeEach, afterEach } from 'vitest';
-import { pack } from '../../src/core/packager.js';
-import { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
+import type { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
+import { pack } from '../../src/core/packager.js';
 import { isWindows } from '../testing/testUtils.js';
 
 const fixturesDir = path.join(__dirname, 'fixtures', 'packager');
@@ -35,7 +35,7 @@ describe.runIf(!isWindows)('packager integration', () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  testCases.forEach(({ desc, input, output, config }) => {
+  for (const { desc, input, output, config } of testCases) {
     test(`should correctly pack ${desc}`, async () => {
       const inputDir = path.join(inputsDir, input);
       const expectedOutputPath = path.join(outputsDir, output);
@@ -68,5 +68,5 @@ describe.runIf(!isWindows)('packager integration', () => {
         console.log(`Updated expected output for ${desc}`);
       }
     });
-  });
+  }
 });

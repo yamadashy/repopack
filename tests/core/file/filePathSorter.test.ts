@@ -1,19 +1,19 @@
 import path from 'node:path';
-import { expect, test, describe } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { sortPaths } from '../../../src/core/file/filePathSorter.js';
 
 describe('filePathSorter', () => {
   const sep = path.sep;
 
   test('should sort directories before files', () => {
-    const input = [`file.txt`, `dir${sep}`, `another_file.js`, `another_dir${sep}`];
-    const expected = [`another_dir${sep}`, `dir${sep}`, `another_file.js`, `file.txt`];
+    const input = ['file.txt', `dir${sep}`, 'another_file.js', `another_dir${sep}`];
+    const expected = [`another_dir${sep}`, `dir${sep}`, 'another_file.js', 'file.txt'];
     expect(sortPaths(input)).toEqual(expected);
   });
 
   test('should sort subdirectories correctly', () => {
-    const input = [`dir${sep}subdir${sep}file.txt`, `dir${sep}file.js`, `dir${sep}subdir${sep}`, `file.txt`];
-    const expected = [`dir${sep}subdir${sep}`, `dir${sep}subdir${sep}file.txt`, `dir${sep}file.js`, `file.txt`];
+    const input = [`dir${sep}subdir${sep}file.txt`, `dir${sep}file.js`, `dir${sep}subdir${sep}`, 'file.txt'];
+    const expected = [`dir${sep}subdir${sep}`, `dir${sep}subdir${sep}file.txt`, `dir${sep}file.js`, 'file.txt'];
     expect(sortPaths(input)).toEqual(expected);
   });
 
@@ -33,8 +33,8 @@ describe('filePathSorter', () => {
       `src${sep}index.ts`,
       `tests${sep}utils${sep}a.ts`,
       `src${sep}utils${sep}b.ts`,
-      `package.json`,
-      `README.md`,
+      'package.json',
+      'README.md',
       `src${sep}components${sep}Component.tsx`,
     ];
     const expected = [
@@ -43,8 +43,8 @@ describe('filePathSorter', () => {
       `src${sep}utils${sep}file3.ts`,
       `src${sep}index.ts`,
       `tests${sep}utils${sep}a.ts`,
-      `package.json`,
-      `README.md`,
+      'package.json',
+      'README.md',
     ];
     expect(sortPaths(input)).toEqual(expected);
   });
@@ -56,8 +56,8 @@ describe('filePathSorter', () => {
   });
 
   test('should be case-insensitive', () => {
-    const input = [`B${sep}`, `a${sep}`, `C`, `d`];
-    const expected = [`a${sep}`, `B${sep}`, `C`, `d`];
+    const input = [`B${sep}`, `a${sep}`, 'C', 'd'];
+    const expected = [`a${sep}`, `B${sep}`, 'C', 'd'];
     expect(sortPaths(input)).toEqual(expected);
   });
 });

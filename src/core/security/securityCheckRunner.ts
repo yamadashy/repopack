@@ -1,10 +1,10 @@
-import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
+import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
-import { RawFile } from '../file/fileTypes.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
+import type { RawFile } from '../file/fileTypes.js';
 
 export interface SuspiciousFileResult {
   filePath: string;

@@ -1,10 +1,10 @@
-import path from 'node:path';
 import * as fs from 'node:fs/promises';
-import { logger } from '../shared/logger.js';
+import path from 'node:path';
 import { RepopackError } from '../shared/errorHandler.js';
-import { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
-import { defaultConfig } from './defaultConfig.js';
+import { logger } from '../shared/logger.js';
+import type { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
 import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
+import { defaultConfig } from './defaultConfig.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
 const defaultConfigPath = 'repopack.config.json';
@@ -13,8 +13,9 @@ const getGlobalConfigPath = () => {
   return path.join(getGlobalDirectory(), 'repopack.config.json');
 };
 
-export const loadFileConfig = async (rootDir: string, configPath: string | null): Promise<RepopackConfigFile> => {
+export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepopackConfigFile> => {
   let useDefaultConfig = false;
+  let configPath = argConfigPath;
   if (!configPath) {
     useDefaultConfig = true;
     configPath = defaultConfigPath;
@@ -52,9 +53,8 @@ export const loadFileConfig = async (rootDir: string, configPath: string | null)
       `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
     );
     return {};
-  } else {
-    throw new RepopackError(`Config file not found at ${configPath}`);
   }
+  throw new RepopackError(`Config file not found at ${configPath}`);
 };
 
 const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFile> => {
@@ -66,13 +66,14 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFi
   } catch (error) {
     if (error instanceof RepopackConfigValidationError) {
       throw new RepopackError(`Invalid configuration in ${filePath}: ${error.message}`);
-    } else if (error instanceof SyntaxError) {
-      throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
-    } else if (error instanceof Error) {
-      throw new RepopackError(`Error loading config from ${filePath}: ${error.message}`);
-    } else {
-      throw new RepopackError(`Error loading config from ${filePath}`);
     }
+    if (error instanceof SyntaxError) {
+      throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
+    }
+    if (error instanceof Error) {
+      throw new RepopackError(`Error loading config from ${filePath}: ${error.message}`);
+    }
+    throw new RepopackError(`Error loading config from ${filePath}`);
   }
 };
 

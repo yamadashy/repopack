@@ -1,10 +1,10 @@
 import process from 'node:process';
-import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runDefaultAction } from '../../../src/cli/actions/defaultActionRunner.js';
-import * as packager from '../../../src/core/packager.js';
+import type { CliOptions } from '../../../src/cli/cliRunner.js';
 import * as configLoader from '../../../src/config/configLoader.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParser.js';
-import { CliOptions } from '../../../src/cli/cliRunner.js';
+import * as packager from '../../../src/core/packager.js';
 
 vi.mock('../../../src/core/packager');
 vi.mock('../../../src/config/configLoader');

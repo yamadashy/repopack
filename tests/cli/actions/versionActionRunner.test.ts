@@ -1,4 +1,4 @@
-import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runVersionAction } from '../../../src/cli/actions/versionActionRunner.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParser.js';
 import { logger } from '../../../src/shared/logger.js';
