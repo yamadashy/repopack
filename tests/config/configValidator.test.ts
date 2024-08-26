@@ -1,5 +1,5 @@
-import { expect, test, describe } from 'vitest';
-import { validateConfig, RepopackConfigValidationError } from '../../src/config/configValidator.js';
+import { describe, expect, test } from 'vitest';
+import { RepopackConfigValidationError, validateConfig } from '../../src/config/configValidator.js';
 
 describe('configValidator', () => {
   test('should pass for a valid config', () => {

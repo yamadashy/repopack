@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
-    "lint": "eslint ./src ./tests --max-warnings 0 --cache --fix && tsc --noEmit && secretlint **/*",
+    "lint": "biome lint --write --unsafe ./src ./tests && biome format --write ./src ./tests && biome check --write --unsafe ./src ./tests && tsc --noEmit && secretlint **/*",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
     "cli-run": "npm run build && node --trace-warnings bin/repopack",
@@ -65,23 +65,13 @@
     "tiktoken": "^1.0.15"
   },
   "devDependencies": {
-    "@eslint/js": "^9.8.0",
-    "@types/eslint": "~8.56.10",
-    "@types/eslint__js": "~8.42.3",
-    "@types/eslint-config-prettier": "~6.11.3",
+    "@biomejs/biome": "^1.8.3",
     "@types/node": "^20.14.12",
     "@types/strip-comments": "^2.0.4",
     "@vitest/coverage-v8": "^2.0.4",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import-x": "^3.1.0",
-    "eslint-plugin-n": "^17.10.2",
-    "eslint-plugin-prefer-arrow-functions": "^3.3.2",
-    "eslint-plugin-prettier": "^5.2.1",
     "rimraf": "^6.0.1",
     "secretlint": "^8.2.4",
     "typescript": "^5.5.4",
-    "typescript-eslint": "^8.0.1",
     "vitest": "^2.0.4"
   },
   "engines": {

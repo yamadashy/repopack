@@ -1,6 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
-import { expect, describe, test, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
 import { isLinux, isMac, isWindows } from '../testing/testUtils.js';
 
@@ -24,7 +24,7 @@ describe('globalDirectory', () => {
   test.runIf(isWindows)('should use homedir if LOCALAPPDATA is not set on Windows', () => {
     vi.mocked(os.platform).mockReturnValue('win32');
     vi.mocked(os.homedir).mockReturnValue('C:\\Users\\TestUser');
-    delete process.env.LOCALAPPDATA;
+    process.env.LOCALAPPDATA = undefined;
 
     const result = getGlobalDirectory();
     expect(result).toBe(path.join('C:\\Users\\TestUser', 'AppData', 'Local', 'Repopack'));
@@ -41,7 +41,7 @@ describe('globalDirectory', () => {
   test.runIf(isMac)('should use ~/.config on Unix systems if XDG_CONFIG_HOME is not set', () => {
     vi.mocked(os.platform).mockReturnValue('darwin');
     vi.mocked(os.homedir).mockReturnValue('/Users/TestUser');
-    delete process.env.XDG_CONFIG_HOME;
+    process.env.XDG_CONFIG_HOME = undefined;
 
     const result = getGlobalDirectory();
     expect(result).toBe(path.join('/Users/TestUser', '.config', 'repopack'));

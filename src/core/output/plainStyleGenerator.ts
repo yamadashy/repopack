@@ -1,4 +1,4 @@
-import { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
 
 const PLAIN_SEPARATOR = '='.repeat(16);
 const PLAIN_LONG_SEPARATOR = '='.repeat(64);
@@ -81,5 +81,5 @@ ${file.content}
 `;
   }
 
-  return output.trim() + '\n';
+  return `${output.trim()}\n`;
 };

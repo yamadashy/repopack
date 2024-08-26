@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { getFileManipulator } from '../../../src/core/file/fileManipulator.js';
 
 describe('fileManipulator', () => {
@@ -471,12 +471,12 @@ describe('fileManipulator', () => {
     },
   ];
 
-  testCases.forEach(({ name, ext, input, expected }) => {
+  for (const { name, ext, input, expected } of testCases) {
     test(name, () => {
       const manipulator = getFileManipulator(`test${ext}`);
       expect(manipulator?.removeComments(input)).toBe(expected);
     });
-  });
+  }
 
   test('Unsupported file type', () => {
     const manipulator = getFileManipulator('test.unsupported');

@@ -1,4 +1,4 @@
-import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { formatGitUrl } from '../../../src/cli/actions/remoteActionRunner.js';
 
 vi.mock('node:fs/promises');

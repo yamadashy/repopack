@@ -1,9 +1,9 @@
-import path from 'node:path';
 import * as fs from 'node:fs/promises';
-import { expect, test, vi, describe, beforeEach } from 'vitest';
-import { pack, PackDependencies } from '../../src/core/packager.js';
-import { createMockConfig } from '../testing/testUtils.js';
+import path from 'node:path';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { type PackDependencies, pack } from '../../src/core/packager.js';
 import { TokenCounter } from '../../src/core/tokenCounter/tokenCounter.js';
+import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('node:fs/promises');
 vi.mock('fs/promises');

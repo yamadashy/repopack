@@ -1,7 +1,7 @@
-import { expect, test, describe } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { generateOutput } from '../../../src/core/output/outputGenerator.js';
 import { createMockConfig } from '../../testing/testUtils.js';
-import { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 
 describe('outputGenerator', () => {
   test('generateOutput should write correct content to file', async () => {

@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
-import * as url from 'node:url';
 import path from 'node:path';
-import { expect, test, describe, vi, beforeEach, afterEach } from 'vitest';
+import * as url from 'node:url';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getVersion } from '../../../src/core/file/packageJsonParser.js';
 import { logger } from '../../../src/shared/logger.js';
 

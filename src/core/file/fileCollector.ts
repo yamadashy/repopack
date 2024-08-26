@@ -1,12 +1,12 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
-import iconv from 'iconv-lite';
 import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
-import { RawFile } from './fileTypes.js';
+import type { RawFile } from './fileTypes.js';
 
 export const collectFiles = async (filePaths: string[], rootDir: string): Promise<RawFile[]> => {
   const rawFiles = await pMap(

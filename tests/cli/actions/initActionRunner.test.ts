@@ -1,10 +1,10 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest';
 import * as prompts from '@clack/prompts';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runInitAction } from '../../../src/cli/actions/initActionRunner.js';
-import { logger } from '../../../src/shared/logger.js';
 import { getGlobalDirectory } from '../../../src/config/globalDirectory.js';
+import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
 vi.mock('@clack/prompts');

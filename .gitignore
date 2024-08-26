@@ -30,3 +30,6 @@ repopack-output.xml
 
 # yarn
 .yarn/
+
+# biome
+.biome/

@@ -52,7 +52,7 @@ export const treeToString = (node: TreeNode, prefix = ''): string => {
   for (const child of node.children) {
     result += `${prefix}${child.name}${child.isDirectory ? '/' : ''}\n`;
     if (child.isDirectory) {
-      result += treeToString(child, prefix + '  ');
+      result += treeToString(child, `${prefix}  `);
     }
   }
 

@@ -12,6 +12,7 @@ tsconfig.build.json
 eslint.config.mjs
 prettier.config.mjs
 vite.config.mts
+biome.json
 
 # Git files
 .gitignore
@@ -57,3 +58,6 @@ CHANGELOG.md
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# biome
+.biome/

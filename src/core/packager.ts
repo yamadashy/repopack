@@ -1,15 +1,18 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import pMap from 'p-map';
-import { RepopackConfigMerged } from '../config/configTypes.js';
-import { getProcessConcurrency } from '../shared/processConcurrency.js';
+import type { RepopackConfigMerged } from '../config/configTypes.js';
 import { logger } from '../shared/logger.js';
-import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
-import { SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheckRunner.js';
-import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
-import { TokenCounter } from './tokenCounter/tokenCounter.js';
+import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import { collectFiles as defaultCollectFiles } from './file/fileCollector.js';
 import { processFiles as defaultProcessFiles } from './file/fileProcessor.js';
+import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
+import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
+import {
+  type SuspiciousFileResult,
+  runSecurityCheck as defaultRunSecurityCheck,
+} from './security/securityCheckRunner.js';
+import { TokenCounter } from './tokenCounter/tokenCounter.js';
 
 export interface PackDependencies {
   searchFiles: typeof defaultSearchFiles;
@@ -87,10 +90,10 @@ export const pack = async (
 
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
-  fileMetrics.forEach((file) => {
+  for (const file of fileMetrics) {
     fileCharCounts[file.path] = file.charCount;
     fileTokenCounts[file.path] = file.tokenCount;
-  });
+  }
 
   return {
     totalFiles,
