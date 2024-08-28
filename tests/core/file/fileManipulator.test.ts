@@ -176,6 +176,71 @@ describe('fileManipulator', () => {
 `,
     },
     {
+      name: 'Python comment, docstring removal',
+      ext: '.py',
+      input: `
+        # Single line comment
+        def test():
+          '''
+          docstring
+          '''
+          return True
+        """
+        Another docstring
+        """
+      `,
+      expected: `
+
+        def test():
+
+          return True
+
+`,
+    },
+    {
+      name: 'Python comment f-string is not removed',
+      ext: '.py',
+      input: `
+        # Single line comment
+        def test():
+          f'f-string'
+          f"""
+          f-string
+          """
+          return True
+      `,
+      expected: `
+
+        def test():
+          f'f-string'
+          f"""
+          f-string
+          """
+          return True
+`,
+    },
+    {
+      name: 'Python comment multi-line string literal is not removed',
+      ext: '.py',
+      input: `
+        def test():
+          hoge = """
+          multi-line
+          string
+          """
+          return True
+      `,
+      expected: `
+
+        def test():
+          hoge = """
+          multi-line
+          string
+          """
+          return True
+`,
+    },
+    {
       name: 'Ruby comment removal',
       ext: '.rb',
       input: `
