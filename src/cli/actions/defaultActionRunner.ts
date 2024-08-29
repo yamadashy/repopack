@@ -63,7 +63,9 @@ export const runDefaultAction = async (
   let packResult: PackResult;
 
   try {
-    packResult = await pack(targetPath, config);
+    packResult = await pack(targetPath, config, (message) => {
+      spinner.update(message);
+    });
   } catch (error) {
     spinner.fail('Error during packing');
     throw error;

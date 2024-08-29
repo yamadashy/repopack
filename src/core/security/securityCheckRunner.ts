@@ -4,6 +4,8 @@ import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/typ
 import pMap from 'p-map';
 import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
+import { sleep } from '../../shared/sleep.js';
+import type { RepopackProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 
 export interface SuspiciousFileResult {
@@ -11,24 +13,34 @@ export interface SuspiciousFileResult {
   messages: string[];
 }
 
-export const runSecurityCheck = async (rawFiles: RawFile[]): Promise<SuspiciousFileResult[]> => {
+export const runSecurityCheck = async (
+  rawFiles: RawFile[],
+  progressCallback: RepopackProgressCallback = () => {},
+): Promise<SuspiciousFileResult[]> => {
   const secretLintConfig = createSecretLintConfig();
 
   const results = await pMap(
     rawFiles,
-    async (rawFile) => {
+    async (rawFile, index) => {
       const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
+
       if (secretLintResult.messages.length > 0) {
         return {
           filePath: rawFile.path,
           messages: secretLintResult.messages.map((message) => message.message),
         };
       }
+
+      progressCallback(`Running security check... (${index + 1}/${rawFiles.length})`);
+
+      // Sleep for a short time to prevent blocking the event loop
+      await sleep(1);
+
       return null;
     },
     {
       concurrency: getProcessConcurrency(),
-    },
+    }
   );
 
   return results.filter((result): result is SuspiciousFileResult => result != null);
