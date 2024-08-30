@@ -45,7 +45,7 @@ export async function run() {
       .option('--init', 'initialize a new repopack.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
-      .action((directory, options: CliOptions) => executeAction(directory, process.cwd(), options));
+      .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);
   } catch (error) {
