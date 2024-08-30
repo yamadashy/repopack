@@ -37,9 +37,50 @@ class StripCommentsManipulator extends BaseManipulator {
 
 class PythonManipulator extends BaseManipulator {
   removeComments(content: string): string {
-    // Remove single-line comments
-    const result = content.replace(/(?<!\\)#.*$/gm, '');
+    if (!content)
+      return '';
+    const lines = content.split('\n');
 
+    let result = '';
+    let buffer = '';
+    let quoteType = "";
+    let tripleQuotes = 0;
+
+    const doubleQuoteRegex = /^\s*(?:""")\s*(?:\n)?[\s\S]*?(?<!("""))(?:""")/gm;
+    const singleQuoteRegex = /^\s*(?:''')\s*(?:\n)?[\s\S]*?(?<!('''))(?:''')/gm;
+
+    const sz = lines.length;
+    for (let i = 0; i < sz; i++) {
+      const line = (lines[i] + (i != sz - 1 ? '\n' : ''));
+      buffer += line;
+      if (quoteType === "") {
+        const indexSingle = line.indexOf("'''");
+        const indexDouble = line.indexOf('"""');
+        if (indexSingle !== -1 && (indexDouble === -1 || indexSingle < indexDouble)) {
+          quoteType = "'''";
+        } else if (indexDouble !== -1 && (indexSingle === -1 || indexDouble < indexSingle)) {
+          quoteType = '"""';
+        }
+      }
+      if (quoteType === "'''") {
+        tripleQuotes += (line.match(/'''/g) || []).length;
+      }
+      if (quoteType === '"""') {
+        tripleQuotes += (line.match(/"""/g) || []).length;
+      }
+
+      if (tripleQuotes % 2 === 0) {
+        const docstringRegex = quoteType === '"""' ? doubleQuoteRegex : singleQuoteRegex;
+        buffer = buffer.replace(docstringRegex, '');
+        result += buffer;
+        buffer = '';
+        tripleQuotes = 0;
+        quoteType = "";
+      }
+    }
+
+    result += buffer;
+    result = result.replace(/(?<!\\)#.*$/gm, '');
     return rtrimLines(result);
   }
 }
