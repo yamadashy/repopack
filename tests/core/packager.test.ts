@@ -36,7 +36,7 @@ describe('packager', () => {
   test('pack should process files and generate output', async () => {
     const mockConfig = createMockConfig();
 
-    const result = await pack('root', mockConfig, mockDeps);
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
 
     const file2Path = path.join('dir1', 'file2.txt');
 
@@ -79,7 +79,7 @@ describe('packager', () => {
       },
     ]);
 
-    const result = await pack('root', mockConfig, mockDeps);
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(

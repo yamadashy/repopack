@@ -13,11 +13,17 @@ class Spinner {
   }
 
   start(): void {
+    const frames = this.spinner.frames;
+    const framesLength = frames.length;
     this.interval = setInterval(() => {
-      const frame = this.spinner.frames[this.currentFrame];
+      this.currentFrame++;
+      const frame = frames[this.currentFrame % framesLength];
       logUpdate(`${pc.cyan(frame)} ${this.message}`);
-      this.currentFrame = (this.currentFrame + 1) % this.spinner.frames.length;
     }, this.spinner.interval);
+  }
+
+  update(message: string): void {
+    this.message = message;
   }
 
   stop(finalMessage: string): void {

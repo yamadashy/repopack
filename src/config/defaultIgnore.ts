@@ -118,4 +118,15 @@ export const defaultIgnoreList = [
 
   // repopack output
   'repopack-output.txt',
+
+  // Essential Python-related entries
+  '**/__pycache__/**',
+  '**/*.py[cod]',
+  'venv/**',
+  '.venv/**',
+  '.pytest_cache/**',
+  '.mypy_cache/**',
+  '.ipynb_checkpoints/**',
+  'Pipfile.lock',
+  'poetry.lock',
 ];
