@@ -40,7 +40,7 @@ export const runSecurityCheck = async (
     },
     {
       concurrency: getProcessConcurrency(),
-    }
+    },
   );
 
   return results.filter((result): result is SuspiciousFileResult => result != null);
