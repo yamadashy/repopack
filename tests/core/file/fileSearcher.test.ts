@@ -61,7 +61,7 @@ describe('fileSearcher', () => {
       const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
       expect(patterns.length).toBeGreaterThan(0);
-      expect(patterns).toContain('node_modules/**');
+      expect(patterns).toContain('**/node_modules/**');
     });
 
     test('should include custom patterns', async () => {
@@ -89,7 +89,7 @@ describe('fileSearcher', () => {
 
       const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
-      expect(patterns).toContain('node_modules/**');
+      expect(patterns).toContain('**/node_modules/**');
       expect(patterns).toContain('*.custom');
       expect(patterns).toContain('temp/');
     });
