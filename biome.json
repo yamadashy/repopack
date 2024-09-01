@@ -1,5 +1,18 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "files": {
+    "include": [
+      "./src/**",
+      "./tests/**",
+      "package.json",
+      "biome.json",
+      ".secretlintrc.json",
+      "tsconfig.json",
+      "tsconfig.build.json",
+      "vite.config.ts",
+      "repopack.config.json"
+    ]
+  },
   "organizeImports": {
     "enabled": true
   },
