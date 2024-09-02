@@ -70,7 +70,7 @@ jobs:
     - run: node bin/repopack
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: repopack-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
         path: repopack-output.txt
