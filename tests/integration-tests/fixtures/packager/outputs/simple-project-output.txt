@@ -56,6 +56,7 @@ resources/
 src/
   index.js
   utils.js
+.repopackignore
 package.json
 README.md
 repopack.config.json
@@ -95,6 +96,11 @@ function greet(name) {
 module.exports = {
   greet,
 };
+
+================
+File: .repopackignore
+================
+**/build/**
 
 ================
 File: package.json

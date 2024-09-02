@@ -7,7 +7,15 @@ export const defaultIgnoreList = [
 
   // Dependency directories
   'node_modules/**',
+  '**/node_modules/**',
   'bower_components/**',
+  '**/bower_components/**',
+  'jspm_packages/**',
+  '**/jspm_packages/**',
+  'vendor/**',
+  '.bundle/**',
+  '.gradle/**',
+  'target/**',
 
   // Logs
   'logs/**',
@@ -34,17 +42,11 @@ export const defaultIgnoreList = [
   // Grunt intermediate storage
   '.grunt/**',
 
-  // Bower dependency directory
-  'bower_components/**',
-
   // node-waf configuration
   '.lock-wscript',
 
   // Compiled binary addons
   'build/Release/**',
-
-  // Dependency directories
-  'jspm_packages/**',
 
   // TypeScript v1 declaration files
   'typings/**',
