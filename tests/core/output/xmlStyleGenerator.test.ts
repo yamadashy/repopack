@@ -1,3 +1,4 @@
+import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { buildOutputGeneratorContext } from '../../../src/core/output/outputGenerator.js';
 import { generateXmlStyle } from '../../../src/core/output/xmlStyleGenerator.js';
@@ -23,10 +24,12 @@ describe('outputGenerator', () => {
       },
     });
 
-    const commonData = buildOutputGeneratorContext(mockConfig, [], []);
-    const output = await generateXmlStyle(commonData);
+    const context = await buildOutputGeneratorContext(process.cwd(), mockConfig, [], []);
+    const output = await generateXmlStyle(context);
 
-    expect(output).toContain('Repopack Output File');
+    expect(output).toContain('file_summary');
+    expect(output).toContain('repository_structure');
     expect(output).toContain('Custom header text');
+    expect(output).toContain('repository_files');
   });
 });
