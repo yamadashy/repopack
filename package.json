@@ -52,7 +52,7 @@
     "@clack/prompts": "^0.7.0",
     "@secretlint/core": "^8.2.4",
     "@secretlint/secretlint-rule-preset-recommend": "^8.2.4",
-    "cli-spinners": "^2.9.2",
+    "cli-spinners": "^3.2.0",
     "commander": "^11.1.0",
     "globby": "^14.0.2",
     "handlebars": "^4.7.8",
