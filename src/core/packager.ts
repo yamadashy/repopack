@@ -53,12 +53,18 @@ export const pack = async (
   progressCallback('Collecting files...');
   const rawFiles = await deps.collectFiles(filePaths, rootDir);
 
-  // Perform security check and filter out suspicious files
-  progressCallback('Running security check...');
-  const suspiciousFilesResults = await deps.runSecurityCheck(rawFiles, progressCallback);
-  const safeRawFiles = rawFiles.filter(
-    (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
-  );
+  let safeRawFiles = rawFiles;
+  let suspiciousFilesResults: SuspiciousFileResult[] = [];
+
+  if (config.security.enableSecurityCheck) {
+    // Perform security check and filter out suspicious files
+    progressCallback('Running security check...');
+    suspiciousFilesResults = await deps.runSecurityCheck(rawFiles, progressCallback);
+    safeRawFiles = rawFiles.filter(
+      (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
+    );
+  }
+
   const safeFilePaths = safeRawFiles.map((file) => file.path);
   logger.trace('Safe files count:', safeRawFiles.length);
 

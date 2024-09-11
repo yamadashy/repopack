@@ -14,5 +14,8 @@
     "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
   }
 }

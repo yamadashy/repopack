@@ -301,6 +301,7 @@ Here's an explanation of the configuration options:
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore (using glob patterns) |`[]`|
+|`security.enableSecurityCheck`| Whether to perform security checks on files |`true`|
 
 Example configuration:
 
@@ -320,6 +321,9 @@ Example configuration:
     "useGitignore": true,
     "useDefaultPatterns": true,
     "customPatterns": ["additional-folder", "**/*.log"]
+  },
+  "security": {
+    "enableSecurityCheck": true
   }
 }
 ```
@@ -429,6 +433,16 @@ Example output:
 2. tests/utils/secretLintUtils.test.ts
 
 Please review these files for potential sensitive information.
+```
+
+By default, the security check is enabled. You can disable it by setting `security.enableSecurityCheck` to `false` in your configuration file:
+
+```json
+{
+  "security": {
+    "enableSecurityCheck": false
+  }
+}
 ```
 
 
