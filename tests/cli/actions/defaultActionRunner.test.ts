@@ -32,6 +32,9 @@ describe('defaultActionRunner', () => {
         customPatterns: [],
       },
       include: [],
+      security: {
+        enableSecurityCheck: true,
+      },
     });
     vi.mocked(packager.pack).mockResolvedValue({
       totalFiles: 10,

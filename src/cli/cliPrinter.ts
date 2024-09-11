@@ -1,5 +1,6 @@
 import path from 'node:path';
 import pc from 'picocolors';
+import type { RepopackConfigMerged } from '../config/configTypes.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 import { logger } from '../shared/logger.js';
 
@@ -9,12 +10,17 @@ export const printSummary = (
   totalTokens: number,
   outputPath: string,
   suspiciousFilesResults: SuspiciousFileResult[],
+  config: RepopackConfigMerged,
 ) => {
   let securityCheckMessage = '';
-  if (suspiciousFilesResults.length > 0) {
-    securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded`);
+  if (config.security.enableSecurityCheck) {
+    if (suspiciousFilesResults.length > 0) {
+      securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded`);
+    } else {
+      securityCheckMessage = pc.white('✔ No suspicious files detected');
+    }
   } else {
-    securityCheckMessage = pc.white('✔ No suspicious files detected');
+    securityCheckMessage = pc.dim('Security check disabled');
   }
 
   logger.log(pc.white('📊 Pack Summary:'));
@@ -26,7 +32,15 @@ export const printSummary = (
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
 
-export const printSecurityCheck = (rootDir: string, suspiciousFilesResults: SuspiciousFileResult[]) => {
+export const printSecurityCheck = (
+  rootDir: string,
+  suspiciousFilesResults: SuspiciousFileResult[],
+  config: RepopackConfigMerged,
+) => {
+  if (!config.security.enableSecurityCheck) {
+    return;
+  }
+
   logger.log(pc.white('🔎 Security Check:'));
   logger.log(pc.dim('──────────────────'));
 

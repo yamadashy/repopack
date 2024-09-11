@@ -79,7 +79,7 @@ export const runDefaultAction = async (
     logger.log('');
   }
 
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults);
+  printSecurityCheck(cwd, packResult.suspiciousFilesResults, config);
   logger.log('');
 
   printSummary(
@@ -88,6 +88,7 @@ export const runDefaultAction = async (
     packResult.totalTokens,
     config.output.filePath,
     packResult.suspiciousFilesResults,
+    config,
   );
   logger.log('');
 

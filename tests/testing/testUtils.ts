@@ -26,6 +26,10 @@ export const createMockConfig = (config: DeepPartial<RepopackConfigMerged> = {})
       customPatterns: [...(defaultConfig.ignore.customPatterns || []), ...(config.ignore?.customPatterns || [])],
     },
     include: [...(defaultConfig.include || []), ...(config.include || [])],
+    security: {
+      ...defaultConfig.security,
+      ...config.security,
+    },
   };
 };
 

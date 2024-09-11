@@ -17,6 +17,9 @@ interface RepopackConfigBase {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
+  security?: {
+    enableSecurityCheck?: boolean;
+  };
 }
 
 export type RepopackConfigDefault = RepopackConfigBase & {
@@ -35,6 +38,9 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     useGitignore: boolean;
     useDefaultPatterns: boolean;
     customPatterns?: string[];
+  };
+  security: {
+    enableSecurityCheck: boolean;
   };
 };
 

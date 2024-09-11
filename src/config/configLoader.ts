@@ -99,4 +99,9 @@ export const mergeConfigs = (
     ],
   },
   include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
+  security: {
+    ...defaultConfig.security,
+    ...fileConfig.security,
+    ...cliConfig.security,
+  },
 });

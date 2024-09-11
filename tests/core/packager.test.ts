@@ -134,4 +134,35 @@ describe('packager', () => {
     expect(result.suspiciousFilesResults[0].filePath).toContain(suspiciousFile);
     expect(result.totalFiles).toBe(2); // Only safe files should be counted
   });
+
+  test('pack should skip security check when disabled', async () => {
+    const mockConfig = createMockConfig({
+      security: {
+        enableSecurityCheck: false,
+      },
+    });
+
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
+
+    expect(mockDeps.runSecurityCheck).not.toHaveBeenCalled();
+    expect(result.suspiciousFilesResults).toEqual([]);
+    expect(result.totalFiles).toBe(2); // All files should be included
+  });
+
+  test('pack should perform security check when enabled', async () => {
+    const mockConfig = createMockConfig({
+      security: {
+        enableSecurityCheck: true,
+      },
+    });
+
+    const suspiciousFile = { filePath: 'suspicious.txt', messages: ['Suspicious content detected'] };
+    vi.mocked(mockDeps.runSecurityCheck).mockResolvedValue([suspiciousFile]);
+
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
+
+    expect(mockDeps.runSecurityCheck).toHaveBeenCalled();
+    expect(result.suspiciousFilesResults).toEqual([suspiciousFile]);
+    expect(result.totalFiles).toBe(2); // All files should still be included in the result
+  });
 });
