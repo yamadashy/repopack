@@ -2,6 +2,7 @@ import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
 import pMap from 'p-map';
+import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 import { sleep } from '../../shared/sleep.js';
@@ -31,7 +32,7 @@ export const runSecurityCheck = async (
         };
       }
 
-      progressCallback(`Running security check... (${index + 1}/${rawFiles.length})`);
+      progressCallback(`Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
 
       // Sleep for a short time to prevent blocking the event loop
       await sleep(1);
