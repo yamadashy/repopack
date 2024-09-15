@@ -4,8 +4,9 @@ import path from 'node:path';
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
-import type { RepopackConfigCli, RepopackConfigFile } from '../../src/config/configTypes.js';
+import type { RepopackConfigCli, RepopackConfigFile } from '../../src/config/configSchema.js';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
+import { RepopackConfigValidationError } from '../../src/shared/errorHandler.js';
 import { logger } from '../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -28,7 +29,7 @@ describe('configLoader', () => {
   describe('loadFileConfig', () => {
     test('should load and parse a valid local config file', async () => {
       const mockConfig = {
-        output: { filePath: 'test-output.txt' },
+        output: { filePath: 'test-output.txt', style: 'plain' },
         ignore: { useDefaultPatterns: true },
       };
       vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockConfig));
@@ -38,9 +39,20 @@ describe('configLoader', () => {
       expect(result).toEqual(mockConfig);
     });
 
+    test('should throw RepopackConfigValidationError for invalid config', async () => {
+      const invalidConfig = {
+        output: { filePath: 123, style: 'invalid' }, // Invalid filePath type and invalid style
+        ignore: { useDefaultPatterns: 'not a boolean' }, // Invalid type
+      };
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(invalidConfig));
+      vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
+
+      await expect(loadFileConfig(process.cwd(), 'test-config.json')).rejects.toThrow(RepopackConfigValidationError);
+    });
+
     test('should load global config when local config is not found', async () => {
       const mockGlobalConfig = {
-        output: { filePath: 'global-output.txt' },
+        output: { filePath: 'global-output.txt', style: 'xml' },
         ignore: { useDefaultPatterns: false },
       };
       vi.mocked(getGlobalDirectory).mockReturnValue('/global/repopack');
@@ -76,20 +88,33 @@ describe('configLoader', () => {
   describe('mergeConfigs', () => {
     test('should correctly merge configs', () => {
       const fileConfig: RepopackConfigFile = {
-        output: { filePath: 'file-output.txt' },
+        output: { filePath: 'file-output.txt', style: 'plain' },
         ignore: { useDefaultPatterns: true, customPatterns: ['file-ignore'] },
       };
       const cliConfig: RepopackConfigCli = {
-        output: { filePath: 'cli-output.txt' },
+        output: { filePath: 'cli-output.txt', style: 'xml' },
         ignore: { customPatterns: ['cli-ignore'] },
       };
 
       const result = mergeConfigs(process.cwd(), fileConfig, cliConfig);
 
       expect(result.output.filePath).toBe('cli-output.txt');
+      expect(result.output.style).toBe('xml');
       expect(result.ignore.useDefaultPatterns).toBe(true);
       expect(result.ignore.customPatterns).toContain('file-ignore');
       expect(result.ignore.customPatterns).toContain('cli-ignore');
+    });
+
+    test('should throw RepopackConfigValidationError for invalid merged config', () => {
+      const fileConfig: RepopackConfigFile = {
+        output: { filePath: 'file-output.txt', style: 'plain' },
+      };
+      const cliConfig: RepopackConfigCli = {
+        // @ts-ignore
+        output: { style: 'invalid' }, // Invalid style
+      };
+
+      expect(() => mergeConfigs(process.cwd(), fileConfig, cliConfig)).toThrow(RepopackConfigValidationError);
     });
   });
 });

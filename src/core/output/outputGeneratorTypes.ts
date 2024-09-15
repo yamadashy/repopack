@@ -1,4 +1,4 @@
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepopackConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 
 export interface OutputGeneratorContext {

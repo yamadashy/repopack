@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import pMap from 'p-map';
 import pc from 'picocolors';
-import type { RepopackConfigMerged } from '../config/configTypes.js';
+import type { RepopackConfigMerged } from '../config/configSchema.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import { sleep } from '../shared/sleep.js';

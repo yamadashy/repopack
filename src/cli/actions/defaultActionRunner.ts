@@ -1,12 +1,14 @@
 import path from 'node:path';
 import { loadFileConfig, mergeConfigs } from '../../config/configLoader.js';
-import type {
-  RepopackConfigCli,
-  RepopackConfigFile,
-  RepopackConfigMerged,
-  RepopackOutputStyle,
-} from '../../config/configTypes.js';
+import {
+  type RepopackConfigCli,
+  type RepopackConfigFile,
+  type RepopackConfigMerged,
+  type RepopackOutputStyle,
+  repopackConfigCliSchema,
+} from '../../config/configSchema.js';
 import { type PackResult, pack } from '../../core/packager.js';
+import { rethrowValidationErrorIfZodError } from '../../shared/errorHandler.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrinter.js';
 import type { CliOptions } from '../cliRunner.js';
@@ -104,5 +106,10 @@ const buildCliConfig = (options: CliOptions): RepopackConfigCli => {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
   }
 
-  return cliConfig;
+  try {
+    return repopackConfigCliSchema.parse(cliConfig);
+  } catch (error) {
+    rethrowValidationErrorIfZodError(error, 'Invalid cli arguments');
+    throw error;
+  }
 };
