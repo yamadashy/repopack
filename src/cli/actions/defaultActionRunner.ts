@@ -28,26 +28,8 @@ export const runDefaultAction = async (
   const fileConfig: RepopackConfigFile = await loadFileConfig(cwd, options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
 
-  // Parse the CLI options
-  const cliConfig: RepopackConfigCli = {};
-  if (options.output) {
-    cliConfig.output = { filePath: options.output };
-  }
-  if (options.include) {
-    cliConfig.include = options.include.split(',');
-  }
-  if (options.ignore) {
-    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
-  }
-  if (options.topFilesLen !== undefined) {
-    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
-  }
-  if (options.outputShowLineNumbers !== undefined) {
-    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
-  }
-  if (options.style) {
-    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
-  }
+  // Parse the CLI options into a config
+  const cliConfig: RepopackConfigCli = buildCliConfig(options);
   logger.trace('CLI config:', cliConfig);
 
   // Merge default, file, and CLI configs
@@ -98,4 +80,29 @@ export const runDefaultAction = async (
     packResult,
     config,
   };
+};
+
+const buildCliConfig = (options: CliOptions): RepopackConfigCli => {
+  const cliConfig: RepopackConfigCli = {};
+
+  if (options.output) {
+    cliConfig.output = { filePath: options.output };
+  }
+  if (options.include) {
+    cliConfig.include = options.include.split(',');
+  }
+  if (options.ignore) {
+    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
+  }
+  if (options.topFilesLen !== undefined) {
+    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
+  }
+  if (options.outputShowLineNumbers !== undefined) {
+    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
+  }
+  if (options.style) {
+    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
+  }
+
+  return cliConfig;
 };
