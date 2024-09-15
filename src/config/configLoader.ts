@@ -1,9 +1,15 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { RepopackError } from '../shared/errorHandler.js';
+import { z } from 'zod';
+import { RepopackError, rethrowValidationErrorIfZodError } from '../shared/errorHandler.js';
 import { logger } from '../shared/logger.js';
-import type { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
-import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
+import {
+  type RepopackConfigCli,
+  type RepopackConfigFile,
+  type RepopackConfigMerged,
+  repopackConfigFileSchema,
+  repopackConfigMergedSchema,
+} from './configSchema.js';
 import { defaultConfig } from './defaultConfig.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
@@ -25,7 +31,6 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
 
   logger.trace('Loading local config from:', fullPath);
 
-  // Check local file existence
   const isLocalFileExists = await fs
     .stat(fullPath)
     .then((stats) => stats.isFile())
@@ -36,7 +41,6 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
   }
 
   if (useDefaultConfig) {
-    // Try to load global config
     const globalConfigPath = getGlobalConfigPath();
     logger.trace('Loading global config from:', globalConfigPath);
 
@@ -61,12 +65,9 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFi
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const config = JSON.parse(fileContent);
-    validateConfig(config);
-    return config;
+    return repopackConfigFileSchema.parse(config);
   } catch (error) {
-    if (error instanceof RepopackConfigValidationError) {
-      throw new RepopackError(`Invalid configuration in ${filePath}: ${error.message}`);
-    }
+    rethrowValidationErrorIfZodError(error, 'Invalid config schema');
     if (error instanceof SyntaxError) {
       throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
     }
@@ -81,27 +82,36 @@ export const mergeConfigs = (
   cwd: string,
   fileConfig: RepopackConfigFile,
   cliConfig: RepopackConfigCli,
-): RepopackConfigMerged => ({
-  cwd,
-  output: {
-    ...defaultConfig.output,
-    ...fileConfig.output,
-    ...cliConfig.output,
-  },
-  ignore: {
-    ...defaultConfig.ignore,
-    ...fileConfig.ignore,
-    ...cliConfig.ignore,
-    customPatterns: [
-      ...(defaultConfig.ignore.customPatterns || []),
-      ...(fileConfig.ignore?.customPatterns || []),
-      ...(cliConfig.ignore?.customPatterns || []),
-    ],
-  },
-  include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
-  security: {
-    ...defaultConfig.security,
-    ...fileConfig.security,
-    ...cliConfig.security,
-  },
-});
+): RepopackConfigMerged => {
+  const mergedConfig = {
+    cwd,
+    output: {
+      ...defaultConfig.output,
+      ...fileConfig.output,
+      ...cliConfig.output,
+    },
+    ignore: {
+      ...defaultConfig.ignore,
+      ...fileConfig.ignore,
+      ...cliConfig.ignore,
+      customPatterns: [
+        ...(defaultConfig.ignore.customPatterns || []),
+        ...(fileConfig.ignore?.customPatterns || []),
+        ...(cliConfig.ignore?.customPatterns || []),
+      ],
+    },
+    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
+    security: {
+      ...defaultConfig.security,
+      ...fileConfig.security,
+      ...cliConfig.security,
+    },
+  };
+
+  try {
+    return repopackConfigMergedSchema.parse(mergedConfig);
+  } catch (error) {
+    rethrowValidationErrorIfZodError(error, 'Invalid merged config');
+    throw error;
+  }
+};

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import pc from 'picocolors';
-import type { RepopackConfigMerged } from '../config/configTypes.js';
+import type { RepopackConfigMerged } from '../config/configSchema.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheckRunner.js';
 import { logger } from '../shared/logger.js';
 
