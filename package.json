@@ -66,14 +66,14 @@
     "tiktoken": "^1.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.1",
     "@types/node": "^20.16.5",
     "@types/strip-comments": "^2.0.4",
-    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/coverage-v8": "^2.1.1",
     "rimraf": "^6.0.1",
     "secretlint": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
   },
   "engines": {
     "node": ">=16.0.0",
