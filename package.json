@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
-    "lint": "biome lint --write && biome format --write && biome check --write && tsc --noEmit && secretlint **/*",
+    "lint": "biome check --write && tsc --noEmit && secretlint **/*",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
     "cli-run": "npm run build && node --trace-warnings bin/repopack",
