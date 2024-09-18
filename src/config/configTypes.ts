@@ -5,6 +5,7 @@ interface RepopackConfigBase {
     filePath?: string;
     style?: RepopackOutputStyle;
     headerText?: string;
+    instructionFilePath?: string;
     removeComments?: boolean;
     removeEmptyLines?: boolean;
     topFilesLength?: number;
@@ -16,6 +17,9 @@ interface RepopackConfigBase {
     useDefaultPatterns?: boolean;
     customPatterns?: string[];
   };
+  security?: {
+    enableSecurityCheck?: boolean;
+  };
 }
 
 export type RepopackConfigDefault = RepopackConfigBase & {
@@ -23,6 +27,7 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     filePath: string;
     style: RepopackOutputStyle;
     headerText?: string;
+    instructionFilePath?: string;
     removeComments: boolean;
     removeEmptyLines: boolean;
     topFilesLength: number;
@@ -33,6 +38,9 @@ export type RepopackConfigDefault = RepopackConfigBase & {
     useGitignore: boolean;
     useDefaultPatterns: boolean;
     customPatterns?: string[];
+  };
+  security: {
+    enableSecurityCheck: boolean;
   };
 };
 

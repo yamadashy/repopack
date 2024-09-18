@@ -36,7 +36,7 @@ describe('packager', () => {
   test('pack should process files and generate output', async () => {
     const mockConfig = createMockConfig();
 
-    const result = await pack('root', mockConfig, mockDeps);
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
 
     const file2Path = path.join('dir1', 'file2.txt');
 
@@ -47,6 +47,36 @@ describe('packager', () => {
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(fs.writeFile).toHaveBeenCalled();
 
+    expect(mockDeps.processFiles).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          content: 'raw content 1',
+          path: 'file1.txt',
+        }),
+        expect.objectContaining({
+          content: 'raw content 2',
+          path: file2Path,
+        }),
+      ],
+      mockConfig,
+    );
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
+      'root',
+      mockConfig,
+      [
+        expect.objectContaining({
+          content: 'processed content 1',
+          path: 'file1.txt',
+        }),
+        expect.objectContaining({
+          content: 'processed content 2',
+          path: file2Path,
+        }),
+      ],
+      ['file1.txt', file2Path],
+    );
+
+    // Check the result of pack function
     expect(result.totalFiles).toBe(2);
     expect(result.totalCharacters).toBe(38);
     expect(result.totalTokens).toBe(20);
@@ -79,7 +109,7 @@ describe('packager', () => {
       },
     ]);
 
-    const result = await pack('root', mockConfig, mockDeps);
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(
@@ -103,5 +133,36 @@ describe('packager', () => {
     expect(result.suspiciousFilesResults).toHaveLength(1);
     expect(result.suspiciousFilesResults[0].filePath).toContain(suspiciousFile);
     expect(result.totalFiles).toBe(2); // Only safe files should be counted
+  });
+
+  test('pack should skip security check when disabled', async () => {
+    const mockConfig = createMockConfig({
+      security: {
+        enableSecurityCheck: false,
+      },
+    });
+
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
+
+    expect(mockDeps.runSecurityCheck).not.toHaveBeenCalled();
+    expect(result.suspiciousFilesResults).toEqual([]);
+    expect(result.totalFiles).toBe(2); // All files should be included
+  });
+
+  test('pack should perform security check when enabled', async () => {
+    const mockConfig = createMockConfig({
+      security: {
+        enableSecurityCheck: true,
+      },
+    });
+
+    const suspiciousFile = { filePath: 'suspicious.txt', messages: ['Suspicious content detected'] };
+    vi.mocked(mockDeps.runSecurityCheck).mockResolvedValue([suspiciousFile]);
+
+    const result = await pack('root', mockConfig, () => {}, mockDeps);
+
+    expect(mockDeps.runSecurityCheck).toHaveBeenCalled();
+    expect(result.suspiciousFilesResults).toEqual([suspiciousFile]);
+    expect(result.totalFiles).toBe(2); // All files should still be included in the result
   });
 });

@@ -1,9 +1,11 @@
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import pMap from 'p-map';
 import type { RepopackConfigMerged } from '../config/configTypes.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
+import { sleep } from '../shared/sleep.js';
+import type { RepopackProgressCallback } from '../shared/types.js';
 import { collectFiles as defaultCollectFiles } from './file/fileCollector.js';
 import { processFiles as defaultProcessFiles } from './file/fileProcessor.js';
 import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
@@ -34,6 +36,7 @@ export interface PackResult {
 export const pack = async (
   rootDir: string,
   config: RepopackConfigMerged,
+  progressCallback: RepopackProgressCallback = () => {},
   deps: PackDependencies = {
     searchFiles: defaultSearchFiles,
     collectFiles: defaultCollectFiles,
@@ -43,25 +46,38 @@ export const pack = async (
   },
 ): Promise<PackResult> => {
   // Get all file paths considering the config
+  progressCallback('Searching for files...');
   const filePaths = await deps.searchFiles(rootDir, config);
 
   // Collect raw files
+  progressCallback('Collecting files...');
   const rawFiles = await deps.collectFiles(filePaths, rootDir);
 
-  // Perform security check and filter out suspicious files
-  const suspiciousFilesResults = await deps.runSecurityCheck(rawFiles);
-  const safeRawFiles = rawFiles.filter(
-    (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
-  );
+  let safeRawFiles = rawFiles;
+  let suspiciousFilesResults: SuspiciousFileResult[] = [];
+
+  if (config.security.enableSecurityCheck) {
+    // Perform security check and filter out suspicious files
+    progressCallback('Running security check...');
+    suspiciousFilesResults = await deps.runSecurityCheck(rawFiles, progressCallback);
+    safeRawFiles = rawFiles.filter(
+      (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
+    );
+  }
+
   const safeFilePaths = safeRawFiles.map((file) => file.path);
+  logger.trace('Safe files count:', safeRawFiles.length);
 
   // Process files (remove comments, etc.)
+  progressCallback('Processing files...');
   const processedFiles = await deps.processFiles(safeRawFiles, config);
 
   // Generate output
-  const output = await deps.generateOutput(config, processedFiles, safeFilePaths);
+  progressCallback('Generating output...');
+  const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);
 
   // Write output to file. path is relative to the cwd
+  progressCallback('Writing output file...');
   const outputPath = path.resolve(config.cwd, config.output.filePath);
   logger.trace(`Writing output to: ${outputPath}`);
   await fs.writeFile(outputPath, output);
@@ -70,11 +86,18 @@ export const pack = async (
   const tokenCounter = new TokenCounter();
 
   // Metrics
+  progressCallback('Calculating metrics...');
   const fileMetrics = await pMap(
     processedFiles,
-    async (file) => {
+    async (file, index) => {
       const charCount = file.content.length;
       const tokenCount = tokenCounter.countTokens(file.content);
+
+      progressCallback(`Calculating metrics... (${index + 1}/${processedFiles.length})`);
+
+      // Sleep for a short time to prevent blocking the event loop
+      await sleep(1);
+
       return { path: file.path, charCount, tokenCount };
     },
     {

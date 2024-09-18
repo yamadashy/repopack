@@ -63,7 +63,9 @@ export const runDefaultAction = async (
   let packResult: PackResult;
 
   try {
-    packResult = await pack(targetPath, config);
+    packResult = await pack(targetPath, config, (message) => {
+      spinner.update(message);
+    });
   } catch (error) {
     spinner.fail('Error during packing');
     throw error;
@@ -77,7 +79,7 @@ export const runDefaultAction = async (
     logger.log('');
   }
 
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults);
+  printSecurityCheck(cwd, packResult.suspiciousFilesResults, config);
   logger.log('');
 
   printSummary(
@@ -86,6 +88,7 @@ export const runDefaultAction = async (
     packResult.totalTokens,
     config.output.filePath,
     packResult.suspiciousFilesResults,
+    config,
   );
   logger.log('');
 

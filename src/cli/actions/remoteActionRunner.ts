@@ -26,6 +26,8 @@ export const runRemoteAction = async (repoUrl: string, options: CliOptions): Pro
     spinner.start();
     await cloneRepository(formattedUrl, tempDir);
     spinner.succeed('Repository cloned successfully!');
+    logger.log('');
+
     const result = await runDefaultAction(tempDir, tempDir, options);
     await copyOutputToCurrentDirectory(tempDir, process.cwd(), result.config.output.filePath);
   } finally {

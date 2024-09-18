@@ -1,8 +1,7 @@
-<summary>
+This file is a merged representation of the entire codebase, combining all repository files into a single document.
 
-<header>
-Repopack Output File
-</header>
+<file_summary>
+This section contains a summary of this file.
 
 <purpose>
 This file contains a packed representation of the entire repository's contents.
@@ -13,38 +12,40 @@ or other automated processes.
 <file_format>
 The content is organized as follows:
 1. This summary section
-2. Repository structure
-3. Repository files, each consisting of:
+2. Repository information
+3. Repository structure
+4. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file
 </file_format>
 
 <usage_guidelines>
-1. This file should be treated as read-only. Any changes should be made to the
+- This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
-2. When processing this file, use the file path attributes to distinguish
+- When processing this file, use the file path to distinguish
   between different files in the repository.
-3. Be aware that this file may contain sensitive information. Handle it with
+- Be aware that this file may contain sensitive information. Handle it with
   the same level of security as you would the original repository.
+- Pay special attention to the Repository Description. These contain important context and guidelines specific to this project.
 </usage_guidelines>
 
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repopack's
   configuration.
-- Binary files are not included in this packed representation.
-
-
+- Binary files are not included in this packed representation. Please refer to
+  the Repository Structure section for a complete list of file paths, including
+  binary files.
 </notes>
 
 <additional_info>
-For more information about Repopack, visit: https://github.com/yamadashy/repopack
-</additional_info>
-
 <user_provided_header>
 This repository is simple-project
 </user_provided_header>
 
-</summary>
+For more information about Repopack, visit: https://github.com/yamadashy/repopack
+</additional_info>
+
+</file_summary>
 
 <repository_structure>
 resources/
@@ -53,12 +54,14 @@ resources/
 src/
   index.js
   utils.js
+.repopackignore
 package.json
 README.md
 repopack.config.json
 </repository_structure>
 
 <repository_files>
+This section contains the contents of the repository's files.
 
 <file path="resources/.repopackignore">
 ignored-data.txt
@@ -86,6 +89,10 @@ function greet(name) {
 module.exports = {
   greet,
 };
+</file>
+
+<file path=".repopackignore">
+**/build/**
 </file>
 
 <file path="package.json">

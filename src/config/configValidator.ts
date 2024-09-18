@@ -13,7 +13,7 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
     throw new RepopackConfigValidationError('Configuration must be an object');
   }
 
-  const { output, ignore } = config as Partial<RepopackConfigFile>;
+  const { output, ignore, security } = config as Partial<RepopackConfigFile>;
 
   // Validate output
   if (output !== undefined) {
@@ -38,7 +38,7 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
     }
   }
 
-  // Validate ignore (existing code remains unchanged)
+  // Validate ignore
   if (ignore !== undefined) {
     if (typeof ignore !== 'object' || ignore == null) {
       throw new RepopackConfigValidationError('ignore must be an object');
@@ -55,6 +55,18 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
       if (!customPatterns.every((pattern) => typeof pattern === 'string')) {
         throw new RepopackConfigValidationError('All items in ignore.customPatterns must be strings');
       }
+    }
+  }
+
+  // Validate security
+  if (security !== undefined) {
+    if (typeof security !== 'object' || security == null) {
+      throw new RepopackConfigValidationError('security must be an object');
+    }
+
+    const { enableSecurityCheck } = security;
+    if (enableSecurityCheck !== undefined && typeof enableSecurityCheck !== 'boolean') {
+      throw new RepopackConfigValidationError('security.enableSecurityCheck must be a boolean');
     }
   }
 }

@@ -2,9 +2,8 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import * as prompts from '@clack/prompts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { runInitAction } from '../../../src/cli/actions/initActionRunner.js';
+import { createConfigFile, createIgnoreFile } from '../../../src/cli/actions/initActionRunner.js';
 import { getGlobalDirectory } from '../../../src/config/globalDirectory.js';
-import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
 vi.mock('@clack/prompts');
@@ -20,76 +19,140 @@ describe('initActionRunner', () => {
     vi.resetAllMocks();
   });
 
-  it('should create a new local config file when one does not exist', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
-    vi.mocked(prompts.group).mockResolvedValue({
-      outputFilePath: 'custom-output.txt',
-      outputStyle: 'xml',
+  describe('createConfigFile', () => {
+    it('should create a new local config file when one does not exist', async () => {
+      vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
+      vi.mocked(prompts.group).mockResolvedValue({
+        outputFilePath: 'custom-output.txt',
+        outputStyle: 'xml',
+      });
+      vi.mocked(prompts.confirm).mockResolvedValue(true);
+
+      await createConfigFile('/test/dir', false);
+
+      const configPath = path.resolve('/test/dir/repopack.config.json');
+
+      console.log('configPath', configPath);
+
+      expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "custom-output.txt"'));
+      expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "xml"'));
     });
 
-    await runInitAction('/test/dir', false);
+    it('should create a new global config file when one does not exist', async () => {
+      vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
+      vi.mocked(prompts.group).mockResolvedValue({
+        outputFilePath: 'global-output.txt',
+        outputStyle: 'plain',
+      });
+      vi.mocked(prompts.confirm).mockResolvedValue(true);
+      vi.mocked(getGlobalDirectory).mockImplementation(() => '/global/repopack');
 
-    const configPath = path.resolve('/test/dir/repopack.config.json');
+      await createConfigFile('/test/dir', true);
 
-    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "custom-output.txt"'));
-    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "xml"'));
-  });
+      const configPath = path.resolve('/global/repopack/repopack.config.json');
 
-  it('should create a new global config file when one does not exist', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
-    vi.mocked(prompts.group).mockResolvedValue({
-      outputFilePath: 'global-output.txt',
-      outputStyle: 'plain',
-    });
-    vi.mocked(getGlobalDirectory).mockImplementation(() => '/global/repopack');
-
-    await runInitAction('/test/dir', true);
-
-    const configPath = path.resolve('/global/repopack/repopack.config.json');
-
-    expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(configPath), { recursive: true });
-    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "global-output.txt"'));
-    expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "plain"'));
-  });
-
-  it('should prompt to overwrite when config file already exists', async () => {
-    vi.mocked(fs.access).mockResolvedValue(undefined);
-    vi.mocked(prompts.confirm).mockResolvedValue(true);
-    vi.mocked(prompts.group).mockResolvedValue({
-      outputFilePath: 'new-output.txt',
-      outputStyle: 'xml',
+      expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(configPath), { recursive: true });
+      expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "global-output.txt"'));
+      expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "plain"'));
     });
 
-    await runInitAction('/test/dir', false);
+    it('should prompt to overwrite when config file already exists', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(prompts.confirm).mockResolvedValue(true);
+      vi.mocked(prompts.group).mockResolvedValue({
+        outputFilePath: 'new-output.txt',
+        outputStyle: 'xml',
+      });
 
-    expect(prompts.confirm).toHaveBeenCalled();
-    expect(fs.writeFile).toHaveBeenCalled();
-  });
+      await createConfigFile('/test/dir', false);
 
-  it('should not overwrite when user chooses not to', async () => {
-    vi.mocked(fs.access).mockResolvedValue(undefined);
-    vi.mocked(prompts.confirm).mockResolvedValue(false);
-
-    const loggerSpy = vi.spyOn(logger, 'info').mockImplementation(vi.fn());
-
-    await runInitAction('/test/dir', false);
-
-    expect(prompts.confirm).toHaveBeenCalled();
-    expect(fs.writeFile).not.toHaveBeenCalled();
-    expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('will not be modified'));
-  });
-
-  it('should handle user cancellation', async () => {
-    vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
-    vi.mocked(prompts.group).mockImplementation(() => {
-      throw new Error('User cancelled');
+      expect(prompts.confirm).toHaveBeenCalled();
+      expect(fs.writeFile).toHaveBeenCalled();
     });
 
-    const loggerSpy = vi.spyOn(logger, 'error').mockImplementation(vi.fn());
+    it('should not overwrite when user chooses not to', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(prompts.confirm).mockResolvedValue(false);
 
-    await runInitAction('/test/dir', false);
+      await createConfigFile('/test/dir', false);
 
-    expect(fs.writeFile).not.toHaveBeenCalled();
-    expect(loggerSpy).toHaveBeenCalledWith('Failed to create repopack.config.json:', new Error('User cancelled'));
+      expect(prompts.confirm).toHaveBeenCalled();
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should handle user cancellation', async () => {
+      vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
+      vi.mocked(prompts.group).mockImplementation(() => {
+        throw new Error('User cancelled');
+      });
+
+      await createConfigFile('/test/dir', false);
+
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('createIgnoreFile', () => {
+    it('should not create a new .repopackignore file when global flag is set', async () => {
+      const result = await createIgnoreFile('/test/dir', true);
+
+      expect(result).toBe(false);
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should create a new .repopackignore file when one does not exist', async () => {
+      vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
+      vi.mocked(prompts.confirm).mockResolvedValue(true);
+
+      await createIgnoreFile('/test/dir', false);
+
+      const ignorePath = path.resolve('/test/dir/.repopackignore');
+
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        ignorePath,
+        expect.stringContaining('# Add patterns to ignore here, one per line'),
+      );
+    });
+
+    it('should prompt to overwrite when .repopackignore file already exists', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(prompts.confirm)
+        .mockResolvedValueOnce(true) // First call for creating the file
+        .mockResolvedValueOnce(true); // Second call for overwriting
+
+      await createIgnoreFile('/test/dir', false);
+
+      expect(prompts.confirm).toHaveBeenCalledTimes(2);
+      expect(fs.writeFile).toHaveBeenCalled();
+    });
+
+    it('should not overwrite when user chooses not to', async () => {
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(prompts.confirm)
+        .mockResolvedValueOnce(true) // First call for creating the file
+        .mockResolvedValueOnce(false); // Second call for overwriting
+
+      await createIgnoreFile('/test/dir', false);
+
+      expect(prompts.confirm).toHaveBeenCalledTimes(2);
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should return false when user chooses not to create .repopackignore', async () => {
+      vi.mocked(prompts.confirm).mockResolvedValue(false);
+
+      const result = await createIgnoreFile('/test/dir', false);
+
+      expect(result).toBe(false);
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should handle user cancellation', async () => {
+      vi.mocked(prompts.confirm).mockResolvedValue(false);
+
+      await createIgnoreFile('/test/dir', false);
+
+      expect(fs.writeFile).not.toHaveBeenCalled();
+    });
   });
 });
