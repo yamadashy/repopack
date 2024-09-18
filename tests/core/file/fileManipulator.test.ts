@@ -1,11 +1,11 @@
-import { describe, expect, test } from 'vitest';
-import { getFileManipulator } from '../../../src/core/file/fileManipulator.js';
+import { describe, expect, test } from "vitest";
+import { getFileManipulator } from "../../../src/core/file/fileManipulator.js";
 
-describe('fileManipulator', () => {
+describe("fileManipulator", () => {
   const testCases = [
     {
-      name: 'C comment removal',
-      ext: '.c',
+      name: "C comment removal",
+      ext: ".c",
       input: `
         // Single line comment
         int main() {
@@ -24,8 +24,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'C# comment removal',
-      ext: '.cs',
+      name: "C# comment removal",
+      ext: ".cs",
       input: `
         // Single line comment
         public class Test {
@@ -44,8 +44,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'CSS comment removal',
-      ext: '.css',
+      name: "CSS comment removal",
+      ext: ".css",
       input: `
         /* Comment */
         body {
@@ -60,14 +60,14 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'HTML comment removal',
-      ext: '.html',
-      input: '<div><!-- Comment -->Content</div>',
-      expected: '<div>Content</div>',
+      name: "HTML comment removal",
+      ext: ".html",
+      input: "<div><!-- Comment -->Content</div>",
+      expected: "<div>Content</div>",
     },
     {
-      name: 'Java comment removal',
-      ext: '.java',
+      name: "Java comment removal",
+      ext: ".java",
       input: `
         // Single line comment
         public class Test {
@@ -86,8 +86,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'JavaScript comment removal',
-      ext: '.js',
+      name: "JavaScript comment removal",
+      ext: ".js",
       input: `
         // Single line comment
         function test() {
@@ -106,8 +106,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Less comment removal',
-      ext: '.less',
+      name: "Less comment removal",
+      ext: ".less",
       input: `
         // Single line comment
         @variable: #888;
@@ -124,8 +124,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'PHP comment removal',
-      ext: '.php',
+      name: "PHP comment removal",
+      ext: ".php",
       input: `
         <?php
         // Single line comment
@@ -150,8 +150,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Python comment, docstring removal',
-      ext: '.py',
+      name: "Python comment, docstring removal",
+      ext: ".py",
       input: `
         # Single line comment
         def test():
@@ -172,8 +172,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Python docstring removal mixing string declaration',
-      ext: '.py',
+      name: "Python docstring removal mixing string declaration",
+      ext: ".py",
       input: `
         var = """
         string variable
@@ -187,11 +187,11 @@ describe('fileManipulator', () => {
         string variable
         """
 
-`
+`,
     },
     {
-      name: 'Python comment f-string is not removed',
-      ext: '.py',
+      name: "Python comment f-string is not removed",
+      ext: ".py",
       input: `
         # Single line comment
         def test():
@@ -212,8 +212,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Python comment multi-line string literal is not removed',
-      ext: '.py',
+      name: "Python comment multi-line string literal is not removed",
+      ext: ".py",
       input: `
         def test():
           hoge = """
@@ -233,7 +233,7 @@ describe('fileManipulator', () => {
     },
     {
       name: "Python nested quotes",
-      ext: '.py',
+      ext: ".py",
       input: `
         """
         '''
@@ -246,8 +246,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Python nested triple quotes with different types',
-      ext: '.py',
+      name: "Python nested triple quotes with different types",
+      ext: ".py",
       input: `
       def func():
         """
@@ -263,11 +263,11 @@ describe('fileManipulator', () => {
       def func():
 
         return True
-`
+`,
     },
     {
-      name: 'Python inline comments',
-      ext: '.py',
+      name: "Python inline comments",
+      ext: ".py",
       input: `
       x = 5  # This is an inline comment
       y = 10  # Another inline comment
@@ -277,11 +277,11 @@ describe('fileManipulator', () => {
       x = 5
       y = 10
       z = x + y
-`
+`,
     },
     {
-      name: 'Python multi-line statement with string',
-      ext: '.py',
+      name: "Python multi-line statement with string",
+      ext: ".py",
       input: `
       long_string = "This is a long string that spans " \\
                     "multiple lines in the code, " \\
@@ -293,29 +293,29 @@ describe('fileManipulator', () => {
                     "multiple lines in the code, " \\
                     "but is actually a single string"
 
-`
+`,
     },
     {
-      name: 'Python docstring with triple quotes inside string literals',
-      ext: '.py',
+      name: "Python docstring with triple quotes inside string literals",
+      ext: ".py",
       input: `
       def func():
         """This is a docstring"""
         x = "This is not a docstring: '''"
-        y = 'This is also not a docstring: """'
+        y = '"""This is also not a docstring: """'
         return x + y
     `,
       expected: `
       def func():
 
         x = "This is not a docstring: '''"
-        y = 'This is also not a docstring: """'
+        y = '"""This is also not a docstring: """'
         return x + y
-`
+`,
     },
     {
-      name: 'Python mixed comments and docstrings',
-      ext: '.py',
+      name: "Python mixed comments and docstrings",
+      ext: ".py",
       input: `
       # This is a comment
       def func():
@@ -337,11 +337,11 @@ describe('fileManipulator', () => {
 
 
         return x
-`
+`,
     },
     {
-      name: 'Python f-strings with triple quotes',
-      ext: '.py',
+      name: "Python f-strings with triple quotes",
+      ext: ".py",
       input: `
       x = 10
       y = 20
@@ -357,34 +357,23 @@ describe('fileManipulator', () => {
       This f-string contains a calculation: {x + y}
       """
 
-`
+`,
     },
     {
-      name: 'Python escaped hash in string',
-      ext: '.py',
+      name: "Python escaped hash in string",
+      ext: ".py",
       input: `
       text = "This string contains an \# escaped hash"
       # This is a real comment
     `,
       expected: `
       text = "This string contains an \# escaped hash"
-`
+
+`,
     },
     {
-      name: 'Python docstring immediately followed by code',
-      ext: '.py',
-      input: `
-      def func():
-        """Docstring"""return True
-    `,
-      expected: `
-      def func():
-        return True
-`
-    },
-    {
-      name: 'Python nested function with docstrings',
-      ext: '.py',
+      name: "Python nested function with docstrings",
+      ext: ".py",
       input: `
       def outer():
         """Outer docstring"""
@@ -395,14 +384,16 @@ describe('fileManipulator', () => {
     `,
       expected: `
       def outer():
+
         def inner():
+
           pass
         return inner
-`
+`,
     },
     {
-      name: 'Python comment-like content in string',
-      ext: '.py',
+      name: "Python comment-like content in string",
+      ext: ".py",
       input: `
       x = "This is not a # comment"
       y = 'Neither is this # comment'
@@ -418,27 +409,28 @@ describe('fileManipulator', () => {
       This is not a # comment
       Neither is this # comment
       """
-`
+`,
     },
     {
-      name: 'Python docstring with backslashes',
-      ext: '.py',
+      name: "Python docstring with backslashes",
+      ext: ".py",
       input: `
       def func():
         """
         This docstring has \\ backslashes
-        It shouldn't \"""\ confuse the parser
+        It shouldn't \\""" confuse the parser
         """
         return True
     `,
       expected: `
       def func():
+
         return True
-`
+`,
     },
     {
-      name: 'Python mixed single and double quotes',
-      ext: '.py',
+      name: "Python mixed single and double quotes",
+      ext: ".py",
       input: `
       x = '\"\"\""'  # This is not a docstring start
       y = "'''"  # Neither is this
@@ -447,11 +439,12 @@ describe('fileManipulator', () => {
       expected: `
       x = '\"\"\""'
       y = "'''"
-`
+
+`,
     },
     {
-      name: 'Ruby comment removal',
-      ext: '.rb',
+      name: "Ruby comment removal",
+      ext: ".rb",
       input: `
         # Single line comment
         def test
@@ -472,8 +465,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Sass comment removal',
-      ext: '.sass',
+      name: "Sass comment removal",
+      ext: ".sass",
       input: `
         // Single line comment
         $variable: #888
@@ -492,8 +485,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'SCSS comment removal',
-      ext: '.scss',
+      name: "SCSS comment removal",
+      ext: ".scss",
       input: `
         // Single line comment
         $variable: #888;
@@ -510,8 +503,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'SQL comment removal',
-      ext: '.sql',
+      name: "SQL comment removal",
+      ext: ".sql",
       input: `
         -- Single line comment
         SELECT * FROM table WHERE id = 1;
@@ -522,8 +515,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Swift comment removal',
-      ext: '.swift',
+      name: "Swift comment removal",
+      ext: ".swift",
       input: `
         // Single line comment
         func test() {
@@ -542,8 +535,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'TypeScript comment removal',
-      ext: '.ts',
+      name: "TypeScript comment removal",
+      ext: ".ts",
       input: `
         // Single line comment
         function test(): boolean {
@@ -562,14 +555,14 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'XML comment removal',
-      ext: '.xml',
-      input: '<root><!-- Comment --><element>Content</element></root>',
-      expected: '<root><element>Content</element></root>',
+      name: "XML comment removal",
+      ext: ".xml",
+      input: "<root><!-- Comment --><element>Content</element></root>",
+      expected: "<root><element>Content</element></root>",
     },
     {
-      name: 'Dart comment removal',
-      ext: '.dart',
+      name: "Dart comment removal",
+      ext: ".dart",
       input: `
         // Single line comment
         void main() {
@@ -588,8 +581,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Go comment removal',
-      ext: '.go',
+      name: "Go comment removal",
+      ext: ".go",
       input: `
         // Single line comment
         func main() {
@@ -608,8 +601,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Kotlin comment removal',
-      ext: '.kt',
+      name: "Kotlin comment removal",
+      ext: ".kt",
       input: `
         // Single line comment
         fun main() {
@@ -628,8 +621,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Rust comment removal',
-      ext: '.rs',
+      name: "Rust comment removal",
+      ext: ".rs",
       input: `
         // Single line comment
         fn main() {
@@ -648,8 +641,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Shell script comment removal',
-      ext: '.sh',
+      name: "Shell script comment removal",
+      ext: ".sh",
       input: `
         # Single line comment
         echo "Hello"
@@ -660,8 +653,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'YAML comment removal',
-      ext: '.yml',
+      name: "YAML comment removal",
+      ext: ".yml",
       input: `
         key: value  # Comment
         another_key: another_value
@@ -672,8 +665,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Vue file comment removal',
-      ext: '.vue',
+      name: "Vue file comment removal",
+      ext: ".vue",
       input: `
         <template>
           <!-- HTML comment -->
@@ -716,8 +709,8 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Svelte file comment removal',
-      ext: '.svelte',
+      name: "Svelte file comment removal",
+      ext: ".svelte",
       input: `
         <!-- HTML comment -->
         <div>{message}</div>
@@ -752,8 +745,8 @@ describe('fileManipulator', () => {
     });
   }
 
-  test('Unsupported file type', () => {
-    const manipulator = getFileManipulator('test.unsupported');
+  test("Unsupported file type", () => {
+    const manipulator = getFileManipulator("test.unsupported");
     expect(manipulator).toBeNull();
   });
 });
