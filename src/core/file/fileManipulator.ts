@@ -124,7 +124,6 @@ class PythonManipulator extends BaseManipulator {
     let result = "";
     const pairs: [number, number][] = [];
     let prevQuote = 0;
-    console.time("findQuotes");
     while (prevQuote < content.length) {
       const openingQuote: number =
         content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) +
@@ -147,9 +146,7 @@ class PythonManipulator extends BaseManipulator {
       pairs.push([openingQuote, closingQuote]);
       prevQuote = closingQuote;
     }
-    console.timeEnd("findQuotes");
     let prevHash = 0;
-    console.time("findHash");
     while (prevHash < content.length) {
       const hashIndex = content.slice(prevHash).search(/(?<!\\)#/g) + prevHash;
       if (hashIndex === prevHash - 1) {
@@ -173,7 +170,6 @@ class PythonManipulator extends BaseManipulator {
       }
       prevHash = nextNewLine + 1;
     }
-    console.timeEnd("findHash");
     return result;
   }
 
