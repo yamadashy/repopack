@@ -160,7 +160,7 @@ class PythonManipulator extends BaseManipulator {
           result += content.slice(prevHash);
           break;
         }
-        result += content.slice(prevHash, hashIndex) + "\n";
+        result += `${content.slice(prevHash, hashIndex)}\n`;
       } else {
         if (nextNewLine === -1) {
           result += content.slice(prevHash);
