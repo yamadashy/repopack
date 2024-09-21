@@ -57,7 +57,7 @@ class PythonManipulator extends BaseManipulator {
 
     const sz = lines.length;
     for (let i = 0; i < sz; i++) {
-      const line = lines[i] + (i != sz - 1 ? "\n" : "");
+      const line = lines[i] + (i !== sz - 1 ? "\n" : "");
       buffer += line;
       if (quoteType === "") {
         const indexSingle = line.search(/(?<![\"])(?<!\\)'''(?![\"])/g);
