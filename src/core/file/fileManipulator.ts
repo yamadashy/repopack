@@ -174,8 +174,11 @@ class PythonManipulator extends BaseManipulator {
   }
 
   removeComments(content: string): string {
-    content = this.removeDocStrings(content);
-    content = this.removeHashComments(content);
+  removeComments(content: string): string {
+    let result = this.removeDocStrings(content);
+    result = this.removeHashComments(result);
+    return rtrimLines(result);
+  }
     return rtrimLines(content);
   }
 }
