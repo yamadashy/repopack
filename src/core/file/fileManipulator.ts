@@ -166,7 +166,7 @@ class PythonManipulator extends BaseManipulator {
           result += content.slice(prevHash);
           break;
         }
-        result += content.slice(prevHash, nextNewLine) + "\n";
+        result += `${content.slice(prevHash, nextNewLine)}\n`;
       }
       prevHash = nextNewLine + 1;
     }
