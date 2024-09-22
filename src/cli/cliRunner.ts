@@ -30,7 +30,6 @@ export async function run() {
     const version = await getVersion();
 
     program
-      .version(version)
       .description('Repopack - Pack your repository into a single AI-friendly file')
       .arguments('[directory]')
       .option('-v, --version', 'show version information')
