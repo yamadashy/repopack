@@ -150,7 +150,7 @@ describe('fileManipulator', () => {
 `,
     },
     {
-      name: 'Python comment removal',
+      name: 'Python comment, docstring removal',
       ext: '.py',
       input: `
         # Single line comment
@@ -166,13 +166,280 @@ describe('fileManipulator', () => {
       expected: `
 
         def test():
-          '''
-          docstring
-          '''
+
           return True
+
+`,
+    },
+    {
+      name: 'Python docstring removal mixing string declaration',
+      ext: '.py',
+      input: `
+        var = """
+        string variable
         """
-        Another docstring
         """
+        docstring
+        """
+      `,
+      expected: `
+        var = """
+        string variable
+        """
+
+`,
+    },
+    {
+      name: 'Python comment f-string is not removed',
+      ext: '.py',
+      input: `
+        # Single line comment
+        def test():
+          f'f-string'
+          f"""
+          f-string
+          """
+          return True
+      `,
+      expected: `
+
+        def test():
+          f'f-string'
+          f"""
+          f-string
+          """
+          return True
+`,
+    },
+    {
+      name: 'Python comment multi-line string literal is not removed',
+      ext: '.py',
+      input: `
+        def test():
+          hoge = """
+          multi-line
+          string
+          """
+          return True
+      `,
+      expected: `
+        def test():
+          hoge = """
+          multi-line
+          string
+          """
+          return True
+`,
+    },
+    {
+      name: 'Python nested quotes',
+      ext: '.py',
+      input: `
+        """
+        '''
+        docstring
+        '''
+        """
+      `,
+      expected: `
+
+`,
+    },
+    {
+      name: 'Python nested triple quotes with different types',
+      ext: '.py',
+      input: `
+      def func():
+        """
+        Outer docstring
+        '''
+        Inner single quotes
+        '''
+        Still in outer docstring
+        """
+        return True
+    `,
+      expected: `
+      def func():
+
+        return True
+`,
+    },
+    {
+      name: 'Python inline comments',
+      ext: '.py',
+      input: `
+      x = 5  # This is an inline comment
+      y = 10  # Another inline comment
+      z = x + y
+    `,
+      expected: `
+      x = 5
+      y = 10
+      z = x + y
+`,
+    },
+    {
+      name: 'Python multi-line statement with string',
+      ext: '.py',
+      input: `
+      long_string = "This is a long string that spans " \\
+                    "multiple lines in the code, " \\
+                    "but is actually a single string"
+      # Comment after multi-line statement
+    `,
+      expected: `
+      long_string = "This is a long string that spans " \\
+                    "multiple lines in the code, " \\
+                    "but is actually a single string"
+
+`,
+    },
+    {
+      name: 'Python docstring with triple quotes inside string literals',
+      ext: '.py',
+      input: `
+      def func():
+        """This is a docstring"""
+        x = "This is not a docstring: '''"
+        y = '"""This is also not a docstring: """'
+        return x + y
+    `,
+      expected: `
+      def func():
+
+        x = "This is not a docstring: '''"
+        y = '"""This is also not a docstring: """'
+        return x + y
+`,
+    },
+    {
+      name: 'Python mixed comments and docstrings',
+      ext: '.py',
+      input: `
+      # This is a comment
+      def func():
+        '''
+        This is a docstring
+        '''
+        x = 5  # Inline comment
+        """
+        This is another docstring
+        """
+        # Another comment
+        return x
+    `,
+      expected: `
+
+      def func():
+
+        x = 5
+
+
+        return x
+`,
+    },
+    {
+      name: 'Python f-strings with triple quotes',
+      ext: '.py',
+      input: `
+      x = 10
+      y = 20
+      f"""
+      This f-string contains a calculation: {x + y}
+      """
+      # Comment after f-string
+    `,
+      expected: `
+      x = 10
+      y = 20
+      f"""
+      This f-string contains a calculation: {x + y}
+      """
+
+`,
+    },
+    {
+      name: 'Python escaped hash in string',
+      ext: '.py',
+      input: `
+      text = "This string contains an \# escaped hash"
+      # This is a real comment
+    `,
+      expected: `
+      text = "This string contains an \# escaped hash"
+
+`,
+    },
+    {
+      name: 'Python nested function with docstrings',
+      ext: '.py',
+      input: `
+      def outer():
+        """Outer docstring"""
+        def inner():
+          """Inner docstring"""
+          pass
+        return inner
+    `,
+      expected: `
+      def outer():
+
+        def inner():
+
+          pass
+        return inner
+`,
+    },
+    {
+      name: 'Python comment-like content in string',
+      ext: '.py',
+      input: `
+      x = "This is not a # comment"
+      y = 'Neither is this # comment'
+      z = """
+      This is not a # comment
+      Neither is this # comment
+      """
+    `,
+      expected: `
+      x = "This is not a # comment"
+      y = 'Neither is this # comment'
+      z = """
+      This is not a # comment
+      Neither is this # comment
+      """
+`,
+    },
+    {
+      name: 'Python docstring with backslashes',
+      ext: '.py',
+      input: `
+      def func():
+        """
+        This docstring has \\ backslashes
+        It shouldn't \\""" confuse the parser
+        """
+        return True
+    `,
+      expected: `
+      def func():
+
+        return True
+`,
+    },
+    {
+      name: 'Python mixed single and double quotes',
+      ext: '.py',
+      input: `
+      x = '\"\"\""'  # This is not a docstring start
+      y = "'''"  # Neither is this
+      """But this is a docstring"""
+    `,
+      expected: `
+      x = '\"\"\""'
+      y = "'''"
+
 `,
     },
     {

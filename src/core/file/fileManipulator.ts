@@ -30,16 +30,131 @@ class StripCommentsManipulator extends BaseManipulator {
   }
 
   removeComments(content: string): string {
-    const result = strip(content, { language: this.language, preserveNewlines: true });
+    const result = strip(content, {
+      language: this.language,
+      preserveNewlines: true,
+    });
     return rtrimLines(result);
   }
 }
 
 class PythonManipulator extends BaseManipulator {
-  removeComments(content: string): string {
-    // Remove single-line comments
-    const result = content.replace(/(?<!\\)#.*$/gm, '');
+  removeDocStrings(content: string): string {
+    if (!content) return '';
+    const lines = content.split('\n');
 
+    let result = '';
+
+    let buffer = '';
+    let quoteType: '' | "'" | '"' = '';
+    let tripleQuotes = 0;
+
+    const doubleQuoteRegex = /^\s*(?<!\\)(?:""")\s*(?:\n)?[\s\S]*?(?<!("""))(?<!\\)(?:""")/gm;
+    const singleQuoteRegex = /^\s*(?<!\\)(?:''')\s*(?:\n)?[\s\S]*?(?<!('''))(?<!\\)(?:''')/gm;
+
+    const sz = lines.length;
+    for (let i = 0; i < sz; i++) {
+      const line = lines[i] + (i !== sz - 1 ? '\n' : '');
+      buffer += line;
+      if (quoteType === '') {
+        const indexSingle = line.search(/(?<![\"])(?<!\\)'''(?![\"])/g);
+        const indexDouble = line.search(/(?<![\'])(?<!\\)"""(?![\'])/g);
+        if (indexSingle !== -1 && (indexDouble === -1 || indexSingle < indexDouble)) {
+          quoteType = "'";
+        } else if (indexDouble !== -1 && (indexSingle === -1 || indexDouble < indexSingle)) {
+          quoteType = '"';
+        }
+      }
+      if (quoteType === "'") {
+        tripleQuotes += (line.match(/(?<![\"])(?<!\\)'''(?!["])/g) || []).length;
+      }
+      if (quoteType === '"') {
+        tripleQuotes += (line.match(/(?<![\'])(?<!\\)"""(?![\'])/g) || []).length;
+      }
+
+      if (tripleQuotes % 2 === 0) {
+        const docstringRegex = quoteType === '"' ? doubleQuoteRegex : singleQuoteRegex;
+        buffer = buffer.replace(docstringRegex, '');
+        result += buffer;
+        buffer = '';
+        tripleQuotes = 0;
+        quoteType = '';
+      }
+    }
+
+    result += buffer;
+    return result;
+  }
+
+  removeHashComments(content: string): string {
+    const searchInPairs = (pairs: [number, number][], hashIndex: number): boolean => {
+      let ans = -1;
+      let start = 0;
+      let end = pairs.length - 1;
+      while (start <= end) {
+        const mid = Math.floor((start + end) / 2);
+        const [pairStart, pairEnd] = pairs[mid];
+        if (hashIndex > pairStart && hashIndex < pairEnd) {
+          ans = mid;
+          break;
+        }
+        if (hashIndex < pairStart) {
+          end = mid - 1;
+        } else {
+          start = mid + 1;
+        }
+      }
+      return ans !== -1;
+    };
+    let result = '';
+    const pairs: [number, number][] = [];
+    let prevQuote = 0;
+    while (prevQuote < content.length) {
+      const openingQuote: number = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
+      if (openingQuote === prevQuote) break;
+
+      let closingQuote: number;
+      if (content.startsWith('"""', openingQuote) || content.startsWith("'''", openingQuote)) {
+        const quoteType = content.slice(openingQuote, openingQuote + 3);
+        closingQuote = content.indexOf(quoteType, openingQuote + 3);
+      } else {
+        const quoteType = content[openingQuote];
+        closingQuote = content.indexOf(quoteType, openingQuote + 1);
+      }
+      if (closingQuote === -1) break;
+      pairs.push([openingQuote, closingQuote]);
+      prevQuote = closingQuote;
+    }
+    let prevHash = 0;
+    while (prevHash < content.length) {
+      const hashIndex = content.slice(prevHash).search(/(?<!\\)#/g) + prevHash;
+      if (hashIndex === prevHash - 1) {
+        result += content.slice(prevHash);
+        break;
+      }
+      const isInsideString = searchInPairs(pairs, hashIndex);
+      const nextNewLine = content.indexOf('\n', hashIndex);
+      if (!isInsideString) {
+        if (nextNewLine === -1) {
+          result += content.slice(prevHash);
+          break;
+        }
+        result += `${content.slice(prevHash, hashIndex)}\n`;
+      } else {
+        if (nextNewLine === -1) {
+          result += content.slice(prevHash);
+          break;
+        }
+        result += `${content.slice(prevHash, nextNewLine)}\n`;
+      }
+      prevHash = nextNewLine + 1;
+    }
+    return result;
+  }
+
+  removeComments(content: string): string {
+    let result = this.removeDocStrings(content);
+    result = this.removeHashComments(result);
     return rtrimLines(result);
   }
 }
