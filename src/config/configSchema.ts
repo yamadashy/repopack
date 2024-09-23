@@ -5,7 +5,7 @@ export const repopackOutputStyleSchema = z.enum(['plain', 'xml', 'markdown']);
 
 export type RepopackOutputStyle = z.infer<typeof repopackOutputStyleSchema>;
 
-const repopackConfigBaseSchema = z.object({
+export const repopackConfigBaseSchema = z.object({
   output: z
     .object({
       filePath: z.string().optional(),
