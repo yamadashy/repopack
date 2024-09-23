@@ -87,3 +87,15 @@ jobs:
       - run: npm ci
       - name: Run npm audit
         run: npm audit
+
+  typos:
+    needs: lint
+    name: "Check for typos"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Check for typos"
+        uses: "crate-ci/typos@v1.24.6"
