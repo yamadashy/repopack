@@ -39,7 +39,7 @@ export async function run() {
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
-      .option('--style <type>', 'specify the output style (plain or xml)')
+      .option('--style <type>', 'specify the output style (plain, xml, markdown)')
       .option('--verbose', 'enable verbose logging for detailed output')
       .option('--init', 'initialize a new repopack.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')

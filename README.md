@@ -223,6 +223,45 @@ https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-
 
 This means that the XML output from Repopack is not just a different format, but potentially a more effective way to feed your codebase into AI systems for analysis, code review, or other tasks.
 
+#### Markdown Format
+
+To generate output in Markdown format, use the `--style markdown` option:
+```bash
+repopack --style markdown
+```
+
+The Markdown format structures the content in a hierarchical manner:
+
+````markdown
+This file is a merged representation of the entire codebase, combining all repository files into a single document.
+
+# File Summary
+(Metadata and usage AI instructions)
+
+# Repository Structure
+```
+src/
+  cli/
+    cliOutput.ts
+    index.ts
+```
+(...remaining directories)
+
+# Repository Files
+
+## File: src/index.js
+```
+// File contents here
+```
+
+(...remaining files)
+
+# Instruction
+(Custom instructions from `output.instructionFilePath`)
+````
+
+This format provides a clean, readable structure that is both human-friendly and easily parseable by AI systems.
+
 ### Command Line Options
 
 - `-v, --version`: Show tool version
@@ -230,7 +269,7 @@ This means that the XML output from Repopack is not just a different format, but
 - `--include <patterns>`: List of include patterns (comma-separated)
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
-- `--style <style>`: Specify the output style (`plain` or `xml`)
+- `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--remote <url>`: Process a remote Git repository
@@ -290,7 +329,7 @@ Here's an explanation of the configuration options:
 | Option | Description | Default |
 |--------|-------------|---------|
 |`output.filePath`| The name of the output file | `"repopack-output.txt"` |
-|`output.style`| The style of the output (`plain`, `xml`) |`"plain"`|
+|`output.style`| The style of the output (`plain`, `xml`, `markdown`) |`"plain"`|
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.instructionFilePath`| Path to a file containing detailed custom instructions |`null`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
