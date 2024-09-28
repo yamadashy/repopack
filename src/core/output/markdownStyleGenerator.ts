@@ -9,8 +9,8 @@ import {
   generateSummaryUsageGuidelines,
 } from './outputStyleDecorator.js';
 
-export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContext) => {
-  const template = Handlebars.compile(plainTemplate);
+export const generateMarkdownStyle = (outputGeneratorContext: OutputGeneratorContext) => {
+  const template = Handlebars.compile(markdownTemplate);
 
   const renderContext = {
     generationHeader: generateHeader(outputGeneratorContext.generationDate),
@@ -31,70 +31,51 @@ export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContex
   return `${template(renderContext).trim()}\n`;
 };
 
-const PLAIN_SEPARATOR = '='.repeat(16);
-const PLAIN_LONG_SEPARATOR = '='.repeat(64);
-
-const plainTemplate = `
+const markdownTemplate = /* md */ `
 {{{generationHeader}}}
 
-${PLAIN_LONG_SEPARATOR}
-File Summary
-${PLAIN_LONG_SEPARATOR}
+# File Summary
 
-Purpose:
---------
+## Purpose
 {{{summaryPurpose}}}
 
-File Format:
-------------
+## File Format
 {{{summaryFileFormat}}}
 4. Multiple file entries, each consisting of:
-  a. A separator line (================)
-  b. The file path (File: path/to/file)
-  c. Another separator line
-  d. The full contents of the file
-  e. A blank line
+  a. A header with the file path (## File: path/to/file)
+  b. The full contents of the file in a code block
 
-Usage Guidelines:
------------------
+## Usage Guidelines
 {{{summaryUsageGuidelines}}}
 
-Notes:
-------
+## Notes
 {{{summaryNotes}}}
 
-Additional Info:
-----------------
+## Additional Info
 {{#if headerText}}
-User Provided Header:
------------------------
+### User Provided Header
 {{{headerText}}}
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
 
-${PLAIN_LONG_SEPARATOR}
-Repository Structure
-${PLAIN_LONG_SEPARATOR}
+# Repository Structure
+\`\`\`
 {{{treeString}}}
+\`\`\`
 
-${PLAIN_LONG_SEPARATOR}
-Repository Files
-${PLAIN_LONG_SEPARATOR}
+# Repository Files
 
 {{#each processedFiles}}
-${PLAIN_SEPARATOR}
-File: {{{this.path}}}
-${PLAIN_SEPARATOR}
+## File: {{{this.path}}}
+\`\`\`
 {{{this.content}}}
+\`\`\`
 
 {{/each}}
 
 {{#if instruction}}
-${PLAIN_LONG_SEPARATOR}
-Instruction
-${PLAIN_LONG_SEPARATOR}
+# Instruction
 {{{instruction}}}
 {{/if}}
-
 `;

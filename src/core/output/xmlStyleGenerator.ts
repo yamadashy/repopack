@@ -31,7 +31,7 @@ export const generateXmlStyle = (outputGeneratorContext: OutputGeneratorContext)
   return `${template(renderContext).trim()}\n`;
 };
 
-const xmlTemplate = `
+const xmlTemplate = /* xml */ `
 {{{generationHeader}}}
 
 <file_summary>

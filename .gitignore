@@ -24,6 +24,7 @@ coverage/
 # Repopack output
 repopack-output.txt
 repopack-output.xml
+repopack-output.md
 
 # ESLint cache
 .eslintcache

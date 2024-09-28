@@ -4,6 +4,7 @@ import type { RepopackConfigMerged } from '../../config/configTypes.js';
 import { RepopackError } from '../../shared/errorHandler.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
+import { generateMarkdownStyle } from './markdownStyleGenerator.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
 import { generatePlainStyle } from './plainStyleGenerator.js';
 import { generateXmlStyle } from './xmlStyleGenerator.js';
@@ -20,6 +21,9 @@ export const generateOutput = async (
   switch (config.output.style) {
     case 'xml':
       output = generateXmlStyle(outputGeneratorContext);
+      break;
+    case 'markdown':
+      output = generateMarkdownStyle(outputGeneratorContext);
       break;
     default:
       output = generatePlainStyle(outputGeneratorContext);
