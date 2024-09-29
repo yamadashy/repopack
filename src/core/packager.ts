@@ -92,7 +92,7 @@ export const pack = async (
     processedFiles,
     async (file, index) => {
       const charCount = file.content.length;
-      const tokenCount = tokenCounter.countTokens(file.content);
+      const tokenCount = tokenCounter.countTokens(file.content, file.path);
 
       progressCallback(`Calculating metrics... (${index + 1}/${processedFiles.length}) ${pc.dim(file.path)}`);
 
