@@ -20,9 +20,9 @@ export const defaultIgnoreList = [
   // Logs
   'logs/**',
   '**/*.log',
-  'npm-debug.log*',
-  'yarn-debug.log*',
-  'yarn-error.log*',
+  '**/npm-debug.log*',
+  '**/yarn-debug.log*',
+  '**/yarn-error.log*',
 
   // Runtime data
   'pids/**',
@@ -52,7 +52,7 @@ export const defaultIgnoreList = [
   'typings/**',
 
   // Optional npm cache directory
-  '.npm/**',
+  '**/.npm/**',
 
   // Optional eslint cache
   '.eslintcache',
@@ -64,10 +64,10 @@ export const defaultIgnoreList = [
   '*.tgz',
 
   // Yarn files
-  '.yarn/**',
+  '**/.yarn/**',
 
   // Yarn Integrity file
-  '.yarn-integrity',
+  '**/.yarn-integrity',
 
   // dotenv environment variables file
   '.env',
@@ -106,9 +106,9 @@ export const defaultIgnoreList = [
   '**/*.bak',
 
   // Package manager locks
-  'package-lock.json',
-  'yarn.lock',
-  'pnpm-lock.yaml',
+  '**/package-lock.json',
+  '**/yarn.lock',
+  '**/pnpm-lock.yaml',
 
   // Build outputs
   'build/**',
@@ -124,11 +124,11 @@ export const defaultIgnoreList = [
   // Essential Python-related entries
   '**/__pycache__/**',
   '**/*.py[cod]',
-  'venv/**',
-  '.venv/**',
-  '.pytest_cache/**',
-  '.mypy_cache/**',
-  '.ipynb_checkpoints/**',
-  'Pipfile.lock',
-  'poetry.lock',
+  '**/venv/**',
+  '**/.venv/**',
+  '**/.pytest_cache/**',
+  '**/.mypy_cache/**',
+  '**/.ipynb_checkpoints/**',
+  '**/Pipfile.lock',
+  '**/poetry.lock',
 ];
