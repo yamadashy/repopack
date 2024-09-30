@@ -1,4 +1,4 @@
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepopackConfigMerged } from '../../config/configSchema.js';
 
 export const generateHeader = (generationDate: string): string => {
   return `

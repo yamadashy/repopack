@@ -1,7 +1,7 @@
 import process from 'node:process';
 import { type OptionValues, program } from 'commander';
 import pc from 'picocolors';
-import type { RepopackOutputStyle } from '../config/configTypes.js';
+import type { RepopackOutputStyle } from '../config/configSchema.js';
 import { getVersion } from '../core/file/packageJsonParser.js';
 import { handleError } from '../shared/errorHandler.js';
 import { logger } from '../shared/logger.js';

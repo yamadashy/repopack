@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepopackConfigMerged } from '../../config/configSchema.js';
 import { RepopackError } from '../../shared/errorHandler.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
 import type { ProcessedFile } from '../file/fileTypes.js';

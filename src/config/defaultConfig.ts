@@ -1,6 +1,6 @@
-import type { RepopackConfigDefault } from './configTypes.js';
+import { type RepopackConfigDefault, repopackConfigDefaultSchema } from './configSchema.js';
 
-export const defaultConfig: RepopackConfigDefault = {
+export const defaultConfig: RepopackConfigDefault = repopackConfigDefaultSchema.parse({
   output: {
     filePath: 'repopack-output.txt',
     style: 'plain',
@@ -18,4 +18,4 @@ export const defaultConfig: RepopackConfigDefault = {
   security: {
     enableSecurityCheck: true,
   },
-};
+});
