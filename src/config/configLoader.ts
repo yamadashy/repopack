@@ -4,7 +4,7 @@ import { RepopackError } from '../shared/errorHandler.js';
 import { logger } from '../shared/logger.js';
 import type { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
 import { RepopackConfigValidationError, validateConfig } from './configValidator.js';
-import { defaultConfig } from './defaultConfig.js';
+import { defaultConfig, defaultFilePathMap } from './defaultConfig.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
 const defaultConfigPath = 'repopack.config.json';
@@ -81,27 +81,35 @@ export const mergeConfigs = (
   cwd: string,
   fileConfig: RepopackConfigFile,
   cliConfig: RepopackConfigCli,
-): RepopackConfigMerged => ({
-  cwd,
-  output: {
-    ...defaultConfig.output,
-    ...fileConfig.output,
-    ...cliConfig.output,
-  },
-  ignore: {
-    ...defaultConfig.ignore,
-    ...fileConfig.ignore,
-    ...cliConfig.ignore,
-    customPatterns: [
-      ...(defaultConfig.ignore.customPatterns || []),
-      ...(fileConfig.ignore?.customPatterns || []),
-      ...(cliConfig.ignore?.customPatterns || []),
-    ],
-  },
-  include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
-  security: {
-    ...defaultConfig.security,
-    ...fileConfig.security,
-    ...cliConfig.security,
-  },
-});
+): RepopackConfigMerged => {
+  // If the output file path is not provided in the config file or CLI, use the default file path for the style
+  if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
+    const style = cliConfig.output?.style || fileConfig.output?.style || defaultConfig.output.style;
+    defaultConfig.output.filePath = defaultFilePathMap[style];
+  }
+
+  return {
+    cwd,
+    output: {
+      ...defaultConfig.output,
+      ...fileConfig.output,
+      ...cliConfig.output,
+    },
+    ignore: {
+      ...defaultConfig.ignore,
+      ...fileConfig.ignore,
+      ...cliConfig.ignore,
+      customPatterns: [
+        ...(defaultConfig.ignore.customPatterns || []),
+        ...(fileConfig.ignore?.customPatterns || []),
+        ...(cliConfig.ignore?.customPatterns || []),
+      ],
+    },
+    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
+    security: {
+      ...defaultConfig.security,
+      ...fileConfig.security,
+      ...cliConfig.security,
+    },
+  };
+};

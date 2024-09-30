@@ -1,8 +1,8 @@
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { generateMarkdownStyle } from '../../../src/core/output/markdownStyleGenerator.js';
-import { buildOutputGeneratorContext } from '../../../src/core/output/outputGenerator.js';
-import { createMockConfig } from '../../testing/testUtils.js';
+import { buildOutputGeneratorContext } from '../../../../src/core/output/outputGenerator.js';
+import { generateMarkdownStyle } from '../../../../src/core/output/styleGenerators/markdownStyleGenerator.js';
+import { createMockConfig } from '../../../testing/testUtils.js';
 
 vi.mock('fs/promises');
 

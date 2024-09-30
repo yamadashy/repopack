@@ -4,10 +4,10 @@ import type { RepopackConfigMerged } from '../../config/configTypes.js';
 import { RepopackError } from '../../shared/errorHandler.js';
 import { generateTreeString } from '../file/fileTreeGenerator.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import { generateMarkdownStyle } from './markdownStyleGenerator.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
-import { generatePlainStyle } from './plainStyleGenerator.js';
-import { generateXmlStyle } from './xmlStyleGenerator.js';
+import { generateMarkdownStyle } from './styleGenerators/markdownStyleGenerator.js';
+import { generatePlainStyle } from './styleGenerators/plainStyleGenerator.js';
+import { generateXmlStyle } from './styleGenerators/xmlStyleGenerator.js';
 
 export const generateOutput = async (
   rootDir: string,

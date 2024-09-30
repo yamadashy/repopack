@@ -1,8 +1,14 @@
-import type { RepopackConfigDefault } from './configTypes.js';
+import type { RepopackConfigDefault, RepopackOutputStyle } from './configTypes.js';
+
+export const defaultFilePathMap: Record<RepopackOutputStyle, string> = {
+  plain: 'repopack-output.txt',
+  markdown: 'repopack-output.md',
+  xml: 'repopack-output.xml',
+};
 
 export const defaultConfig: RepopackConfigDefault = {
   output: {
-    filePath: 'repopack-output.txt',
+    filePath: defaultFilePathMap.plain,
     style: 'plain',
     removeComments: false,
     removeEmptyLines: false,

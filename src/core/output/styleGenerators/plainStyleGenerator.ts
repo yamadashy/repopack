@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type { OutputGeneratorContext } from '../outputGeneratorTypes.js';
 import {
   generateHeader,
   generateSummaryAdditionalInfo,
@@ -7,10 +7,10 @@ import {
   generateSummaryNotes,
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
-} from './outputStyleDecorator.js';
+} from '../outputStyleDecorator.js';
 
-export const generateMarkdownStyle = (outputGeneratorContext: OutputGeneratorContext) => {
-  const template = Handlebars.compile(markdownTemplate);
+export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContext) => {
+  const template = Handlebars.compile(plainTemplate);
 
   const renderContext = {
     generationHeader: generateHeader(outputGeneratorContext.generationDate),
@@ -31,51 +31,70 @@ export const generateMarkdownStyle = (outputGeneratorContext: OutputGeneratorCon
   return `${template(renderContext).trim()}\n`;
 };
 
-const markdownTemplate = /* md */ `
+const PLAIN_SEPARATOR = '='.repeat(16);
+const PLAIN_LONG_SEPARATOR = '='.repeat(64);
+
+const plainTemplate = `
 {{{generationHeader}}}
 
-# File Summary
+${PLAIN_LONG_SEPARATOR}
+File Summary
+${PLAIN_LONG_SEPARATOR}
 
-## Purpose
+Purpose:
+--------
 {{{summaryPurpose}}}
 
-## File Format
+File Format:
+------------
 {{{summaryFileFormat}}}
 4. Multiple file entries, each consisting of:
-  a. A header with the file path (## File: path/to/file)
-  b. The full contents of the file in a code block
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
 
-## Usage Guidelines
+Usage Guidelines:
+-----------------
 {{{summaryUsageGuidelines}}}
 
-## Notes
+Notes:
+------
 {{{summaryNotes}}}
 
-## Additional Info
+Additional Info:
+----------------
 {{#if headerText}}
-### User Provided Header
+User Provided Header:
+-----------------------
 {{{headerText}}}
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
 
-# Repository Structure
-\`\`\`
+${PLAIN_LONG_SEPARATOR}
+Repository Structure
+${PLAIN_LONG_SEPARATOR}
 {{{treeString}}}
-\`\`\`
 
-# Repository Files
+${PLAIN_LONG_SEPARATOR}
+Repository Files
+${PLAIN_LONG_SEPARATOR}
 
 {{#each processedFiles}}
-## File: {{{this.path}}}
-\`\`\`
+${PLAIN_SEPARATOR}
+File: {{{this.path}}}
+${PLAIN_SEPARATOR}
 {{{this.content}}}
-\`\`\`
 
 {{/each}}
 
 {{#if instruction}}
-# Instruction
+${PLAIN_LONG_SEPARATOR}
+Instruction
+${PLAIN_LONG_SEPARATOR}
 {{{instruction}}}
 {{/if}}
+
 `;

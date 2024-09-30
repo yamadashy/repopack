@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type { OutputGeneratorContext } from '../outputGeneratorTypes.js';
 import {
   generateHeader,
   generateSummaryAdditionalInfo,
@@ -7,10 +7,10 @@ import {
   generateSummaryNotes,
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
-} from './outputStyleDecorator.js';
+} from '../outputStyleDecorator.js';
 
-export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContext) => {
-  const template = Handlebars.compile(plainTemplate);
+export const generateXmlStyle = (outputGeneratorContext: OutputGeneratorContext) => {
+  const template = Handlebars.compile(xmlTemplate);
 
   const renderContext = {
     generationHeader: generateHeader(outputGeneratorContext.generationDate),
@@ -31,70 +31,61 @@ export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContex
   return `${template(renderContext).trim()}\n`;
 };
 
-const PLAIN_SEPARATOR = '='.repeat(16);
-const PLAIN_LONG_SEPARATOR = '='.repeat(64);
-
-const plainTemplate = `
+const xmlTemplate = /* xml */ `
 {{{generationHeader}}}
 
-${PLAIN_LONG_SEPARATOR}
-File Summary
-${PLAIN_LONG_SEPARATOR}
+<file_summary>
+This section contains a summary of this file.
 
-Purpose:
---------
+<purpose>
 {{{summaryPurpose}}}
+</purpose>
 
-File Format:
-------------
+<file_format>
 {{{summaryFileFormat}}}
-4. Multiple file entries, each consisting of:
-  a. A separator line (================)
-  b. The file path (File: path/to/file)
-  c. Another separator line
-  d. The full contents of the file
-  e. A blank line
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
 
-Usage Guidelines:
------------------
+<usage_guidelines>
 {{{summaryUsageGuidelines}}}
+</usage_guidelines>
 
-Notes:
-------
+<notes>
 {{{summaryNotes}}}
+</notes>
 
-Additional Info:
-----------------
+<additional_info>
 {{#if headerText}}
-User Provided Header:
------------------------
+<user_provided_header>
 {{{headerText}}}
+</user_provided_header>
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
+</additional_info>
 
-${PLAIN_LONG_SEPARATOR}
-Repository Structure
-${PLAIN_LONG_SEPARATOR}
+</file_summary>
+
+<repository_structure>
 {{{treeString}}}
+</repository_structure>
 
-${PLAIN_LONG_SEPARATOR}
-Repository Files
-${PLAIN_LONG_SEPARATOR}
+<repository_files>
+This section contains the contents of the repository's files.
 
 {{#each processedFiles}}
-${PLAIN_SEPARATOR}
-File: {{{this.path}}}
-${PLAIN_SEPARATOR}
+<file path="{{{this.path}}}">
 {{{this.content}}}
+</file>
 
 {{/each}}
+</repository_files>
 
 {{#if instruction}}
-${PLAIN_LONG_SEPARATOR}
-Instruction
-${PLAIN_LONG_SEPARATOR}
+<instruction>
 {{{instruction}}}
+</instruction>
 {{/if}}
-
 `;
