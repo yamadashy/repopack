@@ -3,7 +3,7 @@ import path from 'node:path';
 import * as prompts from '@clack/prompts';
 import pc from 'picocolors';
 import type { RepopackConfigFile, RepopackOutputStyle } from '../../config/configTypes.js';
-import { defaultConfig } from '../../config/defaultConfig.js';
+import { defaultConfig, defaultFilePathMap } from '../../config/defaultConfig.js';
 import { getGlobalDirectory } from '../../config/globalDirectory.js';
 import { logger } from '../../shared/logger.js';
 
@@ -77,25 +77,29 @@ export async function createConfigFile(rootDir: string, isGlobal: boolean): Prom
 
   const options = await prompts.group(
     {
-      outputFilePath: () => {
+      outputStyle: () => {
         if (isCancelled) {
           return;
         }
-        return prompts.text({
-          message: 'Output file path:',
-          initialValue: defaultConfig.output.filePath,
-          validate: (value) => (value.length === 0 ? 'Output file path is required' : undefined),
-        });
-      },
-
-      outputStyle: () => {
         return prompts.select({
           message: 'Output style:',
           options: [
             { value: 'plain', label: 'Plain', hint: 'Simple text format' },
             { value: 'xml', label: 'XML', hint: 'Structured XML format' },
+            { value: 'markdown', label: 'Markdown', hint: 'Markdown format' },
           ],
           initialValue: defaultConfig.output.style,
+        });
+      },
+      outputFilePath: ({ results }) => {
+        if (isCancelled) {
+          return;
+        }
+        const defaultFilePath = defaultFilePathMap[results.outputStyle as RepopackOutputStyle];
+        return prompts.text({
+          message: 'Output file path:',
+          initialValue: defaultFilePath,
+          validate: (value) => (value.length === 0 ? 'Output file path is required' : undefined),
         });
       },
     },
