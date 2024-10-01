@@ -25,17 +25,17 @@ export const runSecurityCheck = async (
     async (rawFile, index) => {
       const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
 
+      progressCallback(`Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
+
+      // Sleep for a short time to prevent blocking the event loop
+      await sleep(1);
+
       if (secretLintResult.messages.length > 0) {
         return {
           filePath: rawFile.path,
           messages: secretLintResult.messages.map((message) => message.message),
         };
       }
-
-      progressCallback(`Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
-
-      // Sleep for a short time to prevent blocking the event loop
-      await sleep(1);
 
       return null;
     },
