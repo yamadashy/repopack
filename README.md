@@ -39,6 +39,9 @@ npm install -g repopack
 # Or using yarn
 yarn global add repopack
 
+# Or using Homebrew (macOS)
+brew install repopack
+
 # Then run in any project directory
 repopack
 ```
