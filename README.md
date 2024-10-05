@@ -46,7 +46,7 @@ brew install repopack
 repopack
 ```
 
-That's it! Repopack will generate an `repopack-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
+That's it! Repopack will generate a `repopack-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
 
 
