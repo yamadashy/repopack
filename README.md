@@ -24,7 +24,7 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 
 ## 🚀 Quick Start
 
-You can try Rry Repopack instantly in your project directory without installation:
+You can try Repopack instantly in your project directory without installation:
 
 ```bash
 npx repopack
