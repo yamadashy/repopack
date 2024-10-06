@@ -7,7 +7,7 @@
 [![node](https://img.shields.io/node/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 
 Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file.  
-Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
+It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
 
 
@@ -15,7 +15,7 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 
 - **AI-Optimized**: Formats your codebase in a way that's easy for AI to understand and process.
 - **Token Counting**: Provides token counts for each file and the entire repository, useful for LLM context limits.
-- **Simple to Use**: Just one command to pack your entire repository.
+- **Simple to Use**: You need just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your .gitignore files.
 - **Security-Focused**: Incorporates [Secretlint](https://github.com/secretlint/secretlint) for robust security checks to detect and prevent inclusion of sensitive information.
@@ -24,7 +24,7 @@ Perfect for when you need to feed your codebase to Large Language Models (LLMs) 
 
 ## 🚀 Quick Start
 
-Try Repopack instantly in your project directory without installation:
+You can try Repopack instantly in your project directory without installation:
 
 ```bash
 npx repopack
@@ -36,10 +36,10 @@ Or install globally for repeated use:
 # Install using npm
 npm install -g repopack
 
-# Or using yarn
+# Alternatively using yarn
 yarn global add repopack
 
-# Or using Homebrew (macOS)
+# Alternatively using Homebrew (macOS)
 brew install repopack
 
 # Then run in any project directory
@@ -445,7 +445,7 @@ When Repopack generates the output, it will include the contents of `repopack-in
 Note: The instruction content is appended at the end of the output file. This placement can be particularly effective for AI systems. For those interested in understanding why this might be beneficial, Anthropic provides some insights in their documentation:  
 https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips
 
-> Put longform data at the top: Place your long documents and inputs (~20K+ tokens) near the top of your prompt, above your query, instructions, and examples. This can significantly improve Claude's performance across all models.
+> Put long-form data at the top: Place your long documents and inputs (~20K+ tokens) near the top of your prompt, above your query, instructions, and examples. This can significantly improve Claude's performance across all models.
 > Queries at the end can improve response quality by up to 30% in tests, especially with complex, multi-document inputs.
 
 ### Comment Removal
@@ -474,10 +474,10 @@ Example output:
 1. src/utils/test.txt
 2. tests/utils/secretLintUtils.test.ts
 
-Please review these files for potential sensitive information.
+Please review these files for potentially sensitive information.
 ```
 
-By default, the security check is enabled. You can disable it by setting `security.enableSecurityCheck` to `false` in your configuration file:
+By default, Repopack's security check feature is enabled. You can disable it by setting `security.enableSecurityCheck` to `false` in your configuration file:
 
 ```json
 {
