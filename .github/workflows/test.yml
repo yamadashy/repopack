@@ -44,9 +44,41 @@ jobs:
     - name: Clean install dependencies
       run: npm ci
 
+    - run: npm run test --reporter=verbose
+      env:
+        CI_OS: ${{ runner.os }}
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+        cache: npm
+
+    - name: Clean install dependencies
+      run: npm ci
+
     - run: npm run test-coverage -- --reporter=verbose
       env:
         CI_OS: ${{ runner.os }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: test-coverage
+        path: coverage/
+
+    - uses: codecov/codecov-action@v4
+      with:
+        fail_ci_if_error: true
+        directory: ./coverage
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build-and-run:
     needs: lint
@@ -76,7 +108,6 @@ jobs:
         path: repopack-output.txt
 
   security:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +120,6 @@ jobs:
         run: npm audit
 
   typos:
-    needs: lint
     name: "Check for typos"
     runs-on: "ubuntu-latest"
 
