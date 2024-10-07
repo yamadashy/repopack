@@ -1,21 +1,53 @@
 # Contribution Guide
 
-Contributions are welcome! We appreciate your help in making repopack better.
-You can contribute in the following ways:
+Thanks for your interest in **Repopack**! 🚀 We’d love your help to make it even better. Here’s how you can get involved:
 
-- Create an Issue - Propose a new feature or report a bug.
-- Pull Request - Fix a bug, add a feature, or improve documentation.
-- Share - Share your thoughts about repopack on blogs, social media, or in tech communities.
-- Use repopack in your projects - Practical usage often leads to valuable feedback and improvements.
 
-Note:
-repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While we welcome contributions, please understand that not all suggestions may be accepted, especially if they don't align with the project's goals or coding style.
+- **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by creating an issue.
+- **Submit a Pull Request**: Found something to fix or improve? Jump in and submit a PR!
+- **Spread the Word**: Share your experience with Repopack on social media, blogs, or with your tech community.
+- **Use Repopack**: The best feedback comes from real-world usage, so feel free to integrate Repopack into your own projects!
 
-## Installing dependencies
+## Maintainers
 
-The `yamadashy/repopack` project uses [npm](https://www.npmjs.com/) as its package manager. Developers should have Node.js and npm installed.
+Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestions may be accepted if they don't align with the project's goals or coding standards.
 
-After that, please install the dependencies:
+---
+
+## Getting Started
+
+### 1. Install Dependencies
+
+Repopack uses [npm](https://www.npmjs.com/) as its package manager. Make sure you have Node.js and npm installed on your machine.
+
+To install the project dependencies, run:
+
+```bash
+npm install
+```
+
+2. Set Up Locally
+Clone the repository and set up Repopack on your local machine:
+```bash
+git clone https://github.com/yamadashy/repopack.git
+cd repopack
+npm install
+```
+
+To run it locally:
+```
+npm run cli-run
+```
+How You Can Contribute
+Pull Requests
+Before submitting a pull request, please make sure:
+
+Tests are passing:
+Run the test suite with:
+```
+npm run test
+```
+
 
 ```bash
 npm install
@@ -73,6 +105,6 @@ When adding new features or making changes, please update the relevant documenta
 
 ## Releasing
 
-Releasing new versions is handled by the project maintainer. If you believe a new release is needed, please open an issue to discuss it.
+New versions are managed by the maintainer. If you think a release is needed, open an issue to discuss it
 
 Thank you for contributing to Repopack!
