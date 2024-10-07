@@ -7,15 +7,12 @@ import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import { sleep } from '../shared/sleep.js';
 import type { RepopackProgressCallback } from '../shared/types.js';
-import { collectFiles as defaultCollectFiles } from './file/fileCollector.js';
-import { processFiles as defaultProcessFiles } from './file/fileProcessor.js';
-import { searchFiles as defaultSearchFiles } from './file/fileSearcher.js';
-import { generateOutput as defaultGenerateOutput } from './output/outputGenerator.js';
-import {
-  type SuspiciousFileResult,
-  runSecurityCheck as defaultRunSecurityCheck,
-} from './security/securityCheckRunner.js';
-import { TokenCounter } from './tokenCounter/tokenCounter.js';
+import { collectFiles as defaultCollectFiles } from './file/fileCollect.js';
+import { processFiles as defaultProcessFiles } from './file/fileProcess.js';
+import { searchFiles as defaultSearchFiles } from './file/fileSearch.js';
+import { generateOutput as defaultGenerateOutput } from './output/outputGenerate.js';
+import { type SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheck.js';
+import { TokenCounter } from './tokenCount/tokenCount.js';
 
 export interface PackDependencies {
   searchFiles: typeof defaultSearchFiles;
