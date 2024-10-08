@@ -64,7 +64,7 @@ To pack a specific directory:
 repopack path/to/directory
 ```
 
-To pack specific files or directories using glob patterns:
+To pack specific files or directories using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax):
 
 ```bash
 repopack --include "src/**/*.ts,**/*.md"
@@ -339,10 +339,10 @@ Here's an explanation of the configuration options:
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
-|`include`| Patterns of files to include (using glob syntax) |`[]`|
+|`include`| Patterns of files to include (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
-|`ignore.customPatterns`| Additional patterns to ignore (using glob patterns) |`[]`|
+|`ignore.customPatterns`| Additional patterns to ignore (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) |`[]`|
 |`security.enableSecurityCheck`| Whether to perform security checks on files |`true`|
 
 Example configuration:
@@ -385,7 +385,7 @@ Note: Local configuration (if present) takes precedence over global configuratio
 
 ### Include and Ignore
 #### Include Patterns
-Repopack now supports specifying files to include using glob patterns. This allows for more flexible and powerful file selection:
+Repopack now supports specifying files to include using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax). This allows for more flexible and powerful file selection:
 
 - Use `**/*.js` to include all JavaScript files in any directory
 - Use `src/**/*` to include all files within the `src` directory and its subdirectories
