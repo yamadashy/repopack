@@ -2,13 +2,13 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type PackDependencies, pack } from '../../src/core/packager.js';
-import { TokenCounter } from '../../src/core/tokenCounter/tokenCounter.js';
+import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('node:fs/promises');
 vi.mock('fs/promises');
-vi.mock('../../src/core/security/securityCheckRunner');
-vi.mock('../../src/core/tokenCounter/tokenCounter');
+vi.mock('../../src/core/security/securityCheck');
+vi.mock('../../src/core/tokenCount/tokenCount');
 
 describe('packager', () => {
   let mockDeps: PackDependencies;

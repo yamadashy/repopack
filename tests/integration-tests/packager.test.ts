@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { loadFileConfig, mergeConfigs } from '../../src/config/configLoader.js';
+import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
 import type { RepopackConfigFile, RepopackConfigMerged, RepopackOutputStyle } from '../../src/config/configTypes.js';
 import { pack } from '../../src/core/packager.js';
 import { isWindows } from '../testing/testUtils.js';
