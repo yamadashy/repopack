@@ -85,7 +85,7 @@ export const mergeConfigs = (
   // If the output file path is not provided in the config file or CLI, use the default file path for the style
   if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
     const style = cliConfig.output?.style || fileConfig.output?.style || defaultConfig.output.style;
-    defaultConfig.output.filePath = defaultFilePathMap[style];
+    defaultConfig.output.filePath = defaultFilePathMap[style ?? 'plain'];
   }
 
   return {
