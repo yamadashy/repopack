@@ -1,6 +1,5 @@
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import { TokenCounter } from '../tokenCounter/tokenCounter.js';
+import { TokenCounter } from '../tokenCount/tokenCount.js';
 
 export interface OutputSplit {
   partNumber: number;

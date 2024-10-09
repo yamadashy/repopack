@@ -5,9 +5,9 @@ import { RepopackError } from '../../shared/errorHandle.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
-import { generateMarkdownStyle } from './styleGenerators/markdownStyleGenerator.js';
-import { generatePlainStyle } from './styleGenerators/plainStyleGenerator.js';
-import { generateXmlStyle } from './styleGenerators/xmlStyleGenerator.js';
+import { generateMarkdownStyle } from './outputStyles/markdownStyle.js';
+import { generatePlainStyle } from './outputStyles/plainStyle.js';
+import { generateXmlStyle } from './outputStyles/xmlStyle.js';
 import { splitOutput, type OutputSplit } from './outputSplitter.js';
 
 export const generateOutput = async (
