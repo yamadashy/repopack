@@ -14,6 +14,7 @@ export const defaultConfig: RepopackConfigDefault = {
     removeEmptyLines: false,
     topFilesLength: 5,
     showLineNumbers: false,
+    onlyShowPartFilesInRepoStructure: false
   },
   include: [],
   ignore: {

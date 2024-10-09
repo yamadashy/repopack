@@ -60,9 +60,15 @@ export const pack = async (
   if (config.security.enableSecurityCheck) {
     // Perform security check and filter out suspicious files
     progressCallback('Running security check...');
-    suspiciousFilesResults = await deps.runSecurityCheck(rawFiles, progressCallback);
+    suspiciousFilesResults = await deps.runSecurityCheck(
+      rawFiles,
+      progressCallback,
+    );
     safeRawFiles = rawFiles.filter(
-      (rawFile) => !suspiciousFilesResults.some((result) => result.filePath === rawFile.path),
+      (rawFile) =>
+        !suspiciousFilesResults.some(
+          (result) => result.filePath === rawFile.path,
+        ),
     );
   }
 
@@ -75,13 +81,37 @@ export const pack = async (
 
   // Generate output
   progressCallback('Generating output...');
-  const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);
+  const outputs = await deps.generateOutput(
+    rootDir,
+    config,
+    processedFiles,
+    safeFilePaths
+  );
 
-  // Write output to file. path is relative to the cwd
-  progressCallback('Writing output file...');
-  const outputPath = path.resolve(config.cwd, config.output.filePath);
-  logger.trace(`Writing output to: ${outputPath}`);
-  await fs.writeFile(outputPath, output);
+  // Write output to file(s). path is relative to the cwd
+  progressCallback('Writing output file(s)...');
+
+  // Handle the case where filePath is undefined
+  if (config.output.filePath) {
+    const outputFileBase = path.parse(config.output.filePath).name;
+    const outputFileExt = path.parse(config.output.filePath).ext;
+
+    await Promise.all(
+      outputs.map(async (output, index) => {
+        const outputPath = path.resolve(
+          config.cwd,
+          `${outputFileBase}${
+            outputs.length > 1 ? `-${index + 1}` : ''
+          }${outputFileExt}`,
+        );
+        logger.trace(`Writing output to: ${outputPath}`);
+        await fs.writeFile(outputPath, output);
+      }),
+    );
+  } else {
+    // Handle the case where filePath is undefined (e.g., log a warning)
+    logger.warn('Output file path is not defined. Skipping file writing.');
+  }
 
   // Setup token counter
   const tokenCounter = new TokenCounter();
@@ -94,7 +124,11 @@ export const pack = async (
       const charCount = file.content.length;
       const tokenCount = tokenCounter.countTokens(file.content, file.path);
 
-      progressCallback(`Calculating metrics... (${index + 1}/${processedFiles.length}) ${pc.dim(file.path)}`);
+      progressCallback(
+        `Calculating metrics... (${index + 1}/${
+          processedFiles.length
+        }) ${pc.dim(file.path ?? 'Unknown File')}`,
+      );
 
       // Sleep for a short time to prevent blocking the event loop
       await sleep(1);
@@ -109,8 +143,14 @@ export const pack = async (
   tokenCounter.free();
 
   const totalFiles = processedFiles.length;
-  const totalCharacters = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.charCount, 0);
-  const totalTokens = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.tokenCount, 0);
+  const totalCharacters = fileMetrics.reduce(
+    (sum, fileMetric) => sum + fileMetric.charCount,
+    0,
+  );
+  const totalTokens = fileMetrics.reduce(
+    (sum, fileMetric) => sum + fileMetric.tokenCount,
+    0,
+  );
 
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
@@ -128,3 +168,4 @@ export const pack = async (
     suspiciousFilesResults,
   };
 };
+

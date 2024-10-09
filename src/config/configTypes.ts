@@ -1,16 +1,20 @@
 export type RepopackOutputStyle = 'plain' | 'xml' | 'markdown';
 
+export interface RepopackOutputConfig {
+  filePath?: string;
+  style?: RepopackOutputStyle;
+  headerText?: string;
+  instructionFilePath?: string;
+  removeComments?: boolean;
+  removeEmptyLines?: boolean;
+  topFilesLength?: number;
+  showLineNumbers?: boolean;
+  maxTokensPerFile?: number; // Added maxTokensPerFile
+  onlyShowPartFilesInRepoStructure?: boolean;
+}
+
 interface RepopackConfigBase {
-  output?: {
-    filePath?: string;
-    style?: RepopackOutputStyle;
-    headerText?: string;
-    instructionFilePath?: string;
-    removeComments?: boolean;
-    removeEmptyLines?: boolean;
-    topFilesLength?: number;
-    showLineNumbers?: boolean;
-  };
+  output?: RepopackOutputConfig;
   include?: string[];
   ignore?: {
     useGitignore?: boolean;
@@ -23,16 +27,7 @@ interface RepopackConfigBase {
 }
 
 export type RepopackConfigDefault = RepopackConfigBase & {
-  output: {
-    filePath: string;
-    style: RepopackOutputStyle;
-    headerText?: string;
-    instructionFilePath?: string;
-    removeComments: boolean;
-    removeEmptyLines: boolean;
-    topFilesLength: number;
-    showLineNumbers: boolean;
-  };
+  output: RepopackOutputConfig;
   include: string[];
   ignore: {
     useGitignore: boolean;
