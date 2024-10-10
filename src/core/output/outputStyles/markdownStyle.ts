@@ -74,7 +74,7 @@ This file contains {{{totalPartFiles}}} out of a total of {{{totalFiles}}} files
 
 # Repository Files
 
-{{#each processedFiles}}
+{{#each includedFiles}}
 ## File: {{{this.path}}}
 \`\`\`{{{getFileExtension this.path}}}
 {{{this.content}}}

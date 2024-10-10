@@ -91,7 +91,7 @@ ${PLAIN_LONG_SEPARATOR}
 Repository Files
 ${PLAIN_LONG_SEPARATOR}
 
-{{#each processedFiles}}
+{{#each includedFiles}}
 ${PLAIN_SEPARATOR}
 File: {{{this.path}}}
 ${PLAIN_SEPARATOR}
