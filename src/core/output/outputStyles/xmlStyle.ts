@@ -25,7 +25,11 @@ export const generateXmlStyle = (outputGeneratorContext: OutputGeneratorContext)
     headerText: outputGeneratorContext.config.output.headerText,
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
-    processedFiles: outputGeneratorContext.processedFiles,
+    includedFiles: outputGeneratorContext.includedFiles,
+    partNumber: outputGeneratorContext.partNumber,
+    totalParts: outputGeneratorContext.totalParts,
+    totalPartFiles: outputGeneratorContext.includedFiles.length,
+    totalFiles: outputGeneratorContext.totalFiles
   };
 
   return `${template(renderContext).trim()}\n`;
@@ -52,6 +56,12 @@ This section contains a summary of this file.
 {{{summaryUsageGuidelines}}}
 </usage_guidelines>
 
+<repository_size>
+This file is part {{{partNumber}}} of {{{totalParts}}} of a split representation of the entire codebase.
+This file contains {{{totalPartFiles}}} out of a total of {{{totalFiles}}} files.
+
+</repository_size>
+
 <notes>
 {{{summaryNotes}}}
 </notes>
@@ -75,7 +85,7 @@ This section contains a summary of this file.
 <repository_files>
 This section contains the contents of the repository's files.
 
-{{#each processedFiles}}
+{{#each includedFiles}}
 <file path="{{{this.path}}}">
 {{{this.content}}}
 </file>

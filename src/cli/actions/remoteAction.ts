@@ -29,7 +29,7 @@ export const runRemoteAction = async (repoUrl: string, options: CliOptions): Pro
     logger.log('');
 
     const result = await runDefaultAction(tempDir, tempDir, options);
-    await copyOutputToCurrentDirectory(tempDir, process.cwd(), result.config.output.filePath);
+    await copyOutputToCurrentDirectory(tempDir, process.cwd(), result.config.output.filePath ?? 'repopack-output.txt');
   } finally {
     // Clean up the temporary directory
     await cleanupTempDirectory(tempDir);
