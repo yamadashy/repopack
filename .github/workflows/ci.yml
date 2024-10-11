@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   push:
@@ -8,27 +8,73 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  lint-biome:
+    name: Lint Biome
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup node
-      uses: actions/setup-node@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version-file: .tool-versions
-        cache: npm
+    - run: npm ci
+    - run: npm run lint-biome && git diff --exit-code
 
-    - name: Clean install dependencies
-      run: npm ci
+  lint-ts:
+    name: Lint TypeScript
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+    - run: npm ci
+    - run: npm run lint-ts
 
-    - name: Lint
-      run: npm run lint && git diff --exit-code
+  lint-secretlint:
+    name: Lint Secretlint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+    - run: npm ci
+    - run: npm run lint-secretlint
+
+  lint-renovate-config:
+    name: Lint Renovate config
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+    - name: Validate Renovate config
+      run: npx --yes --package renovate -- renovate-config-validator --strict
+
+  check-npm-audit:
+    name: Check npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: npm audit
+
+  check-typos:
+    name: Check typos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crate-ci/typos@master
 
   test:
-    needs: lint
+    name: Test
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -40,39 +86,29 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Clean install dependencies
-      run: npm ci
-
+    - run: npm ci
     - run: npm run test --reporter=verbose
       env:
         CI_OS: ${{ runner.os }}
 
-  coverage:
+  test-coverage:
+    name: Test coverage
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup node
-      uses: actions/setup-node@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version-file: .tool-versions
         cache: npm
-
-    - name: Clean install dependencies
-      run: npm ci
-
+    - run: npm ci
     - run: npm run test-coverage -- --reporter=verbose
       env:
         CI_OS: ${{ runner.os }}
-
     - uses: actions/upload-artifact@v4
       with:
         name: test-coverage
         path: coverage/
-
     - uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true
@@ -81,7 +117,7 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build-and-run:
-    needs: lint
+    name: Build and run
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -93,39 +129,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Clean install dependencies
-      run: npm ci
-
+    - run: npm ci
     - run: npm run build
-
     - run: node bin/repopack
-
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
         name: repopack-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
         path: repopack-output.txt
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .tool-versions
-      - run: npm ci
-      - name: Run npm audit
-        run: npm audit
-
-  typos:
-    name: "Check for typos"
-    runs-on: "ubuntu-latest"
-
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-
-      - name: "Check for typos"
-        uses: "crate-ci/typos@v1.25.0"
