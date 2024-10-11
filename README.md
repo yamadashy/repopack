@@ -489,11 +489,9 @@ By default, Repopack's security check feature is enabled. You can disable it by 
 
 
 
-## Contribution
+## 🤝 Contribution
 
-See [Contributing Guide](CONTRIBUTING.md).
-
-
-
+We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md). 
 ## 📜 License
-MIT
+
+This project is licensed under the [MIT License](LICENSE).
