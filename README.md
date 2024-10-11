@@ -1,6 +1,6 @@
 # 📦 Repopack
 
-[![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/test.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"test")
+[![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"ci")
 [![npm](https://img.shields.io/npm/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 [![npm](https://img.shields.io/npm/d18m/repopack)](https://www.npmjs.com/package/repopack)
 [![npm](https://img.shields.io/npm/l/repopack.svg?maxAge=1000)](https://github.com/yamadashy/repopack/blob/master/LICENSE.md)
