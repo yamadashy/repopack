@@ -1,3 +1,5 @@
+<a name="readme-top"></a>
+
 # 📦 Repopack
 
 [![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"ci")
@@ -492,6 +494,19 @@ By default, Repopack's security check feature is enabled. You can disable it by 
 ## 🤝 Contribution
 
 We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md). 
+
+## ✨ Contributors
+
+<a href="https://github.com/yamadashy/repopack/graphs/contributors">
+  <img alt="contributors" src="https://contrib.rocks/image?repo=yamadashy/repopack"/>
+</a>
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+<p align="right" style="font-size: 14px; color: #555; margin-top: 20px;">
+    <a href="#readme-top" style="text-decoration: none; color: #007bff; font-weight: bold;">
+        ↑ Back to Top ↑
+    </a>
+</p>
