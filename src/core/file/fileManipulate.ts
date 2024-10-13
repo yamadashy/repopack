@@ -40,91 +40,13 @@ class StripCommentsManipulator extends BaseManipulator {
 
 class PythonManipulator extends BaseManipulator {
   removeDocStrings(content: string): string {
-    if (!content) return '';
-    const lines = content.split('\n');
-
-    let result = '';
-    let buffer = '';
-    let quoteType: '' | "'" | '"' = '';
-    let tripleQuotes = 0;
-
-    const sz = lines.length;
-    for (let i = 0; i < sz; i++) {
-      const line = lines[i] + (i !== sz - 1 ? '\n' : '');
-      buffer += line;
-      if (quoteType === '') {
-        const indexSingle = line.search(/(?<![\"])(?<!\\)'''(?![\"])/g);
-        const indexDouble = line.search(/(?<![\'])(?<!\\)"""(?![\'])/g);
-        if (indexSingle !== -1 && (indexDouble === -1 || indexSingle < indexDouble)) {
-          quoteType = "'";
-        } else if (indexDouble !== -1 && (indexSingle === -1 || indexDouble < indexSingle)) {
-          quoteType = '"';
-        }
-      }
-      if (quoteType === "'") {
-        tripleQuotes += (line.match(/(?<![\"])(?<!\\)'''(?!["])/g) || []).length;
-      }
-      if (quoteType === '"') {
-        tripleQuotes += (line.match(/(?<![\'])(?<!\\)"""(?![\'])/g) || []).length;
-      }
-
-      if (tripleQuotes % 2 === 0) {
-        buffer = buffer.replace(new RegExp(`${quoteType === '"' ? '"""' : "'''"}`, 'g'), '');
-        result += buffer;
-        buffer = '';
-        tripleQuotes = 0;
-        quoteType = '';
-      }
-    }
-
-    result += buffer;
-    return result;
+    const docstringRegex = /(?:^|\n)\s*(?:'{3}|"{3})[\s\S]*?(?:'{3}|"{3})/gm;
+    return content.replace(docstringRegex, '');
   }
 
   removeHashComments(content: string): string {
-    let result = '';
-    const pairs: [number, number][] = [];
-    let prevQuote = 0;
-    while (prevQuote < content.length) {
-      const openingQuote = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
-      if (openingQuote === prevQuote) break;
-      let closingQuote: number;
-      if (content.startsWith('"""', openingQuote) || content.startsWith("'''", openingQuote)) {
-        const quoteType = content.slice(openingQuote, openingQuote + 3);
-        closingQuote = content.indexOf(quoteType, openingQuote + 3);
-      } else {
-        const quoteType = content[openingQuote];
-        closingQuote = content.indexOf(quoteType, openingQuote + 1);
-      }
-      if (closingQuote === -1) break;
-      pairs.push([openingQuote, closingQuote]);
-      prevQuote = closingQuote;
-    }
-    let prevHash = 0;
-    while (prevHash < content.length) {
-      const hashIndex = content.slice(prevHash).search(/(?<!\\)#/g) + prevHash;
-      if (hashIndex === prevHash - 1) {
-        result += content.slice(prevHash);
-        break;
-      }
-      const isInsideString = pairs.some(([start, end]) => hashIndex > start && hashIndex < end);
-      const nextNewLine = content.indexOf('\n', hashIndex);
-      if (!isInsideString) {
-        if (nextNewLine === -1) {
-          result += content.slice(prevHash);
-          break;
-        }
-        result += `${content.slice(prevHash, hashIndex)}\n`;
-      } else {
-        if (nextNewLine === -1) {
-          result += content.slice(prevHash);
-          break;
-        }
-        result += `${content.slice(prevHash, nextNewLine)}\n`;
-      }
-      prevHash = nextNewLine + 1;
-    }
-    return result;
+    const hashCommentRegex = /(?<!["'])#.*$/gm;
+    return content.replace(hashCommentRegex, '');
   }
 
   removeComments(content: string): string {
