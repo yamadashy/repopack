@@ -27,9 +27,6 @@ To run it locally:
 ```
 npm run cli-run
 ```
-How You Can Contribute
-Pull Requests
-Before submitting a pull request, please make sure:
 
 Tests are passing:
 Run the test suite with:
