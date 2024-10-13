@@ -492,15 +492,21 @@ By default, Repopack's security check feature is enabled. You can disable it by 
 ## 🤝 Contribution
 
 We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md). 
+
+### Contributors
+
+<a href="https://github.com/yamadashy/repopack/graphs/contributors">
+  <img alt="contributors" src="https://contrib.rocks/image?repo=yamadashy/repopack"/>
+</a>
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
-
-
 
 <p align="center">
   &nbsp;&nbsp;&nbsp;
   <a href="#-repopack" target="_blank">
     Back To Top
   </a>
+
 </p>
