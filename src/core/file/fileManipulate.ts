@@ -44,13 +44,9 @@ class PythonManipulator extends BaseManipulator {
     const lines = content.split('\n');
 
     let result = '';
-
     let buffer = '';
     let quoteType: '' | "'" | '"' = '';
     let tripleQuotes = 0;
-
-    const doubleQuoteRegex = /^\s*(?<!\\)(?:""")\s*(?:\n)?[\s\S]*?(?<!("""))(?<!\\)(?:""")/gm;
-    const singleQuoteRegex = /^\s*(?<!\\)(?:''')\s*(?:\n)?[\s\S]*?(?<!('''))(?<!\\)(?:''')/gm;
 
     const sz = lines.length;
     for (let i = 0; i < sz; i++) {
@@ -73,8 +69,7 @@ class PythonManipulator extends BaseManipulator {
       }
 
       if (tripleQuotes % 2 === 0) {
-        const docstringRegex = quoteType === '"' ? doubleQuoteRegex : singleQuoteRegex;
-        buffer = buffer.replace(docstringRegex, '');
+        buffer = buffer.replace(new RegExp(`${quoteType === '"' ? '"""' : "'''"}`, 'g'), '');
         result += buffer;
         buffer = '';
         tripleQuotes = 0;
@@ -87,32 +82,12 @@ class PythonManipulator extends BaseManipulator {
   }
 
   removeHashComments(content: string): string {
-    const searchInPairs = (pairs: [number, number][], hashIndex: number): boolean => {
-      let ans = -1;
-      let start = 0;
-      let end = pairs.length - 1;
-      while (start <= end) {
-        const mid = Math.floor((start + end) / 2);
-        const [pairStart, pairEnd] = pairs[mid];
-        if (hashIndex > pairStart && hashIndex < pairEnd) {
-          ans = mid;
-          break;
-        }
-        if (hashIndex < pairStart) {
-          end = mid - 1;
-        } else {
-          start = mid + 1;
-        }
-      }
-      return ans !== -1;
-    };
     let result = '';
     const pairs: [number, number][] = [];
     let prevQuote = 0;
     while (prevQuote < content.length) {
-      const openingQuote: number = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
+      const openingQuote = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
       if (openingQuote === prevQuote) break;
-
       let closingQuote: number;
       if (content.startsWith('"""', openingQuote) || content.startsWith("'''", openingQuote)) {
         const quoteType = content.slice(openingQuote, openingQuote + 3);
@@ -132,7 +107,7 @@ class PythonManipulator extends BaseManipulator {
         result += content.slice(prevHash);
         break;
       }
-      const isInsideString = searchInPairs(pairs, hashIndex);
+      const isInsideString = pairs.some(([start, end]) => hashIndex > start && hashIndex < end);
       const nextNewLine = content.indexOf('\n', hashIndex);
       if (!isInsideString) {
         if (nextNewLine === -1) {
@@ -159,60 +134,17 @@ class PythonManipulator extends BaseManipulator {
   }
 }
 
-class CompositeManipulator extends BaseManipulator {
-  private manipulators: FileManipulator[];
+const manipulators: Record<string, FileManipulator> = {};
 
-  constructor(...manipulators: FileManipulator[]) {
-    super();
-    this.manipulators = manipulators;
+const getOrCreateManipulator = (ext: string): FileManipulator => {
+  if (!manipulators[ext]) {
+    manipulators[ext] =
+      ext === '.py' ? new PythonManipulator() : new StripCommentsManipulator('javascript');
   }
-
-  removeComments(content: string): string {
-    return this.manipulators.reduce((acc, manipulator) => manipulator.removeComments(acc), content);
-  }
-}
-
-const manipulators: Record<string, FileManipulator> = {
-  '.c': new StripCommentsManipulator('c'),
-  '.cs': new StripCommentsManipulator('csharp'),
-  '.css': new StripCommentsManipulator('css'),
-  '.dart': new StripCommentsManipulator('c'),
-  '.go': new StripCommentsManipulator('c'),
-  '.html': new StripCommentsManipulator('html'),
-  '.java': new StripCommentsManipulator('java'),
-  '.js': new StripCommentsManipulator('javascript'),
-  '.jsx': new StripCommentsManipulator('javascript'),
-  '.kt': new StripCommentsManipulator('c'),
-  '.less': new StripCommentsManipulator('less'),
-  '.php': new StripCommentsManipulator('php'),
-  '.rb': new StripCommentsManipulator('ruby'),
-  '.rs': new StripCommentsManipulator('c'),
-  '.sass': new StripCommentsManipulator('sass'),
-  '.scss': new StripCommentsManipulator('sass'),
-  '.sh': new StripCommentsManipulator('perl'),
-  '.sql': new StripCommentsManipulator('sql'),
-  '.swift': new StripCommentsManipulator('swift'),
-  '.ts': new StripCommentsManipulator('javascript'),
-  '.tsx': new StripCommentsManipulator('javascript'),
-  '.xml': new StripCommentsManipulator('xml'),
-  '.yaml': new StripCommentsManipulator('perl'),
-  '.yml': new StripCommentsManipulator('perl'),
-
-  '.py': new PythonManipulator(),
-
-  '.vue': new CompositeManipulator(
-    new StripCommentsManipulator('html'),
-    new StripCommentsManipulator('css'),
-    new StripCommentsManipulator('javascript'),
-  ),
-  '.svelte': new CompositeManipulator(
-    new StripCommentsManipulator('html'),
-    new StripCommentsManipulator('css'),
-    new StripCommentsManipulator('javascript'),
-  ),
+  return manipulators[ext];
 };
 
 export const getFileManipulator = (filePath: string): FileManipulator | null => {
   const ext = path.extname(filePath);
-  return manipulators[ext] || null;
+  return getOrCreateManipulator(ext) || null;
 };
