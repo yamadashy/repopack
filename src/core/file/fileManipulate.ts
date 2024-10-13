@@ -134,7 +134,45 @@ class PythonManipulator extends BaseManipulator {
   }
 }
 
-const manipulators: Record<string, FileManipulator> = {};
+const manipulators: Record<string, FileManipulator> = {
+  '.c': new StripCommentsManipulator('c'),
+  '.cs': new StripCommentsManipulator('csharp'),
+  '.css': new StripCommentsManipulator('css'),
+  '.dart': new StripCommentsManipulator('c'),
+  '.go': new StripCommentsManipulator('c'),
+  '.html': new StripCommentsManipulator('html'),
+  '.java': new StripCommentsManipulator('java'),
+  '.js': new StripCommentsManipulator('javascript'),
+  '.jsx': new StripCommentsManipulator('javascript'),
+  '.kt': new StripCommentsManipulator('c'),
+  '.less': new StripCommentsManipulator('less'),
+  '.php': new StripCommentsManipulator('php'),
+  '.rb': new StripCommentsManipulator('ruby'),
+  '.rs': new StripCommentsManipulator('c'),
+  '.sass': new StripCommentsManipulator('sass'),
+  '.scss': new StripCommentsManipulator('sass'),
+  '.sh': new StripCommentsManipulator('perl'),
+  '.sql': new StripCommentsManipulator('sql'),
+  '.swift': new StripCommentsManipulator('swift'),
+  '.ts': new StripCommentsManipulator('javascript'),
+  '.tsx': new StripCommentsManipulator('javascript'),
+  '.xml': new StripCommentsManipulator('xml'),
+  '.yaml': new StripCommentsManipulator('perl'),
+  '.yml': new StripCommentsManipulator('perl'),
+
+  '.py': new PythonManipulator(),
+
+  '.vue': new CompositeManipulator(
+    new StripCommentsManipulator('html'),
+    new StripCommentsManipulator('css'),
+    new StripCommentsManipulator('javascript'),
+  ),
+  '.svelte': new CompositeManipulator(
+    new StripCommentsManipulator('html'),
+    new StripCommentsManipulator('css'),
+    new StripCommentsManipulator('javascript'),
+  ),
+};
 
 const getOrCreateManipulator = (ext: string): FileManipulator => {
   if (!manipulators[ext]) {
