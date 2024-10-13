@@ -10,7 +10,7 @@ Thanks for your interest in **Repopack**! 🚀 We’d love your help to make it 
 
 ## Maintainers
 
-Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestions may be accepted if they don't align with the project's goals or coding standards.
+Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestion may be accepted if they don't align with the project's goals or coding standards.
 
 ---
 
