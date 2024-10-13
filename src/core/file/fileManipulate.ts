@@ -103,7 +103,7 @@ class PythonManipulator extends BaseManipulator {
       const openingQuote = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
       if (openingQuote === prevQuote) break;
 
-      let closingQuote;
+      let closingQuote = -1;
       if (content.startsWith('"""', openingQuote) || content.startsWith("'''", openingQuote)) {
         const quoteType = content.slice(openingQuote, openingQuote + 3);
         closingQuote = content.indexOf(quoteType, openingQuote + 3);
