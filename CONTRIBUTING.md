@@ -16,17 +16,6 @@ Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy))
 
 ## Getting Started
 
-### 1. Install Dependencies
-
-Repopack uses [npm](https://www.npmjs.com/) as its package manager. Make sure you have Node.js and npm installed on your machine.
-
-To install the project dependencies, run:
-
-```bash
-npm install
-```
-
-2. Set Up Locally
 Clone the repository and set up Repopack on your local machine:
 ```bash
 git clone https://github.com/yamadashy/repopack.git
