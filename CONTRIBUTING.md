@@ -1,25 +1,18 @@
 # Contribution Guide
 
-Contributions are welcome! We appreciate your help in making repopack better.
-You can contribute in the following ways:
+Thanks for your interest in **Repopack**! 🚀 We’d love your help to make it even better. Here’s how you can get involved:
 
-- Create an Issue - Propose a new feature or report a bug.
-- Pull Request - Fix a bug, add a feature, or improve documentation.
-- Share - Share your thoughts about repopack on blogs, social media, or in tech communities.
-- Use repopack in your projects - Practical usage often leads to valuable feedback and improvements.
 
-Note:
-repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While we welcome contributions, please understand that not all suggestions may be accepted, especially if they don't align with the project's goals or coding style.
+- **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by creating an issue.
+- **Submit a Pull Request**: Found something to fix or improve? Jump in and submit a PR!
+- **Spread the Word**: Share your experience with Repopack on social media, blogs, or with your tech community.
+- **Use Repopack**: The best feedback comes from real-world usage, so feel free to integrate Repopack into your own projects!
 
-## Installing dependencies
+## Maintainers
 
-The `yamadashy/repopack` project uses [npm](https://www.npmjs.com/) as its package manager. Developers should have Node.js and npm installed.
+Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestion may be accepted if they don't align with the project's goals or coding standards.
 
-After that, please install the dependencies:
-
-```bash
-npm install
-```
+---
 
 ## Pull Requests
 
@@ -45,7 +38,7 @@ To run Repopack locally:
 npm run cli-run
 ```
 
-## Coding Style
+### Coding Style
 
 We use [Biome](https://biomejs.dev/) for linting and formatting. Please make sure your code follows the style guide by running:
 
@@ -53,7 +46,7 @@ We use [Biome](https://biomejs.dev/) for linting and formatting. Please make sur
 npm run lint
 ```
 
-## Testing
+### Testing
 
 We use [Vitest](https://vitest.dev/) for testing. To run the tests:
 
@@ -67,12 +60,12 @@ For test coverage:
 npm run test-coverage
 ```
 
-## Documentation
+### Documentation
 
 When adding new features or making changes, please update the relevant documentation in the README.md file.
 
 ## Releasing
 
-Releasing new versions is handled by the project maintainer. If you believe a new release is needed, please open an issue to discuss it.
+New versions are managed by the maintainer. If you think a release is needed, open an issue to discuss it
 
 Thank you for contributing to Repopack!
