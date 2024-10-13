@@ -14,31 +14,6 @@ Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy))
 
 ---
 
-## Getting Started
-
-Clone the repository and set up Repopack on your local machine:
-```bash
-git clone https://github.com/yamadashy/repopack.git
-cd repopack
-npm install
-```
-
-To run it locally:
-```
-npm run cli-run
-```
-
-Tests are passing:
-Run the test suite with:
-```
-npm run test
-```
-
-
-```bash
-npm install
-```
-
 ## Pull Requests
 
 Before submitting a Pull Request, please ensure:
@@ -63,7 +38,7 @@ To run Repopack locally:
 npm run cli-run
 ```
 
-## Coding Style
+### Coding Style
 
 We use [Biome](https://biomejs.dev/) for linting and formatting. Please make sure your code follows the style guide by running:
 
@@ -71,7 +46,7 @@ We use [Biome](https://biomejs.dev/) for linting and formatting. Please make sur
 npm run lint
 ```
 
-## Testing
+### Testing
 
 We use [Vitest](https://vitest.dev/) for testing. To run the tests:
 
@@ -85,7 +60,7 @@ For test coverage:
 npm run test-coverage
 ```
 
-## Documentation
+### Documentation
 
 When adding new features or making changes, please update the relevant documentation in the README.md file.
 
