@@ -1,5 +1,3 @@
-<a name="readme-top"></a>
-
 # 📦 Repopack
 
 [![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"ci")
@@ -505,8 +503,10 @@ We welcome contributions from the community! To get started, please refer to our
 
 This project is licensed under the [MIT License](LICENSE).
 
-<p align="right" style="font-size: 14px; color: #555; margin-top: 20px;">
-    <a href="#readme-top" style="text-decoration: none; color: #007bff; font-weight: bold;">
-        ↑ Back to Top ↑
-    </a>
+<p align="center">
+  &nbsp;&nbsp;&nbsp;
+  <a href="#-repopack" target="_blank">
+    Back To Top
+  </a>
+
 </p>
