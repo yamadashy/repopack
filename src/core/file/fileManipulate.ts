@@ -12,7 +12,6 @@ const rtrimLines = (content: string): string =>
     .map((line) => line.trimEnd())
     .join('\n');
 
-
 class BaseManipulator implements FileManipulator {
   removeComments(content: string): string {
     return content;
@@ -145,7 +144,6 @@ class PythonManipulator extends BaseManipulator {
     }
     return result;
   }
-
 
   removeComments(content: string): string {
     let result = this.removeDocStrings(content);
