@@ -6,7 +6,11 @@ interface FileManipulator {
   removeEmptyLines(content: string): string;
 }
 
-const rtrimLines = (content: string): string => content.replace(/[ \t]+$/gm, '');
+const rtrimLines = (content: string): string =>
+  content
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .join('\n');
 
 class BaseManipulator implements FileManipulator {
   removeComments(content: string): string {
@@ -88,32 +92,17 @@ class PythonManipulator extends BaseManipulator {
 
   removeHashComments(content: string): string {
     const searchInPairs = (pairs: [number, number][], hashIndex: number): boolean => {
-      let ans = -1;
-      let start = 0;
-      let end = pairs.length - 1;
-      while (start <= end) {
-        const mid = Math.floor((start + end) / 2);
-        const [pairStart, pairEnd] = pairs[mid];
-        if (hashIndex > pairStart && hashIndex < pairEnd) {
-          ans = mid;
-          break;
-        }
-        if (hashIndex < pairStart) {
-          end = mid - 1;
-        } else {
-          start = mid + 1;
-        }
-      }
-      return ans !== -1;
+      return pairs.some(([start, end]) => hashIndex > start && hashIndex < end);
     };
+
     let result = '';
     const pairs: [number, number][] = [];
     let prevQuote = 0;
     while (prevQuote < content.length) {
-      const openingQuote: number = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
+      const openingQuote = content.slice(prevQuote + 1).search(/(?<!\\)(?:"|'|'''|""")/g) + prevQuote + 1;
       if (openingQuote === prevQuote) break;
 
-      let closingQuote: number;
+      let closingQuote = -1;
       if (content.startsWith('"""', openingQuote) || content.startsWith("'''", openingQuote)) {
         const quoteType = content.slice(openingQuote, openingQuote + 3);
         closingQuote = content.indexOf(quoteType, openingQuote + 3);
@@ -121,6 +110,7 @@ class PythonManipulator extends BaseManipulator {
         const quoteType = content[openingQuote];
         closingQuote = content.indexOf(quoteType, openingQuote + 1);
       }
+
       if (closingQuote === -1) break;
       pairs.push([openingQuote, closingQuote]);
       prevQuote = closingQuote;
@@ -132,8 +122,10 @@ class PythonManipulator extends BaseManipulator {
         result += content.slice(prevHash);
         break;
       }
+
       const isInsideString = searchInPairs(pairs, hashIndex);
       const nextNewLine = content.indexOf('\n', hashIndex);
+
       if (!isInsideString) {
         if (nextNewLine === -1) {
           result += content.slice(prevHash);
@@ -147,6 +139,7 @@ class PythonManipulator extends BaseManipulator {
         }
         result += `${content.slice(prevHash, nextNewLine)}\n`;
       }
+
       prevHash = nextNewLine + 1;
     }
     return result;
