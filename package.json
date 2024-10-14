@@ -70,12 +70,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
-    "@types/node": "^20.16.10",
+    "@types/node": "^20.16.11",
     "@types/strip-comments": "^2.0.4",
     "@vitest/coverage-v8": "^2.1.2",
     "rimraf": "^6.0.1",
     "secretlint": "^8.4.0",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "vitest": "^2.1.2"
   },
   "engines": {
