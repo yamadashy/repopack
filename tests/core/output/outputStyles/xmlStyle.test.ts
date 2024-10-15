@@ -1,8 +1,8 @@
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { buildOutputGeneratorContext } from '../../../../src/core/output/outputGenerate.js';
-import { generateXmlStyle } from '../../../../src/core/output/outputStyles/xmlStyle.js';
 import { createMockConfig } from '../../../testing/testUtils.js';
+import { generateOutput } from '../../../../src/core/output/outputGenerate.js';
+
 
 vi.mock('fs/promises');
 
@@ -11,7 +11,7 @@ describe('xmlStyle', () => {
     vi.resetAllMocks();
   });
 
-  test('generateXmlOutput should include user-provided header text', async () => {
+  test('generateOutput for xml should include user-provided header text', async () => {
     const mockConfig = createMockConfig({
       output: {
         filePath: 'output.txt',
@@ -24,8 +24,7 @@ describe('xmlStyle', () => {
       },
     });
 
-    const context = await buildOutputGeneratorContext(process.cwd(), mockConfig, [], []);
-    const output = await generateXmlStyle(context);
+    const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
     expect(output).toContain('file_summary');
     expect(output).toContain('repository_structure');

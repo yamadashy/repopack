@@ -1,7 +1,6 @@
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { buildOutputGeneratorContext } from '../../../../src/core/output/outputGenerate.js';
-import { generatePlainStyle } from '../../../../src/core/output/outputStyles/plainStyle.js';
+import { generateOutput } from '../../../../src/core/output/outputGenerate.js';
 import { createMockConfig } from '../../../testing/testUtils.js';
 
 vi.mock('fs/promises');
@@ -11,7 +10,7 @@ describe('plainStyle', () => {
     vi.resetAllMocks();
   });
 
-  test('generatePlainOutput should include user-provided header text', async () => {
+  test('generateOutput for plain should include user-provided header text', async () => {
     const mockConfig = createMockConfig({
       output: {
         filePath: 'output.txt',
@@ -24,8 +23,7 @@ describe('plainStyle', () => {
       },
     });
 
-    const context = await buildOutputGeneratorContext(process.cwd(), mockConfig, [], []);
-    const output = await generatePlainStyle(context);
+    const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
     expect(output).toContain('File Summary');
     expect(output).toContain('Repository Structure');
