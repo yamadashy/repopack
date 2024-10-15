@@ -32,8 +32,8 @@ export function validateConfig(config: unknown): asserts config is RepopackConfi
       if (typeof style !== 'string') {
         throw new RepopackConfigValidationError('output.style must be a string');
       }
-      if (style !== 'plain' && style !== 'xml') {
-        throw new RepopackConfigValidationError('output.style must be either "plain" or "xml"');
+      if (style !== 'plain' && style !== 'xml' && style !== 'markdown') {
+        throw new RepopackConfigValidationError('output.style must be either "plain", "xml" or "markdown"');
       }
     }
   }
