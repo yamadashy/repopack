@@ -1,0 +1,17 @@
+name: Brew
+on:
+  push:
+    tags: 'v*'
+
+jobs:
+  brew:
+    name: Bump Homebrew formula version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release | Brew
+        uses: mislav/bump-homebrew-formula-action@v3
+        with:
+          formula-name: repopack
+          formula-path: Formula/r/repopack.rb
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
