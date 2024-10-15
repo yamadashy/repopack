@@ -46,6 +46,6 @@ describe('configValidate', () => {
   test('should throw for invalid output.style value', () => {
     const invalidConfig = { output: { style: 'invalid' } };
     expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
-    expect(() => validateConfig(invalidConfig)).toThrow('output.style must be either "plain" or "xml"');
+    expect(() => validateConfig(invalidConfig)).toThrow('output.style must be either "plain", "xml" or "markdown"');
   });
 });
