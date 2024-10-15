@@ -25,7 +25,11 @@ export const generateMarkdownStyle = (outputGeneratorContext: OutputGeneratorCon
     headerText: outputGeneratorContext.config.output.headerText,
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
-    processedFiles: outputGeneratorContext.processedFiles,
+    includedFiles: outputGeneratorContext.includedFiles,
+    partNumber: outputGeneratorContext.partNumber,
+    totalParts: outputGeneratorContext.totalParts,
+    totalPartFiles: outputGeneratorContext.includedFiles.length,
+    totalFiles: outputGeneratorContext.totalFiles
   };
 
   return `${template(renderContext).trim()}\n`;
@@ -48,6 +52,10 @@ const markdownTemplate = /* md */ `
 ## Usage Guidelines
 {{{summaryUsageGuidelines}}}
 
+## Repository Size
+This file is part {{{partNumber}}} of {{{totalParts}}} of a split representation of the entire codebase.
+This file contains {{{totalPartFiles}}} out of a total of {{{totalFiles}}} files.
+
 ## Notes
 {{{summaryNotes}}}
 
@@ -66,7 +74,7 @@ const markdownTemplate = /* md */ `
 
 # Repository Files
 
-{{#each processedFiles}}
+{{#each includedFiles}}
 ## File: {{{this.path}}}
 \`\`\`{{{getFileExtension this.path}}}
 {{{this.content}}}

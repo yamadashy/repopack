@@ -56,8 +56,8 @@ export const runDefaultAction = async (
   spinner.succeed('Packing completed successfully!');
   logger.log('');
 
-  if (config.output.topFilesLength > 0) {
-    printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength);
+  if (config.output.topFilesLength && config.output.topFilesLength > 0) {
+    printTopFiles(packResult.fileCharCounts, packResult.fileTokenCounts, config.output.topFilesLength ?? 0);
     logger.log('');
   }
 
@@ -68,7 +68,7 @@ export const runDefaultAction = async (
     packResult.totalFiles,
     packResult.totalCharacters,
     packResult.totalTokens,
-    config.output.filePath,
+    config.output.filePath ?? 'No output file specified',
     packResult.suspiciousFilesResults,
     config,
   );
@@ -102,6 +102,9 @@ const buildCliConfig = (options: CliOptions): RepopackConfigCli => {
   }
   if (options.style) {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
+  }
+  if (options.maxTokens !== undefined) {
+    cliConfig.output = { ...cliConfig.output, maxTokensPerFile: options.maxTokens };
   }
 
   return cliConfig;

@@ -25,7 +25,11 @@ export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContex
     headerText: outputGeneratorContext.config.output.headerText,
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
-    processedFiles: outputGeneratorContext.processedFiles,
+    includedFiles: outputGeneratorContext.includedFiles,
+    partNumber: outputGeneratorContext.partNumber,
+    totalParts: outputGeneratorContext.totalParts,
+    totalPartFiles: outputGeneratorContext.includedFiles.length,
+    totalFiles: outputGeneratorContext.totalFiles
   };
 
   return `${template(renderContext).trim()}\n`;
@@ -59,6 +63,11 @@ Usage Guidelines:
 -----------------
 {{{summaryUsageGuidelines}}}
 
+Repository Size:
+-----------------
+This file is part {{{partNumber}}} of {{{totalParts}}} of a split representation of the entire codebase.
+This file contains {{{totalPartFiles}}} out of a total of {{{totalFiles}}} files.
+
 Notes:
 ------
 {{{summaryNotes}}}
@@ -82,7 +91,7 @@ ${PLAIN_LONG_SEPARATOR}
 Repository Files
 ${PLAIN_LONG_SEPARATOR}
 
-{{#each processedFiles}}
+{{#each includedFiles}}
 ${PLAIN_SEPARATOR}
 File: {{{this.path}}}
 ${PLAIN_SEPARATOR}
