@@ -16,7 +16,7 @@
     "lint": "npm run lint-biome && npm run lint-ts && npm run lint-secretlint",
     "lint-biome": "biome check --write",
     "lint-ts": "tsc --noEmit",
-    "lint-secretlint": "secretlint \"**/*\"",
+    "lint-secretlint": "secretlint \"**/*\" --secretlintignore .gitignore",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
     "cli-run": "npm run build && node --trace-warnings bin/repopack",
