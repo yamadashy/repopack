@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import Handlebars from 'handlebars';
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepopackConfigMerged, RepopackOutputStyle } from '../../config/configTypes.js';
 import { RepopackError } from '../../shared/errorHandle.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
@@ -17,6 +17,55 @@ import {
 import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
+
+const compiledTemplateCache: Record<
+  RepopackOutputStyle,
+  HandlebarsTemplateDelegate<ReturnType<typeof createRenderContext>> | null
+> = {
+  xml: null,
+  markdown: null,
+  plain: null,
+};
+
+export const generateOutput = async (
+  rootDir: string,
+  config: RepopackConfigMerged,
+  processedFiles: ProcessedFile[],
+  allFilePaths: string[],
+): Promise<string> => {
+  const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
+  const renderContext = createRenderContext(outputGeneratorContext);
+
+  const compiledTemplate = getCompiledTemplate(config.output.style);
+
+  return `${compiledTemplate(renderContext).trim()}\n`;
+};
+
+const buildOutputGeneratorContext = async (
+  rootDir: string,
+  config: RepopackConfigMerged,
+  allFilePaths: string[],
+  processedFiles: ProcessedFile[],
+): Promise<OutputGeneratorContext> => {
+  let repositoryInstruction = '';
+
+  if (config.output.instructionFilePath) {
+    const instructionPath = path.resolve(rootDir, config.output.instructionFilePath);
+    try {
+      repositoryInstruction = await fs.readFile(instructionPath, 'utf-8');
+    } catch {
+      throw new RepopackError(`指示ファイルが ${instructionPath} で見つかりません`);
+    }
+  }
+
+  return {
+    generationDate: new Date().toISOString(),
+    treeString: generateTreeString(allFilePaths),
+    processedFiles,
+    config,
+    instruction: repositoryInstruction,
+  };
+};
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
   return {
@@ -36,53 +85,23 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
   };
 };
 
-export const generateOutput = async (
-  rootDir: string,
-  config: RepopackConfigMerged,
-  processedFiles: ProcessedFile[],
-  allFilePaths: string[],
-): Promise<string> => {
-  const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
-  const renderContext = createRenderContext(outputGeneratorContext);
-
-  let template: string;
-  switch (config.output.style) {
-    case 'xml':
-      template = getXmlTemplate();
-      break;
-    case 'markdown':
-      template = getMarkdownTemplate();
-      break;
-    default:
-      template = getPlainTemplate();
-  }
-
-  const compiledTemplate = Handlebars.compile(template);
-  return `${compiledTemplate(renderContext).trim()}\n`;
-};
-
-export const buildOutputGeneratorContext = async (
-  rootDir: string,
-  config: RepopackConfigMerged,
-  allFilePaths: string[],
-  processedFiles: ProcessedFile[],
-): Promise<OutputGeneratorContext> => {
-  let repositoryInstruction = '';
-
-  if (config.output.instructionFilePath) {
-    const instructionPath = path.resolve(rootDir, config.output.instructionFilePath);
-    try {
-      repositoryInstruction = await fs.readFile(instructionPath, 'utf-8');
-    } catch {
-      throw new RepopackError(`Instruction file not found at ${instructionPath}`);
+const getCompiledTemplate = (style: RepopackOutputStyle) => {
+  if (!compiledTemplateCache[style]) {
+    let compiledTemplate: HandlebarsTemplateDelegate;
+    switch (style) {
+      case 'xml':
+        compiledTemplate = Handlebars.compile(getXmlTemplate());
+        break;
+      case 'markdown':
+        compiledTemplate = Handlebars.compile(getMarkdownTemplate());
+        break;
+      case 'plain':
+        compiledTemplate = Handlebars.compile(getPlainTemplate());
+        break;
+      default:
+        throw new RepopackError(`Unknown output style: ${style}`);
     }
+    compiledTemplateCache[style] = compiledTemplate;
   }
-
-  return {
-    generationDate: new Date().toISOString(),
-    treeString: generateTreeString(allFilePaths),
-    processedFiles,
-    config,
-    instruction: repositoryInstruction,
-  };
+  return compiledTemplateCache[style];
 };
