@@ -25,7 +25,6 @@ describe('markdownStyle', () => {
 
     const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
-
     expect(output).toContain('# File Summary');
     expect(output).toContain('# Repository Structure');
     expect(output).toContain('# Repository Files');

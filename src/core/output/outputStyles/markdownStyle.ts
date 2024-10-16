@@ -1,8 +1,7 @@
 import Handlebars from 'handlebars';
 
 export const getMarkdownTemplate = () => {
-
-  return  /* md */ `
+  return /* md */ `
 {{{generationHeader}}}
 
 # File Summary
@@ -50,7 +49,7 @@ export const getMarkdownTemplate = () => {
 {{{instruction}}}
 {{/if}}
 `;
-}
+};
 
 Handlebars.registerHelper('getFileExtension', (filePath) => {
   const extension = filePath.split('.').pop()?.toLowerCase();

@@ -1,8 +1,7 @@
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { createMockConfig } from '../../../testing/testUtils.js';
 import { generateOutput } from '../../../../src/core/output/outputGenerate.js';
-
+import { createMockConfig } from '../../../testing/testUtils.js';
 
 vi.mock('fs/promises');
 

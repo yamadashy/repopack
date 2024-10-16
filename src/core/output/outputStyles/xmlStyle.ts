@@ -1,6 +1,5 @@
 export const getXmlTemplate = () => {
-
-  return  /* xml */ `
+  return /* xml */ `
 {{{generationHeader}}}
 
 <file_summary>
@@ -58,4 +57,4 @@ This section contains the contents of the repository's files.
 </instruction>
 {{/if}}
 `;
-}
+};

@@ -2,7 +2,6 @@ const PLAIN_SEPARATOR = '='.repeat(16);
 const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
 export const getPlainTemplate = () => {
-
   return `
 {{{generationHeader}}}
 
@@ -67,4 +66,4 @@ ${PLAIN_LONG_SEPARATOR}
 {{/if}}
 
 `;
-}
+};

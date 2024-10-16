@@ -6,9 +6,6 @@ import { RepopackError } from '../../shared/errorHandle.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
-import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
-import { getXmlTemplate } from './outputStyles/xmlStyle.js';
-import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import {
   generateHeader,
   generateSummaryAdditionalInfo,
@@ -17,7 +14,9 @@ import {
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
 } from './outputStyleDecorate.js';
-
+import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
+import { getPlainTemplate } from './outputStyles/plainStyle.js';
+import { getXmlTemplate } from './outputStyles/xmlStyle.js';
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
   return {
@@ -35,7 +34,7 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
     treeString: outputGeneratorContext.treeString,
     processedFiles: outputGeneratorContext.processedFiles,
   };
-}
+};
 
 export const generateOutput = async (
   rootDir: string,
