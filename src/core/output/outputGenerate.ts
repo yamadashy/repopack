@@ -1,13 +1,40 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import Handlebars from 'handlebars';
 import type { RepopackConfigMerged } from '../../config/configTypes.js';
 import { RepopackError } from '../../shared/errorHandle.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
-import { generateMarkdownStyle } from './outputStyles/markdownStyle.js';
-import { generatePlainStyle } from './outputStyles/plainStyle.js';
-import { generateXmlStyle } from './outputStyles/xmlStyle.js';
+import {
+  generateHeader,
+  generateSummaryAdditionalInfo,
+  generateSummaryFileFormat,
+  generateSummaryNotes,
+  generateSummaryPurpose,
+  generateSummaryUsageGuidelines,
+} from './outputStyleDecorate.js';
+import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
+import { getPlainTemplate } from './outputStyles/plainStyle.js';
+import { getXmlTemplate } from './outputStyles/xmlStyle.js';
+
+const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
+  return {
+    generationHeader: generateHeader(outputGeneratorContext.generationDate),
+    summaryPurpose: generateSummaryPurpose(),
+    summaryFileFormat: generateSummaryFileFormat(),
+    summaryUsageGuidelines: generateSummaryUsageGuidelines(
+      outputGeneratorContext.config,
+      outputGeneratorContext.instruction,
+    ),
+    summaryNotes: generateSummaryNotes(outputGeneratorContext.config),
+    summaryAdditionalInfo: generateSummaryAdditionalInfo(),
+    headerText: outputGeneratorContext.config.output.headerText,
+    instruction: outputGeneratorContext.instruction,
+    treeString: outputGeneratorContext.treeString,
+    processedFiles: outputGeneratorContext.processedFiles,
+  };
+};
 
 export const generateOutput = async (
   rootDir: string,
@@ -16,20 +43,22 @@ export const generateOutput = async (
   allFilePaths: string[],
 ): Promise<string> => {
   const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
+  const renderContext = createRenderContext(outputGeneratorContext);
 
-  let output: string;
+  let template: string;
   switch (config.output.style) {
     case 'xml':
-      output = generateXmlStyle(outputGeneratorContext);
+      template = getXmlTemplate();
       break;
     case 'markdown':
-      output = generateMarkdownStyle(outputGeneratorContext);
+      template = getMarkdownTemplate();
       break;
     default:
-      output = generatePlainStyle(outputGeneratorContext);
+      template = getPlainTemplate();
   }
 
-  return output;
+  const compiledTemplate = Handlebars.compile(template);
+  return `${compiledTemplate(renderContext).trim()}\n`;
 };
 
 export const buildOutputGeneratorContext = async (

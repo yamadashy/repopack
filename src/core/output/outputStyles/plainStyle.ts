@@ -1,40 +1,8 @@
-import Handlebars from 'handlebars';
-import type { OutputGeneratorContext } from '../outputGeneratorTypes.js';
-import {
-  generateHeader,
-  generateSummaryAdditionalInfo,
-  generateSummaryFileFormat,
-  generateSummaryNotes,
-  generateSummaryPurpose,
-  generateSummaryUsageGuidelines,
-} from '../outputStyleDecorate.js';
-
-export const generatePlainStyle = (outputGeneratorContext: OutputGeneratorContext) => {
-  const template = Handlebars.compile(plainTemplate);
-
-  const renderContext = {
-    generationHeader: generateHeader(outputGeneratorContext.generationDate),
-    summaryPurpose: generateSummaryPurpose(),
-    summaryFileFormat: generateSummaryFileFormat(),
-    summaryUsageGuidelines: generateSummaryUsageGuidelines(
-      outputGeneratorContext.config,
-      outputGeneratorContext.instruction,
-    ),
-    summaryNotes: generateSummaryNotes(outputGeneratorContext.config),
-    summaryAdditionalInfo: generateSummaryAdditionalInfo(),
-    headerText: outputGeneratorContext.config.output.headerText,
-    instruction: outputGeneratorContext.instruction,
-    treeString: outputGeneratorContext.treeString,
-    processedFiles: outputGeneratorContext.processedFiles,
-  };
-
-  return `${template(renderContext).trim()}\n`;
-};
-
 const PLAIN_SEPARATOR = '='.repeat(16);
 const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
-const plainTemplate = `
+export const getPlainTemplate = () => {
+  return `
 {{{generationHeader}}}
 
 ${PLAIN_LONG_SEPARATOR}
@@ -98,3 +66,4 @@ ${PLAIN_LONG_SEPARATOR}
 {{/if}}
 
 `;
+};

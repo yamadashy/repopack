@@ -1,7 +1,6 @@
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { buildOutputGeneratorContext } from '../../../../src/core/output/outputGenerate.js';
-import { generateMarkdownStyle } from '../../../../src/core/output/outputStyles/markdownStyle.js';
+import { generateOutput } from '../../../../src/core/output/outputGenerate.js';
 import { createMockConfig } from '../../../testing/testUtils.js';
 
 vi.mock('fs/promises');
@@ -11,7 +10,7 @@ describe('markdownStyle', () => {
     vi.resetAllMocks();
   });
 
-  test('generateMarkdownOutput should include user-provided header text', async () => {
+  test('generateOutput for md should include user-provided header text', async () => {
     const mockConfig = createMockConfig({
       output: {
         filePath: 'output.md',
@@ -24,8 +23,7 @@ describe('markdownStyle', () => {
       },
     });
 
-    const context = await buildOutputGeneratorContext(process.cwd(), mockConfig, [], []);
-    const output = await generateMarkdownStyle(context);
+    const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
     expect(output).toContain('# File Summary');
     expect(output).toContain('# Repository Structure');

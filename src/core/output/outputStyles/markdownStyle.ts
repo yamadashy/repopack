@@ -1,37 +1,7 @@
 import Handlebars from 'handlebars';
-import type { OutputGeneratorContext } from '../outputGeneratorTypes.js';
-import {
-  generateHeader,
-  generateSummaryAdditionalInfo,
-  generateSummaryFileFormat,
-  generateSummaryNotes,
-  generateSummaryPurpose,
-  generateSummaryUsageGuidelines,
-} from '../outputStyleDecorate.js';
 
-export const generateMarkdownStyle = (outputGeneratorContext: OutputGeneratorContext) => {
-  const template = Handlebars.compile(markdownTemplate);
-
-  const renderContext = {
-    generationHeader: generateHeader(outputGeneratorContext.generationDate),
-    summaryPurpose: generateSummaryPurpose(),
-    summaryFileFormat: generateSummaryFileFormat(),
-    summaryUsageGuidelines: generateSummaryUsageGuidelines(
-      outputGeneratorContext.config,
-      outputGeneratorContext.instruction,
-    ),
-    summaryNotes: generateSummaryNotes(outputGeneratorContext.config),
-    summaryAdditionalInfo: generateSummaryAdditionalInfo(),
-    headerText: outputGeneratorContext.config.output.headerText,
-    instruction: outputGeneratorContext.instruction,
-    treeString: outputGeneratorContext.treeString,
-    processedFiles: outputGeneratorContext.processedFiles,
-  };
-
-  return `${template(renderContext).trim()}\n`;
-};
-
-const markdownTemplate = /* md */ `
+export const getMarkdownTemplate = () => {
+  return /* md */ `
 {{{generationHeader}}}
 
 # File Summary
@@ -79,6 +49,7 @@ const markdownTemplate = /* md */ `
 {{{instruction}}}
 {{/if}}
 `;
+};
 
 Handlebars.registerHelper('getFileExtension', (filePath) => {
   const extension = filePath.split('.').pop()?.toLowerCase();
