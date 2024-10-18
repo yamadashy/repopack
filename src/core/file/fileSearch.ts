@@ -7,43 +7,51 @@ import { sortPaths } from './filePathSort.js';
 export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
-  const ignorePatterns = await getIgnorePatterns(rootDir, config);
-  const ignoreFilePatterns = await getIgnoreFilePatterns(config);
-
-  logger.trace('Include patterns:', includePatterns);
-  logger.trace('Ignore patterns:', ignorePatterns);
-  logger.trace('Ignore file patterns: ', ignoreFilePatterns);
-
   try {
+    const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
+      getIgnorePatterns(rootDir, config),
+      getIgnoreFilePatterns(config),
+    ]);
+
+    logger.trace('Include patterns:', includePatterns);
+    logger.trace('Ignore patterns:', ignorePatterns);
+    logger.trace('Ignore file patterns:', ignoreFilePatterns);
+
     const filePaths = await globby(includePatterns, {
       cwd: rootDir,
-      ignore: ignorePatterns,
-      ignoreFiles: ignoreFilePatterns,
-      // result options
+      ignore: [...ignorePatterns],
+      ignoreFiles: [...ignoreFilePatterns],
       onlyFiles: true,
       absolute: false,
-      // glob options
       dot: true,
       followSymbolicLinks: false,
     });
 
     logger.trace(`Filtered ${filePaths.length} files`);
-
-    // Sort the filtered paths
     const sortedPaths = sortPaths(filePaths);
 
     return sortedPaths;
-  } catch (error) {
-    logger.error('Error filtering files:', error);
-    throw new Error('Failed to filter files');
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      logger.error('Error filtering files:', error.message);
+      throw new Error(`Failed to filter files in directory ${rootDir}. Reason: ${error.message}`);
+    }
+    logger.error('An unexpected error occurred:', error);
+    throw new Error('An unexpected error occurred while filtering files.');
   }
 };
 
-export const parseIgnoreContent = (content: string): string[] =>
-  content
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith('#'));
+export const parseIgnoreContent = (content: string): string[] => {
+  if (!content) return [];
+
+  return content.split('\n').reduce<string[]>((acc, line) => {
+    const trimmedLine = line.trim();
+    if (trimmedLine && !trimmedLine.startsWith('#')) {
+      acc.push(trimmedLine);
+    }
+    return acc;
+  }, []);
+};
 
 export const getIgnoreFilePatterns = async (config: RepopackConfigMerged): Promise<string[]> => {
   const ignoreFilePatterns: string[] = [];
@@ -58,25 +66,29 @@ export const getIgnoreFilePatterns = async (config: RepopackConfigMerged): Promi
 };
 
 export const getIgnorePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
-  let ignorePatterns: string[] = [];
+  const ignorePatterns = new Set<string>();
 
   // Add default ignore patterns
   if (config.ignore.useDefaultPatterns) {
     logger.trace('Adding default ignore patterns');
-    ignorePatterns = [...ignorePatterns, ...defaultIgnoreList];
+    for (const pattern of defaultIgnoreList) {
+      ignorePatterns.add(pattern);
+    }
   }
 
   // Add repopack output file
   if (config.output.filePath) {
     logger.trace('Adding output file to ignore patterns:', config.output.filePath);
-    ignorePatterns.push(config.output.filePath);
+    ignorePatterns.add(config.output.filePath);
   }
 
   // Add custom ignore patterns
   if (config.ignore.customPatterns) {
-    logger.trace('Adding default custom ignore patterns: ', config.ignore.customPatterns);
-    ignorePatterns = [...ignorePatterns, ...config.ignore.customPatterns];
+    logger.trace('Adding custom ignore patterns:', config.ignore.customPatterns);
+    for (const pattern of config.ignore.customPatterns) {
+      ignorePatterns.add(pattern);
+    }
   }
 
-  return ignorePatterns;
+  return Array.from(ignorePatterns);
 };
