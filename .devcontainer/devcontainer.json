@@ -1,0 +1,6 @@
+{
+	"name": "Repopack",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bullseye",
+	"runArgs": ["--name", "repopack-devcontainer"],
+	"postCreateCommand": "npm install"
+}
