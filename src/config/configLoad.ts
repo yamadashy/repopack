@@ -14,47 +14,35 @@ const getGlobalConfigPath = () => {
 };
 
 export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepopackConfigFile> => {
-  let useDefaultConfig = false;
-  let configPath = argConfigPath;
-  if (!configPath) {
-    useDefaultConfig = true;
-    configPath = defaultConfigPath;
-  }
+  let configPath = argConfigPath ?? defaultConfigPath;
 
   const fullPath = path.resolve(rootDir, configPath);
-
   logger.trace('Loading local config from:', fullPath);
 
-  // Check local file existence
-  const isLocalFileExists = await fs
-    .stat(fullPath)
-    .then((stats) => stats.isFile())
-    .catch(() => false);
+  const [isLocalFileExists, isGlobalFileExists] = await Promise.all([
+    checkFileExists(fullPath),
+    checkFileExists(getGlobalConfigPath()),
+  ]);
 
   if (isLocalFileExists) {
     return await loadAndValidateConfig(fullPath);
   }
 
-  if (useDefaultConfig) {
-    // Try to load global config
-    const globalConfigPath = getGlobalConfigPath();
-    logger.trace('Loading global config from:', globalConfigPath);
-
-    const isGlobalFileExists = await fs
-      .stat(globalConfigPath)
-      .then((stats) => stats.isFile())
-      .catch(() => false);
-
-    if (isGlobalFileExists) {
-      return await loadAndValidateConfig(globalConfigPath);
-    }
-
-    logger.note(
-      `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
-    );
-    return {};
+  if (isGlobalFileExists) {
+    return await loadAndValidateConfig(getGlobalConfigPath());
   }
-  throw new RepopackError(`Config file not found at ${configPath}`);
+
+  logger.note(
+    `No custom config found at ${configPath} or global config. You can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
+  );
+  return {};
+};
+
+const checkFileExists = async (filePath: string): Promise<boolean> => {
+  return fs
+    .stat(filePath)
+    .then((stats) => stats.isFile())
+    .catch(() => false);
 };
 
 const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFile> => {
@@ -64,52 +52,58 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFi
     validateConfig(config);
     return config;
   } catch (error) {
-    if (error instanceof RepopackConfigValidationError) {
-      throw new RepopackError(`Invalid configuration in ${filePath}: ${error.message}`);
-    }
-    if (error instanceof SyntaxError) {
-      throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
-    }
-    if (error instanceof Error) {
-      throw new RepopackError(`Error loading config from ${filePath}: ${error.message}`);
-    }
-    throw new RepopackError(`Error loading config from ${filePath}`);
+    handleError(error, filePath);
   }
 };
 
-export const mergeConfigs = (
+const handleError = (error: unknown, filePath: string): void => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  throw new RepopackError(`Error loading config from ${filePath}: ${errorMessage}`);
+};
+
+const mergeConfigs = (
   cwd: string,
   fileConfig: RepopackConfigFile,
   cliConfig: RepopackConfigCli,
 ): RepopackConfigMerged => {
-  // If the output file path is not provided in the config file or CLI, use the default file path for the style
-  if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
-    const style = cliConfig.output?.style || fileConfig.output?.style || defaultConfig.output.style;
-    defaultConfig.output.filePath = defaultFilePathMap[style];
-  }
+  const output = mergeOutput(fileConfig.output, cliConfig.output);
+  const ignore = mergeIgnore(fileConfig.ignore, cliConfig.ignore);
+  const include = Array.prototype.flat([defaultConfig.include || [], fileConfig.include || [], cliConfig.include || []]);
 
   return {
     cwd,
-    output: {
-      ...defaultConfig.output,
-      ...fileConfig.output,
-      ...cliConfig.output,
-    },
-    ignore: {
-      ...defaultConfig.ignore,
-      ...fileConfig.ignore,
-      ...cliConfig.ignore,
-      customPatterns: [
-        ...(defaultConfig.ignore.customPatterns || []),
-        ...(fileConfig.ignore?.customPatterns || []),
-        ...(cliConfig.ignore?.customPatterns || []),
-      ],
-    },
-    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
+    output,
+    ignore,
+    include,
     security: {
       ...defaultConfig.security,
       ...fileConfig.security,
       ...cliConfig.security,
     },
+  };
+};
+
+const mergeOutput = (fileOutput: any, cliOutput: any) => {
+  const style = cliOutput?.style || fileOutput?.style || defaultConfig.output.style;
+  const filePath = cliOutput?.filePath ?? fileOutput?.filePath ?? defaultFilePathMap[style];
+
+  return {
+    ...defaultConfig.output,
+    ...fileOutput,
+    ...cliOutput,
+    filePath,
+  };
+};
+
+const mergeIgnore = (fileIgnore: any, cliIgnore: any) => {
+  return {
+    ...defaultConfig.ignore,
+    ...fileIgnore,
+    ...cliIgnore,
+    customPatterns: [
+      ...(defaultConfig.ignore.customPatterns || []),
+      ...(fileIgnore?.customPatterns || []),
+      ...(cliIgnore?.customPatterns || []),
+    ],
   };
 };
