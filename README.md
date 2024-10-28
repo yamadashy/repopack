@@ -3,7 +3,7 @@
 [![Actions Status](https://github.com/yamadashy/repopack/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repopack/actions?query=workflow%3A"ci")
 [![npm](https://img.shields.io/npm/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 [![npm](https://img.shields.io/npm/d18m/repopack)](https://www.npmjs.com/package/repopack)
-[![npm](https://img.shields.io/npm/l/repopack.svg?maxAge=1000)](https://github.com/yamadashy/repopack/blob/master/LICENSE.md)
+[![npm](https://img.shields.io/npm/l/repopack.svg?maxAge=1000)](https://github.com/yamadashy/repopack/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/repopack.svg?maxAge=1000)](https://www.npmjs.com/package/repopack)
 
 Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file.  
