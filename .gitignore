@@ -21,10 +21,10 @@ coverage/
 *.tmp
 *.temp
 
-# Repopack output
-repopack-output.txt
-repopack-output.xml
-repopack-output.md
+# Repomix output
+repomix-output.txt
+repomix-output.xml
+repomix-output.md
 
 # ESLint cache
 .eslintcache

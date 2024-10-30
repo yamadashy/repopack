@@ -1,7 +1,7 @@
 import process from 'node:process';
 import { type OptionValues, program } from 'commander';
 import pc from 'picocolors';
-import type { RepopackOutputStyle } from '../config/configTypes.js';
+import type { RepomixOutputStyle } from '../config/configTypes.js';
 import { getVersion } from '../core/file/packageJsonParse.js';
 import { handleError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
@@ -19,7 +19,7 @@ export interface CliOptions extends OptionValues {
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
-  style?: RepopackOutputStyle;
+  style?: RepomixOutputStyle;
   init?: boolean;
   global?: boolean;
   remote?: string;
@@ -30,7 +30,7 @@ export async function run() {
     const version = await getVersion();
 
     program
-      .description('Repopack - Pack your repository into a single AI-friendly file')
+      .description('Repomix - Pack your repository into a single AI-friendly file')
       .arguments('[directory]')
       .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
@@ -41,7 +41,7 @@ export async function run() {
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
       .option('--verbose', 'enable verbose logging for detailed output')
-      .option('--init', 'initialize a new repopack.config.json file')
+      .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
@@ -61,7 +61,7 @@ const executeAction = async (directory: string, cwd: string, options: CliOptions
   }
 
   const version = await getVersion();
-  logger.log(pc.dim(`\n📦 Repopack v${version}\n`));
+  logger.log(pc.dim(`\n📦 Repomix v${version}\n`));
 
   if (options.init) {
     await runInitAction(cwd, options.global || false);

@@ -1,6 +1,6 @@
 # Simple Project
 
-This is a simple project used for testing Repopack.
+This is a simple project used for testing Repomix.
 
 ## Usage
 

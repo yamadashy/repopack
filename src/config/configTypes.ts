@@ -1,9 +1,9 @@
-export type RepopackOutputStyle = 'plain' | 'xml' | 'markdown';
+export type RepomixOutputStyle = 'plain' | 'xml' | 'markdown';
 
-interface RepopackConfigBase {
+interface RepomixConfigBase {
   output?: {
     filePath?: string;
-    style?: RepopackOutputStyle;
+    style?: RepomixOutputStyle;
     headerText?: string;
     instructionFilePath?: string;
     removeComments?: boolean;
@@ -22,10 +22,10 @@ interface RepopackConfigBase {
   };
 }
 
-export type RepopackConfigDefault = RepopackConfigBase & {
+export type RepomixConfigDefault = RepomixConfigBase & {
   output: {
     filePath: string;
-    style: RepopackOutputStyle;
+    style: RepomixOutputStyle;
     headerText?: string;
     instructionFilePath?: string;
     removeComments: boolean;
@@ -44,12 +44,12 @@ export type RepopackConfigDefault = RepopackConfigBase & {
   };
 };
 
-export type RepopackConfigFile = RepopackConfigBase;
+export type RepomixConfigFile = RepomixConfigBase;
 
-export type RepopackConfigCli = RepopackConfigBase;
+export type RepomixConfigCli = RepomixConfigBase;
 
-export type RepopackConfigMerged = RepopackConfigDefault &
-  RepopackConfigFile &
-  RepopackConfigCli & {
+export type RepomixConfigMerged = RepomixConfigDefault &
+  RepomixConfigFile &
+  RepomixConfigCli & {
     cwd: string;
   };

@@ -6,7 +6,7 @@ import pMap from 'p-map';
 import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
-import type { RepopackProgressCallback } from '../../shared/types.js';
+import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 
 export interface SuspiciousFileResult {
@@ -16,7 +16,7 @@ export interface SuspiciousFileResult {
 
 export const runSecurityCheck = async (
   rawFiles: RawFile[],
-  progressCallback: RepopackProgressCallback = () => {},
+  progressCallback: RepomixProgressCallback = () => {},
 ): Promise<SuspiciousFileResult[]> => {
   const secretLintConfig = createSecretLintConfig();
 

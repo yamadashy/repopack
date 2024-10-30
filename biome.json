@@ -10,7 +10,7 @@
       "tsconfig.json",
       "tsconfig.build.json",
       "vite.config.ts",
-      "repopack.config.json"
+      "repomix.config.json"
     ]
   },
   "organizeImports": {

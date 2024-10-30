@@ -1,19 +1,19 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { RepopackError } from '../shared/errorHandle.js';
+import { RepomixError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
-import type { RepopackConfigCli, RepopackConfigFile, RepopackConfigMerged } from './configTypes.js';
-import { RepopackConfigValidationError, validateConfig } from './configValidate.js';
+import type { RepomixConfigCli, RepomixConfigFile, RepomixConfigMerged } from './configTypes.js';
+import { RepomixConfigValidationError, validateConfig } from './configValidate.js';
 import { defaultConfig, defaultFilePathMap } from './defaultConfig.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
-const defaultConfigPath = 'repopack.config.json';
+const defaultConfigPath = 'repomix.config.json';
 
 const getGlobalConfigPath = () => {
-  return path.join(getGlobalDirectory(), 'repopack.config.json');
+  return path.join(getGlobalDirectory(), 'repomix.config.json');
 };
 
-export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepopackConfigFile> => {
+export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepomixConfigFile> => {
   let useDefaultConfig = false;
   let configPath = argConfigPath;
   if (!configPath) {
@@ -50,38 +50,38 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
     }
 
     logger.note(
-      `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repopack for more information.`,
+      `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.`,
     );
     return {};
   }
-  throw new RepopackError(`Config file not found at ${configPath}`);
+  throw new RepomixError(`Config file not found at ${configPath}`);
 };
 
-const loadAndValidateConfig = async (filePath: string): Promise<RepopackConfigFile> => {
+const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFile> => {
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const config = JSON.parse(fileContent);
     validateConfig(config);
     return config;
   } catch (error) {
-    if (error instanceof RepopackConfigValidationError) {
-      throw new RepopackError(`Invalid configuration in ${filePath}: ${error.message}`);
+    if (error instanceof RepomixConfigValidationError) {
+      throw new RepomixError(`Invalid configuration in ${filePath}: ${error.message}`);
     }
     if (error instanceof SyntaxError) {
-      throw new RepopackError(`Invalid JSON in config file ${filePath}: ${error.message}`);
+      throw new RepomixError(`Invalid JSON in config file ${filePath}: ${error.message}`);
     }
     if (error instanceof Error) {
-      throw new RepopackError(`Error loading config from ${filePath}: ${error.message}`);
+      throw new RepomixError(`Error loading config from ${filePath}: ${error.message}`);
     }
-    throw new RepopackError(`Error loading config from ${filePath}`);
+    throw new RepomixError(`Error loading config from ${filePath}`);
   }
 };
 
 export const mergeConfigs = (
   cwd: string,
-  fileConfig: RepopackConfigFile,
-  cliConfig: RepopackConfigCli,
-): RepopackConfigMerged => {
+  fileConfig: RepomixConfigFile,
+  cliConfig: RepomixConfigCli,
+): RepomixConfigMerged => {
   // If the output file path is not provided in the config file or CLI, use the default file path for the style
   if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
     const style = cliConfig.output?.style || fileConfig.output?.style || defaultConfig.output.style;

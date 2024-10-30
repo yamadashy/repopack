@@ -31,7 +31,7 @@ biome.json
 .editorconfig
 .node-version
 .tool-versions
-repopack.config.js
+repomix.config.js
 
 # Editor files
 .vscode/
@@ -40,8 +40,8 @@ repopack.config.js
 # Logs
 *.log
 
-# Repopack output
-repopack-output.txt
+# Repomix output
+repomix-output.txt
 
 # Development scripts
 scripts/

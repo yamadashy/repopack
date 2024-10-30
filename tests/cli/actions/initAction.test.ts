@@ -30,7 +30,7 @@ describe('initAction', () => {
 
       await createConfigFile('/test/dir', false);
 
-      const configPath = path.resolve('/test/dir/repopack.config.json');
+      const configPath = path.resolve('/test/dir/repomix.config.json');
 
       console.log('configPath', configPath);
 
@@ -45,11 +45,11 @@ describe('initAction', () => {
         outputStyle: 'plain',
       });
       vi.mocked(prompts.confirm).mockResolvedValue(true);
-      vi.mocked(getGlobalDirectory).mockImplementation(() => '/global/repopack');
+      vi.mocked(getGlobalDirectory).mockImplementation(() => '/global/repomix');
 
       await createConfigFile('/test/dir', true);
 
-      const configPath = path.resolve('/global/repopack/repopack.config.json');
+      const configPath = path.resolve('/global/repomix/repomix.config.json');
 
       expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(configPath), { recursive: true });
       expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "global-output.txt"'));
@@ -93,20 +93,20 @@ describe('initAction', () => {
   });
 
   describe('createIgnoreFile', () => {
-    it('should not create a new .repopackignore file when global flag is set', async () => {
+    it('should not create a new .repomixignore file when global flag is set', async () => {
       const result = await createIgnoreFile('/test/dir', true);
 
       expect(result).toBe(false);
       expect(fs.writeFile).not.toHaveBeenCalled();
     });
 
-    it('should create a new .repopackignore file when one does not exist', async () => {
+    it('should create a new .repomixignore file when one does not exist', async () => {
       vi.mocked(fs.access).mockRejectedValue(new Error('File does not exist'));
       vi.mocked(prompts.confirm).mockResolvedValue(true);
 
       await createIgnoreFile('/test/dir', false);
 
-      const ignorePath = path.resolve('/test/dir/.repopackignore');
+      const ignorePath = path.resolve('/test/dir/.repomixignore');
 
       expect(fs.writeFile).toHaveBeenCalledWith(
         ignorePath,
@@ -114,7 +114,7 @@ describe('initAction', () => {
       );
     });
 
-    it('should prompt to overwrite when .repopackignore file already exists', async () => {
+    it('should prompt to overwrite when .repomixignore file already exists', async () => {
       vi.mocked(fs.access).mockResolvedValue(undefined);
       vi.mocked(prompts.confirm)
         .mockResolvedValueOnce(true) // First call for creating the file
@@ -138,7 +138,7 @@ describe('initAction', () => {
       expect(fs.writeFile).not.toHaveBeenCalled();
     });
 
-    it('should return false when user chooses not to create .repopackignore', async () => {
+    it('should return false when user chooses not to create .repomixignore', async () => {
       vi.mocked(prompts.confirm).mockResolvedValue(false);
 
       const result = await createIgnoreFile('/test/dir', false);

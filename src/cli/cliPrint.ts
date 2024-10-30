@@ -1,6 +1,6 @@
 import path from 'node:path';
 import pc from 'picocolors';
-import type { RepopackConfigMerged } from '../config/configTypes.js';
+import type { RepomixConfigMerged } from '../config/configTypes.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheck.js';
 import { logger } from '../shared/logger.js';
 
@@ -10,7 +10,7 @@ export const printSummary = (
   totalTokens: number,
   outputPath: string,
   suspiciousFilesResults: SuspiciousFileResult[],
-  config: RepopackConfigMerged,
+  config: RepomixConfigMerged,
 ) => {
   let securityCheckMessage = '';
   if (config.security.enableSecurityCheck) {
@@ -35,7 +35,7 @@ export const printSummary = (
 export const printSecurityCheck = (
   rootDir: string,
   suspiciousFilesResults: SuspiciousFileResult[],
-  config: RepopackConfigMerged,
+  config: RepomixConfigMerged,
 ) => {
   if (!config.security.enableSecurityCheck) {
     return;

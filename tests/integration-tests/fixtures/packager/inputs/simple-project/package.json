@@ -1,7 +1,7 @@
 {
   "name": "simple-project",
   "version": "1.0.0",
-  "description": "A simple project for testing Repopack",
+  "description": "A simple project for testing Repomix",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"

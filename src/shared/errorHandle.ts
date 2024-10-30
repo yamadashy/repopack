@@ -1,14 +1,14 @@
 import { logger } from './logger.js';
 
-export class RepopackError extends Error {
+export class RepomixError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'RepopackError';
+    this.name = 'RepomixError';
   }
 }
 
 export const handleError = (error: unknown): void => {
-  if (error instanceof RepopackError) {
+  if (error instanceof RepomixError) {
     logger.error(`Error: ${error.message}`);
   } else if (error instanceof Error) {
     logger.error(`Unexpected error: ${error.message}`);
@@ -17,5 +17,5 @@ export const handleError = (error: unknown): void => {
     logger.error('An unknown error occurred');
   }
 
-  logger.info('For more help, please visit: https://github.com/yamadashy/repopack/issues');
+  logger.info('For more help, please visit: https://github.com/yamadashy/repomix/issues');
 };

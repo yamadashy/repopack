@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /*
-Add this file so we can use `node bin/repopack` or `node bin/repopack.js`
-instead of `node bin/repopack.cjs`.
+Add this file so we can use `node bin/repomix` or `node bin/repomix.js`
+instead of `node bin/repomix.cjs`.
 
 This file should only used for development.
 */

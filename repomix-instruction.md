@@ -13,7 +13,7 @@ Here are some examples of release notes that follow the guidelines:
 
 v0.1.40
 ````md
-This release introduces improvements to file handling and output formatting, enhancing Repopack's functionality and user experience.
+This release introduces improvements to file handling and output formatting, enhancing Repomix's functionality and user experience.
 
 ## Improvements
 
@@ -39,12 +39,12 @@ This release introduces improvements to file handling and output formatting, enh
 To update to the latest version, run:
 
 ```bash
-npm update -g repopack
+npm update -g repomix
 ```
 
 ---
 
-We value your feedback and contributions in making Repopack better! If you encounter any issues or have suggestions, please share them through our GitHub issues.
+We value your feedback and contributions in making Repomix better! If you encounter any issues or have suggestions, please share them through our GitHub issues.
 ````
 
 v0.1.38
@@ -63,10 +63,10 @@ This release introduces a new Markdown output style, providing users with an add
 To use the new Markdown output style, use the `--style markdown` option:
 
 ```bash
-repopack --style markdown
+repomix --style markdown
 ```
 
-Or update your `repopack.config.json`:
+Or update your `repomix.config.json`:
 
 ```json
 {
@@ -80,15 +80,15 @@ Or update your `repopack.config.json`:
 
 To update, simply run:
 ```bash
-npm update -g repopack
+npm update -g repomix
 ```
 
-As always, we appreciate your feedback and contributions to make Repopack even better! If you encounter any issues or have suggestions regarding this new feature, please let us know through our GitHub issues.
+As always, we appreciate your feedback and contributions to make Repomix even better! If you encounter any issues or have suggestions regarding this new feature, please let us know through our GitHub issues.
 ````
 
 v0.1.36
 ````md
-This release introduces a new configuration option that allows users to control the security check feature, providing more flexibility in how Repopack handles sensitive information detection.
+This release introduces a new configuration option that allows users to control the security check feature, providing more flexibility in how Repomix handles sensitive information detection.
 
 ## What's New
 
@@ -99,7 +99,7 @@ This release introduces a new configuration option that allows users to control 
 
 ## How to Use
 
-To **disable** the security check, add the following to your `repopack.config.json`:
+To **disable** the security check, add the following to your `repomix.config.json`:
 
 ```json
 {
@@ -115,10 +115,10 @@ To **disable** the security check, add the following to your `repopack.config.js
 
 To update, simply run:
 ```bash
-npm update -g repopack
+npm update -g repomix
 ```
 
-As always, we appreciate your feedback and contributions to make Repopack even better! If you encounter any issues or have suggestions regarding this new feature, please let us know through our GitHub issues.
+As always, we appreciate your feedback and contributions to make Repomix even better! If you encounter any issues or have suggestions regarding this new feature, please let us know through our GitHub issues.
 ````
 
 v0.1.32
@@ -135,8 +135,8 @@ This release focuses on improving performance and user experience, particularly 
 ---
 To update, simply run:
 ```
-npm update -g repopack
+npm update -g repomix
 ```
 
-As always, we appreciate your feedback and contributions to make Repopack even better!
+As always, we appreciate your feedback and contributions to make Repomix even better!
 ````

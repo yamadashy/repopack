@@ -19,7 +19,7 @@ describe('packageJsonParse', () => {
 
   test('getVersion should return correct version from package.json', async () => {
     const mockPackageJson = {
-      name: 'repopack',
+      name: 'repomix',
       version: '1.2.3',
     };
 
@@ -38,7 +38,7 @@ describe('packageJsonParse', () => {
 
   test('getVersion should handle missing version in package.json', async () => {
     const mockPackageJson = {
-      name: 'repopack',
+      name: 'repomix',
     };
 
     const loggerSpy = vi.spyOn(logger, 'warn').mockImplementation(vi.fn());

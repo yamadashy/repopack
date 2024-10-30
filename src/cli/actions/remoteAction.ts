@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import pc from 'picocolors';
-import { RepopackError } from '../../shared/errorHandle.js';
+import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
@@ -15,7 +15,7 @@ const execAsync = promisify(exec);
 export const runRemoteAction = async (repoUrl: string, options: CliOptions): Promise<void> => {
   const gitInstalled = await checkGitInstallation();
   if (!gitInstalled) {
-    throw new RepopackError('Git is not installed or not in the system PATH.');
+    throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
   const formattedUrl = formatGitUrl(repoUrl);
@@ -53,7 +53,7 @@ export const formatGitUrl = (url: string): string => {
 };
 
 const createTempDirectory = async (): Promise<string> => {
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repopack-'));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repomix-'));
   logger.trace(`Created temporary directory. (path: ${pc.dim(tempDir)})`);
   return tempDir;
 };
@@ -65,7 +65,7 @@ const cloneRepository = async (url: string, directory: string): Promise<void> =>
   try {
     await execAsync(`git clone --depth 1 ${url} ${directory}`);
   } catch (error) {
-    throw new RepopackError(`Failed to clone repository: ${(error as Error).message}`);
+    throw new RepomixError(`Failed to clone repository: ${(error as Error).message}`);
   }
 };
 
@@ -99,6 +99,6 @@ const copyOutputToCurrentDirectory = async (
     logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath}`);
     await fs.copyFile(sourcePath, targetPath);
   } catch (error) {
-    throw new RepopackError(`Failed to copy output file: ${(error as Error).message}`);
+    throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
   }
 };

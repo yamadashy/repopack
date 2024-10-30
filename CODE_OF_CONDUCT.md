@@ -1,4 +1,4 @@
-# Repopack Contributor Covenant Code of Conduct
+# Repomix Contributor Covenant Code of Conduct
 
 ## Our Pledge
 

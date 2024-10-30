@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import Handlebars from 'handlebars';
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
-import { RepopackError } from '../../shared/errorHandle.js';
+import type { RepomixConfigMerged } from '../../config/configTypes.js';
+import { RepomixError } from '../../shared/errorHandle.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
@@ -38,7 +38,7 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
 
 export const generateOutput = async (
   rootDir: string,
-  config: RepopackConfigMerged,
+  config: RepomixConfigMerged,
   processedFiles: ProcessedFile[],
   allFilePaths: string[],
 ): Promise<string> => {
@@ -63,7 +63,7 @@ export const generateOutput = async (
 
 export const buildOutputGeneratorContext = async (
   rootDir: string,
-  config: RepopackConfigMerged,
+  config: RepomixConfigMerged,
   allFilePaths: string[],
   processedFiles: ProcessedFile[],
 ): Promise<OutputGeneratorContext> => {
@@ -74,7 +74,7 @@ export const buildOutputGeneratorContext = async (
     try {
       repositoryInstruction = await fs.readFile(instructionPath, 'utf-8');
     } catch {
-      throw new RepopackError(`Instruction file not found at ${instructionPath}`);
+      throw new RepomixError(`Instruction file not found at ${instructionPath}`);
     }
   }
 

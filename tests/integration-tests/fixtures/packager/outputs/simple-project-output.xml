@@ -30,7 +30,7 @@ The content is organized as follows:
 </usage_guidelines>
 
 <notes>
-- Some files may have been excluded based on .gitignore rules and Repopack's
+- Some files may have been excluded based on .gitignore rules and Repomix's
   configuration.
 - Binary files are not included in this packed representation. Please refer to
   the Repository Structure section for a complete list of file paths, including
@@ -42,28 +42,28 @@ The content is organized as follows:
 This repository is simple-project
 </user_provided_header>
 
-For more information about Repopack, visit: https://github.com/yamadashy/repopack
+For more information about Repomix, visit: https://github.com/yamadashy/repomix
 </additional_info>
 
 </file_summary>
 
 <repository_structure>
 resources/
-  .repopackignore
+  .repomixignore
   data.txt
 src/
   index.js
   utils.js
-.repopackignore
+.repomixignore
 package.json
 README.md
-repopack.config.json
+repomix.config.json
 </repository_structure>
 
 <repository_files>
 This section contains the contents of the repository's files.
 
-<file path="resources/.repopackignore">
+<file path="resources/.repomixignore">
 ignored-data.txt
 </file>
 
@@ -91,7 +91,7 @@ module.exports = {
 };
 </file>
 
-<file path=".repopackignore">
+<file path=".repomixignore">
 **/build/**
 </file>
 
@@ -99,7 +99,7 @@ module.exports = {
 {
   "name": "simple-project",
   "version": "1.0.0",
-  "description": "A simple project for testing Repopack",
+  "description": "A simple project for testing Repomix",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"
@@ -113,7 +113,7 @@ module.exports = {
 <file path="README.md">
 # Simple Project
 
-This is a simple project used for testing Repopack.
+This is a simple project used for testing Repomix.
 
 ## Usage
 
@@ -126,10 +126,10 @@ npm start
 This will output a greeting message to the console.
 </file>
 
-<file path="repopack.config.json">
+<file path="repomix.config.json">
 {
   "output": {
-    "filePath": "repopack-output.txt",
+    "filePath": "repomix-output.txt",
     "headerText": "This repository is simple-project",
     "removeComments": false,
     "removeEmptyLines": false,

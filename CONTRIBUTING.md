@@ -1,16 +1,16 @@
 # Contribution Guide
 
-Thanks for your interest in **Repopack**! 🚀 We’d love your help to make it even better. Here’s how you can get involved:
+Thanks for your interest in **Repomix**! 🚀 We’d love your help to make it even better. Here’s how you can get involved:
 
 
 - **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by creating an issue.
 - **Submit a Pull Request**: Found something to fix or improve? Jump in and submit a PR!
-- **Spread the Word**: Share your experience with Repopack on social media, blogs, or with your tech community.
-- **Use Repopack**: The best feedback comes from real-world usage, so feel free to integrate Repopack into your own projects!
+- **Spread the Word**: Share your experience with Repomix on social media, blogs, or with your tech community.
+- **Use Repomix**: The best feedback comes from real-world usage, so feel free to integrate Repomix into your own projects!
 
 ## Maintainers
 
-Repopack is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestion may be accepted if they don't align with the project's goals or coding standards.
+Repomix is maintained by Yamadashy ([@yamadashy](https://github.com/yamadashy)). While all contributions are welcome, please understand that not every suggestion may be accepted if they don't align with the project's goals or coding standards.
 
 ---
 
@@ -24,15 +24,15 @@ Before submitting a Pull Request, please ensure:
 
 ## Local Development
 
-To set up Repopack for local development:
+To set up Repomix for local development:
 
 ```bash
-git clone https://github.com/yamadashy/repopack.git
-cd repopack
+git clone https://github.com/yamadashy/repomix.git
+cd repomix
 npm install
 ```
 
-To run Repopack locally:
+To run Repomix locally:
 
 ```bash
 npm run cli-run
@@ -68,4 +68,4 @@ When adding new features or making changes, please update the relevant documenta
 
 New versions are managed by the maintainer. If you think a release is needed, open an issue to discuss it
 
-Thank you for contributing to Repopack!
+Thank you for contributing to Repomix!
