@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { setTimeout } from 'node:timers/promises';
 import pMap from 'p-map';
 import pc from 'picocolors';
 import type { RepopackConfigMerged } from '../config/configTypes.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
-import { sleep } from '../shared/sleep.js';
 import type { RepopackProgressCallback } from '../shared/types.js';
 import { collectFiles as defaultCollectFiles } from './file/fileCollect.js';
 import { processFiles as defaultProcessFiles } from './file/fileProcess.js';
@@ -94,7 +94,7 @@ export const pack = async (
       progressCallback(`Calculating metrics... (${index + 1}/${processedFiles.length}) ${pc.dim(file.path)}`);
 
       // Sleep for a short time to prevent blocking the event loop
-      await sleep(1);
+      await setTimeout(1);
 
       return { path: file.path, charCount, tokenCount };
     },

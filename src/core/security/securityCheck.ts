@@ -1,11 +1,14 @@
+import { setTimeout } from 'node:timers/promises';
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
-import type { SecretLintCoreConfig, SecretLintCoreResult } from '@secretlint/types';
+import type {
+  SecretLintCoreConfig,
+  SecretLintCoreResult,
+} from '@secretlint/types';
 import pMap from 'p-map';
 import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
-import { sleep } from '../../shared/sleep.js';
 import type { RepopackProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 
@@ -16,19 +19,27 @@ export interface SuspiciousFileResult {
 
 export const runSecurityCheck = async (
   rawFiles: RawFile[],
-  progressCallback: RepopackProgressCallback = () => {},
+  progressCallback: RepopackProgressCallback = () => {}
 ): Promise<SuspiciousFileResult[]> => {
   const secretLintConfig = createSecretLintConfig();
 
   const results = await pMap(
     rawFiles,
     async (rawFile, index) => {
-      const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
+      const secretLintResult = await runSecretLint(
+        rawFile.path,
+        rawFile.content,
+        secretLintConfig
+      );
 
-      progressCallback(`Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
+      progressCallback(
+        `Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(
+          rawFile.path
+        )}`
+      );
 
       // Sleep for a short time to prevent blocking the event loop
-      await sleep(1);
+      await setTimeout(1);
 
       if (secretLintResult.messages.length > 0) {
         return {
@@ -41,16 +52,18 @@ export const runSecurityCheck = async (
     },
     {
       concurrency: getProcessConcurrency(),
-    },
+    }
   );
 
-  return results.filter((result): result is SuspiciousFileResult => result != null);
+  return results.filter(
+    (result): result is SuspiciousFileResult => result != null
+  );
 };
 
 export const runSecretLint = async (
   filePath: string,
   content: string,
-  config: SecretLintCoreConfig,
+  config: SecretLintCoreConfig
 ): Promise<SecretLintCoreResult> => {
   const result = await lintSource({
     source: {
@@ -66,7 +79,9 @@ export const runSecretLint = async (
 
   if (result.messages.length > 0) {
     logger.trace(`Found ${result.messages.length} issues in ${filePath}`);
-    logger.trace(result.messages.map((message) => `  - ${message.message}`).join('\n'));
+    logger.trace(
+      result.messages.map((message) => `  - ${message.message}`).join('\n')
+    );
   }
 
   return result;
