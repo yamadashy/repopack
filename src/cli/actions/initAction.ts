@@ -39,11 +39,9 @@ export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise
 };
 
 export async function createConfigFile(rootDir: string, isGlobal: boolean): Promise<boolean> {
-  const isCancelled = false;
 
-  const configPath = isGlobal
-    ? path.resolve(getGlobalDirectory(), 'repomix.config.json')
-    : path.resolve(rootDir, 'repomix.config.json');
+const isCancelled = false
+  const configPath = path.resolve(isGlobal ? getGlobalDirectory() : rootDir, 'repomix.config.json');
 
   const isCreateConfig = await prompts.confirm({
     message: `Do you want to create a ${isGlobal ? 'global ' : ''}${pc.green('repomix.config.json')} file?`,
