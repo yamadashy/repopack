@@ -1,0 +1,24 @@
+name: release
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  homebrew:
+    runs-on: macos-latest
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        with:
+          test-bot: false
+
+      - name: Configure Git user
+        uses: Homebrew/actions/git-user-config@master
+
+      - name: Bump packages
+        uses: Homebrew/actions/bump-packages@master
+        with:
+          token: ${{ secrets.COMMITTER_TOKEN }}
+          formulae: repomix
