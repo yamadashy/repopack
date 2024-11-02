@@ -119,7 +119,8 @@ export const defaultIgnoreList = [
   'temp/**',
 
   // repomix output
-  'repomix-output.txt',
+  'repomix-output.*',
+  'repopack-output.*', // Legacy
 
   // Essential Python-related entries
   '**/__pycache__/**',

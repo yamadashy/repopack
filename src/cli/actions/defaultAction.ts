@@ -11,6 +11,7 @@ import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
+import { runMigrationAction } from './migrationAction.js';
 
 export interface DefaultActionRunnerResult {
   packResult: PackResult;
@@ -23,6 +24,9 @@ export const runDefaultAction = async (
   options: CliOptions,
 ): Promise<DefaultActionRunnerResult> => {
   logger.trace('Loaded CLI options:', options);
+
+  // Run migration before loading config
+  await runMigrationAction(cwd);
 
   // Load the config file
   const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, options.config ?? null);
