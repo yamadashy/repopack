@@ -9,10 +9,10 @@
 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
-## Important Notice: Project Renamed to Repomix
+## 📢 Important Notice: Project Renamed to Repomix
 
 > [!NOTE]
-> Due to legal considerations, this project has been renamed from "Repopack" to "Repomix".
+> Due to legal considerations, this project has been renamed from "Repopack" to "Repomix". Only the name is changing; Repomix all functionality and maintainer @yamadashy remain the same.
 > We are committed to ensuring a smooth transition for all users.
 
 ### Migration Guide
@@ -37,10 +37,9 @@ Your existing configuration files (`repopack.config.json` and `.repopackignore`)
 
 #### Timeline
 - Current: Transition period begins
-- December 1st, 2024: The `repopack` npm package will be transferred
+- December 1st, 2024: Ownership of the [repopack npm package](https://npmjs.com/repopack) will be transferred to another party. The repomix package will continue to be maintained as usual
 
-We appreciate your understanding and cooperation during this transition. The project's functionality remains unchanged - only the name has been updated.
-
+We appreciate your understanding and cooperation during this transition.
 
 ## 🌟 Features
 
