@@ -18,6 +18,7 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 ## Migration Guide
 
 ### For CLI Users
+To continue using the tool, simply install the new package:
 ```bash
 # Install new package
 npm install -g repomix
@@ -26,8 +27,14 @@ npm install -g repomix
 npx repomix
 ```
 
+Optionally, you can also uninstall the old package:
+```bash
+npm uninstall -g repopack
+```
+
 ### Configuration Files
-Your existing configuration files (`repopack.config.json` and `.repopackignore`) will continue to work during the transition period. The CLI will automatically detect these files and offer to migrate them to the new format (`repomix.config.json` and `.repomixignore`).
+Your existing configuration files (`repopack.config.json` and `.repopackignore`) will continue to work during the transition period.  
+`repomix` will automatically detect these files and offer to migrate them to the new format (`repomix.config.json` and `.repomixignore`).
 
 ### Timeline
 - Current: Transition period begins
