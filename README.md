@@ -12,7 +12,7 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 ## 📢 Important Notice: Project Renamed to Repomix
 
 > [!NOTE]
-> Due to legal considerations, this project has been renamed from "Repopack" to "Repomix". Only the name is changing; Repomix all functionality and maintainer @yamadashy remain the same.
+> Due to legal considerations, this project has been renamed from "Repopack" to "Repomix". Only the name is changing; Repomix all functionality and maintainer ([@yamadashy](https://github.com/yamadashy)) remain the same.
 > We are committed to ensuring a smooth transition for all users.
 
 ### Migration Guide
