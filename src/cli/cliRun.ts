@@ -10,6 +10,25 @@ import { runInitAction } from './actions/initAction.js';
 import { runRemoteAction } from './actions/remoteAction.js';
 import { runVersionAction } from './actions/versionAction.js';
 
+const showMigrationNotice = () => {
+  logger.log('');
+  logger.log(pc.dim('───────────────────────────────────────────────'));
+  logger.warn(pc.yellow('📢 Important Notice: Project Renamed to Repomix'));
+  logger.log(pc.dim('───────────────────────────────────────────────'));
+  logger.log('');
+  logger.log(pc.white('Due to legal considerations, this project has been renamed from "Repopack" to "Repomix".'));
+  logger.log(pc.white('Please install the new package:'));
+  logger.log('');
+  logger.log(pc.cyan('  npx repomix'));
+  logger.log(pc.white('  or'));
+  logger.log(pc.cyan('  npm install -g repomix'));
+  logger.log('');
+  logger.log(pc.white('For more information, visit: https://github.com/yamadashy/repomix'));
+  logger.log('');
+  logger.log(pc.green('Thank you for using Repopack! We look forward to serving you as Repomix.'));
+  logger.log('');
+};
+
 export interface CliOptions extends OptionValues {
   version?: boolean;
   output?: string;
@@ -74,4 +93,7 @@ const executeAction = async (directory: string, cwd: string, options: CliOptions
   }
 
   await runDefaultAction(directory, cwd, options);
+
+  // Show migration notice before any other output
+  showMigrationNotice();
 };
