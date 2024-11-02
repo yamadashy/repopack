@@ -1,12 +1,12 @@
-import type { RepopackConfigDefault, RepopackOutputStyle } from './configTypes.js';
+import type { RepomixConfigDefault, RepomixOutputStyle } from './configTypes.js';
 
-export const defaultFilePathMap: Record<RepopackOutputStyle, string> = {
-  plain: 'repopack-output.txt',
-  markdown: 'repopack-output.md',
-  xml: 'repopack-output.xml',
+export const defaultFilePathMap: Record<RepomixOutputStyle, string> = {
+  plain: 'repomix-output.txt',
+  markdown: 'repomix-output.md',
+  xml: 'repomix-output.xml',
 };
 
-export const defaultConfig: RepopackConfigDefault = {
+export const defaultConfig: RepomixConfigDefault = {
   output: {
     filePath: defaultFilePathMap.plain,
     style: 'plain',

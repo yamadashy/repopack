@@ -18,7 +18,7 @@ describe('globalDirectory', () => {
     process.env.LOCALAPPDATA = 'C:\\Users\\TestUser\\AppData\\Local';
 
     const result = getGlobalDirectory();
-    expect(result).toBe(path.join('C:\\Users\\TestUser\\AppData\\Local', 'Repopack'));
+    expect(result).toBe(path.join('C:\\Users\\TestUser\\AppData\\Local', 'Repomix'));
   });
 
   test.runIf(isWindows)('should use homedir if LOCALAPPDATA is not set on Windows', () => {
@@ -27,7 +27,7 @@ describe('globalDirectory', () => {
     process.env.LOCALAPPDATA = undefined;
 
     const result = getGlobalDirectory();
-    expect(result).toBe(path.join('C:\\Users\\TestUser', 'AppData', 'Local', 'Repopack'));
+    expect(result).toBe(path.join('C:\\Users\\TestUser', 'AppData', 'Local', 'Repomix'));
   });
 
   test.runIf(isLinux)('should use XDG_CONFIG_HOME on Unix systems if set', () => {
@@ -35,7 +35,7 @@ describe('globalDirectory', () => {
     process.env.XDG_CONFIG_HOME = '/custom/config';
 
     const result = getGlobalDirectory();
-    expect(result).toBe(path.join('/custom/config', 'repopack'));
+    expect(result).toBe(path.join('/custom/config', 'repomix'));
   });
 
   test.runIf(isMac)('should use ~/.config on Unix systems if XDG_CONFIG_HOME is not set', () => {
@@ -44,6 +44,6 @@ describe('globalDirectory', () => {
     process.env.XDG_CONFIG_HOME = undefined;
 
     const result = getGlobalDirectory();
-    expect(result).toBe(path.join('/Users/TestUser', '.config', 'repopack'));
+    expect(result).toBe(path.join('/Users/TestUser', '.config', 'repomix'));
   });
 });

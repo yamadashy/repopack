@@ -1,6 +1,6 @@
 import os from 'node:os';
 import process from 'node:process';
-import type { RepopackConfigMerged } from '../../src/config/configTypes.js';
+import type { RepomixConfigMerged } from '../../src/config/configTypes.js';
 import { defaultConfig } from '../../src/config/defaultConfig.js';
 
 type DeepPartial<T> = {
@@ -13,7 +13,7 @@ type DeepPartial<T> = {
         : T[P];
 };
 
-export const createMockConfig = (config: DeepPartial<RepopackConfigMerged> = {}): RepopackConfigMerged => {
+export const createMockConfig = (config: DeepPartial<RepomixConfigMerged> = {}): RepomixConfigMerged => {
   return {
     cwd: process.cwd(),
     output: {

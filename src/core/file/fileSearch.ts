@@ -1,10 +1,10 @@
 import { globby } from 'globby';
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepomixConfigMerged } from '../../config/configTypes.js';
 import { defaultIgnoreList } from '../../config/defaultIgnore.js';
 import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSort.js';
 
-export const searchFiles = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
+export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<string[]> => {
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
   try {
@@ -53,19 +53,19 @@ export const parseIgnoreContent = (content: string): string[] => {
   }, []);
 };
 
-export const getIgnoreFilePatterns = async (config: RepopackConfigMerged): Promise<string[]> => {
+export const getIgnoreFilePatterns = async (config: RepomixConfigMerged): Promise<string[]> => {
   const ignoreFilePatterns: string[] = [];
 
   if (config.ignore.useGitignore) {
     ignoreFilePatterns.push('**/.gitignore');
   }
 
-  ignoreFilePatterns.push('**/.repopackignore');
+  ignoreFilePatterns.push('**/.repomixignore');
 
   return ignoreFilePatterns;
 };
 
-export const getIgnorePatterns = async (rootDir: string, config: RepopackConfigMerged): Promise<string[]> => {
+export const getIgnorePatterns = async (rootDir: string, config: RepomixConfigMerged): Promise<string[]> => {
   const ignorePatterns = new Set<string>();
 
   // Add default ignore patterns
@@ -76,7 +76,7 @@ export const getIgnorePatterns = async (rootDir: string, config: RepopackConfigM
     }
   }
 
-  // Add repopack output file
+  // Add repomix output file
   if (config.output.filePath) {
     logger.trace('Adding output file to ignore patterns:', config.output.filePath);
     ignorePatterns.add(config.output.filePath);

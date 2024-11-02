@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { RepopackConfigValidationError, validateConfig } from '../../src/config/configValidate.js';
+import { RepomixConfigValidationError, validateConfig } from '../../src/config/configValidate.js';
 
 describe('configValidate', () => {
   test('should pass for a valid config', () => {
@@ -11,22 +11,22 @@ describe('configValidate', () => {
   });
 
   test('should throw for non-object config', () => {
-    expect(() => validateConfig('not an object')).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig('not an object')).toThrow(RepomixConfigValidationError);
   });
 
   test('should throw for invalid output.filePath', () => {
     const invalidConfig = { output: { filePath: 123 } };
-    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow(RepomixConfigValidationError);
   });
 
   test('should throw for invalid ignore.useDefaultPatterns', () => {
     const invalidConfig = { ignore: { useDefaultPatterns: 'true' } };
-    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow(RepomixConfigValidationError);
   });
 
   test('should throw for invalid ignore.customPatterns', () => {
     const invalidConfig = { ignore: { customPatterns: 'not an array' } };
-    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow(RepomixConfigValidationError);
   });
 
   test('should pass for a valid config with output style', () => {
@@ -39,13 +39,13 @@ describe('configValidate', () => {
 
   test('should throw for invalid output.style type', () => {
     const invalidConfig = { output: { style: 123 } };
-    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow(RepomixConfigValidationError);
     expect(() => validateConfig(invalidConfig)).toThrow('output.style must be a string');
   });
 
   test('should throw for invalid output.style value', () => {
     const invalidConfig = { output: { style: 'invalid' } };
-    expect(() => validateConfig(invalidConfig)).toThrow(RepopackConfigValidationError);
+    expect(() => validateConfig(invalidConfig)).toThrow(RepomixConfigValidationError);
     expect(() => validateConfig(invalidConfig)).toThrow('output.style must be either "plain", "xml" or "markdown"');
   });
 });

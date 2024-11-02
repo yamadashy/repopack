@@ -3,10 +3,10 @@ import path from 'node:path';
 import { setTimeout } from 'node:timers/promises';
 import pMap from 'p-map';
 import pc from 'picocolors';
-import type { RepopackConfigMerged } from '../config/configTypes.js';
+import type { RepomixConfigMerged } from '../config/configTypes.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
-import type { RepopackProgressCallback } from '../shared/types.js';
+import type { RepomixProgressCallback } from '../shared/types.js';
 import { collectFiles as defaultCollectFiles } from './file/fileCollect.js';
 import { processFiles as defaultProcessFiles } from './file/fileProcess.js';
 import { searchFiles as defaultSearchFiles } from './file/fileSearch.js';
@@ -33,8 +33,8 @@ export interface PackResult {
 
 export const pack = async (
   rootDir: string,
-  config: RepopackConfigMerged,
-  progressCallback: RepopackProgressCallback = () => {},
+  config: RepomixConfigMerged,
+  progressCallback: RepomixProgressCallback = () => {},
   deps: PackDependencies = {
     searchFiles: defaultSearchFiles,
     collectFiles: defaultCollectFiles,

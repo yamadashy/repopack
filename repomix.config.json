@@ -1,0 +1,21 @@
+{
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "headerText": "This repository contains the source code for the Repomix tool.\nRepomix is designed to pack repository contents into a single file,\nmaking it easier for AI systems to analyze and process the codebase.\n\nKey Features:\n- Configurable ignore patterns\n- Custom header text support\n- Efficient file processing and packing\n\nPlease refer to the README.md file for more detailed information on usage and configuration.\n",
+    "instructionFilePath": "repomix-instruction.md",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  }
+}

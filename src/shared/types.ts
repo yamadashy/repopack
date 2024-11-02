@@ -1,1 +1,1 @@
-export type RepopackProgressCallback = (message: string) => void;
+export type RepomixProgressCallback = (message: string) => void;

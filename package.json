@@ -1,6 +1,6 @@
 {
-  "name": "repopack",
-  "version": "0.1.44",
+  "name": "repomix",
+  "version": "0.2.1",
   "description": "A tool to pack repository contents to single file for AI consumption",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -9,7 +9,7 @@
       "types": "./lib/index.d.ts"
     }
   },
-  "bin": "./bin/repopack.cjs",
+  "bin": "./bin/repomix.cjs",
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
@@ -19,7 +19,7 @@
     "lint-secretlint": "secretlint \"**/*\" --secretlintignore .gitignore",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
-    "cli-run": "npm run build && node --trace-warnings bin/repopack",
+    "cli-run": "npm run build && node --trace-warnings bin/repomix",
     "npm-publish": "npm run lint && npm run test-coverage && npm run build && npm publish",
     "npm-release-patch": "npm version patch && npm run npm-publish",
     "npm-release-minor": "npm version minor && npm run npm-publish",
@@ -39,13 +39,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/yamadashy/repopack.git"
+    "url": "git://github.com/yamadashy/repomix.git"
   },
   "bugs": {
-    "url": "https://github.com/yamadashy/repopack/issues"
+    "url": "https://github.com/yamadashy/repomix/issues"
   },
   "author": "Kazuki Yamada <koukun0120@gmail.com>",
-  "homepage": "https://github.com/yamadashy/repopack",
+  "homepage": "https://github.com/yamadashy/repomix",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

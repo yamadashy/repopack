@@ -35,7 +35,7 @@ Usage Guidelines:
 
 Notes:
 ------
-- Some files may have been excluded based on .gitignore rules and Repopack's
+- Some files may have been excluded based on .gitignore rules and Repomix's
   configuration.
 - Binary files are not included in this packed representation. Please refer to
   the Repository Structure section for a complete list of file paths, including
@@ -47,28 +47,28 @@ User Provided Header:
 -----------------------
 This repository is simple-project
 
-For more information about Repopack, visit: https://github.com/yamadashy/repopack
+For more information about Repomix, visit: https://github.com/yamadashy/repomix
 
 ================================================================
 Repository Structure
 ================================================================
 resources/
-  .repopackignore
+  .repomixignore
   data.txt
 src/
   index.js
   utils.js
-.repopackignore
+.repomixignore
 package.json
 README.md
-repopack.config.json
+repomix.config.json
 
 ================================================================
 Repository Files
 ================================================================
 
 ================
-File: resources/.repopackignore
+File: resources/.repomixignore
 ================
 ignored-data.txt
 
@@ -100,7 +100,7 @@ module.exports = {
 };
 
 ================
-File: .repopackignore
+File: .repomixignore
 ================
 **/build/**
 
@@ -110,7 +110,7 @@ File: package.json
 {
   "name": "simple-project",
   "version": "1.0.0",
-  "description": "A simple project for testing Repopack",
+  "description": "A simple project for testing Repomix",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"
@@ -125,7 +125,7 @@ File: README.md
 ================
 # Simple Project
 
-This is a simple project used for testing Repopack.
+This is a simple project used for testing Repomix.
 
 ## Usage
 
@@ -138,11 +138,11 @@ npm start
 This will output a greeting message to the console.
 
 ================
-File: repopack.config.json
+File: repomix.config.json
 ================
 {
   "output": {
-    "filePath": "repopack-output.txt",
+    "filePath": "repomix-output.txt",
     "headerText": "This repository is simple-project",
     "removeComments": false,
     "removeEmptyLines": false,

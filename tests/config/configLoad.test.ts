@@ -4,7 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
-import type { RepopackConfigCli, RepopackConfigFile } from '../../src/config/configTypes.js';
+import type { RepomixConfigCli, RepomixConfigFile } from '../../src/config/configTypes.js';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
 import { logger } from '../../src/shared/logger.js';
 
@@ -43,7 +43,7 @@ describe('configLoad', () => {
         output: { filePath: 'global-output.txt' },
         ignore: { useDefaultPatterns: false },
       };
-      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repopack');
+      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repomix');
       vi.mocked(fs.stat)
         .mockRejectedValueOnce(new Error('File not found')) // Local config
         .mockResolvedValueOnce({ isFile: () => true } as Stats); // Global config
@@ -51,12 +51,12 @@ describe('configLoad', () => {
 
       const result = await loadFileConfig(process.cwd(), null);
       expect(result).toEqual(mockGlobalConfig);
-      expect(fs.readFile).toHaveBeenCalledWith(path.join('/global/repopack', 'repopack.config.json'), 'utf-8');
+      expect(fs.readFile).toHaveBeenCalledWith(path.join('/global/repomix', 'repomix.config.json'), 'utf-8');
     });
 
     test('should return an empty object if no config file is found', async () => {
       const loggerSpy = vi.spyOn(logger, 'note').mockImplementation(vi.fn());
-      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repopack');
+      vi.mocked(getGlobalDirectory).mockReturnValue('/global/repomix');
       vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
 
       const result = await loadFileConfig(process.cwd(), null);
@@ -75,11 +75,11 @@ describe('configLoad', () => {
 
   describe('mergeConfigs', () => {
     test('should correctly merge configs', () => {
-      const fileConfig: RepopackConfigFile = {
+      const fileConfig: RepomixConfigFile = {
         output: { filePath: 'file-output.txt' },
         ignore: { useDefaultPatterns: true, customPatterns: ['file-ignore'] },
       };
-      const cliConfig: RepopackConfigCli = {
+      const cliConfig: RepomixConfigCli = {
         output: { filePath: 'cli-output.txt' },
         ignore: { customPatterns: ['cli-ignore'] },
       };

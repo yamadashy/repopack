@@ -1,10 +1,10 @@
 import pMap from 'p-map';
-import type { RepopackConfigMerged } from '../../config/configTypes.js';
+import type { RepomixConfigMerged } from '../../config/configTypes.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 import { getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';
 
-export const processFiles = async (rawFiles: RawFile[], config: RepopackConfigMerged): Promise<ProcessedFile[]> => {
+export const processFiles = async (rawFiles: RawFile[], config: RepomixConfigMerged): Promise<ProcessedFile[]> => {
   return pMap(
     rawFiles,
     async (rawFile) => ({
@@ -20,7 +20,7 @@ export const processFiles = async (rawFiles: RawFile[], config: RepopackConfigMe
 export const processContent = async (
   content: string,
   filePath: string,
-  config: RepopackConfigMerged,
+  config: RepomixConfigMerged,
 ): Promise<string> => {
   let processedContent = content;
   const manipulator = getFileManipulator(filePath);

@@ -21,7 +21,7 @@ describe('fileSearch', () => {
   });
 
   describe('getIgnoreFilePaths', () => {
-    test('should return correct paths when .gitignore and .repopackignore exist', async () => {
+    test('should return correct paths when .gitignore and .repomixignore exist', async () => {
       vi.mocked(fs.access).mockResolvedValue(undefined);
       const mockConfig = createMockConfig({
         ignore: {
@@ -31,7 +31,7 @@ describe('fileSearch', () => {
         },
       });
       const filePatterns = await getIgnoreFilePatterns(mockConfig);
-      expect(filePatterns).toEqual(['**/.gitignore', '**/.repopackignore']);
+      expect(filePatterns).toEqual(['**/.gitignore', '**/.repomixignore']);
     });
 
     test('should not include .gitignore when useGitignore is false', async () => {
@@ -44,7 +44,7 @@ describe('fileSearch', () => {
         },
       });
       const filePatterns = await getIgnoreFilePatterns(mockConfig);
-      expect(filePatterns).toEqual(['**/.repopackignore']);
+      expect(filePatterns).toEqual(['**/.repomixignore']);
     });
   });
 
@@ -75,7 +75,7 @@ describe('fileSearch', () => {
 
       const patterns = await getIgnorePatterns(process.cwd(), mockConfig);
 
-      expect(patterns).toEqual(['repopack-output.txt', '*.custom', 'temp/']);
+      expect(patterns).toEqual(['repomix-output.txt', '*.custom', 'temp/']);
     });
 
     test('should combine default and custom patterns', async () => {
@@ -144,7 +144,7 @@ node_modules
         expect.objectContaining({
           cwd: '/mock/root',
           ignore: expect.arrayContaining(['*.custom']),
-          ignoreFiles: expect.arrayContaining(['**/.gitignore', '**/.repopackignore']),
+          ignoreFiles: expect.arrayContaining(['**/.gitignore', '**/.repomixignore']),
           onlyFiles: true,
           absolute: false,
           dot: true,

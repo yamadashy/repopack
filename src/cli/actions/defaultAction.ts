@@ -1,20 +1,21 @@
 import path from 'node:path';
 import { loadFileConfig, mergeConfigs } from '../../config/configLoad.js';
 import type {
-  RepopackConfigCli,
-  RepopackConfigFile,
-  RepopackConfigMerged,
-  RepopackOutputStyle,
+  RepomixConfigCli,
+  RepomixConfigFile,
+  RepomixConfigMerged,
+  RepomixOutputStyle,
 } from '../../config/configTypes.js';
 import { type PackResult, pack } from '../../core/packager.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
+import { runMigrationAction } from './migrationAction.js';
 
 export interface DefaultActionRunnerResult {
   packResult: PackResult;
-  config: RepopackConfigMerged;
+  config: RepomixConfigMerged;
 }
 
 export const runDefaultAction = async (
@@ -24,16 +25,19 @@ export const runDefaultAction = async (
 ): Promise<DefaultActionRunnerResult> => {
   logger.trace('Loaded CLI options:', options);
 
+  // Run migration before loading config
+  await runMigrationAction(cwd);
+
   // Load the config file
-  const fileConfig: RepopackConfigFile = await loadFileConfig(cwd, options.config ?? null);
+  const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, options.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
 
   // Parse the CLI options into a config
-  const cliConfig: RepopackConfigCli = buildCliConfig(options);
+  const cliConfig: RepomixConfigCli = buildCliConfig(options);
   logger.trace('CLI config:', cliConfig);
 
   // Merge default, file, and CLI configs
-  const config: RepopackConfigMerged = mergeConfigs(cwd, fileConfig, cliConfig);
+  const config: RepomixConfigMerged = mergeConfigs(cwd, fileConfig, cliConfig);
 
   logger.trace('Merged config:', config);
 
@@ -82,8 +86,8 @@ export const runDefaultAction = async (
   };
 };
 
-const buildCliConfig = (options: CliOptions): RepopackConfigCli => {
-  const cliConfig: RepopackConfigCli = {};
+const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
+  const cliConfig: RepomixConfigCli = {};
 
   if (options.output) {
     cliConfig.output = { filePath: options.output };
@@ -101,7 +105,7 @@ const buildCliConfig = (options: CliOptions): RepopackConfigCli => {
     cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
   }
   if (options.style) {
-    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepopackOutputStyle };
+    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepomixOutputStyle };
   }
 
   return cliConfig;

@@ -1,6 +1,6 @@
 {
   "output": {
-    "filePath": "repopack-output.txt",
+    "filePath": "repomix-output.txt",
     "headerText": "This repository is simple-project",
     "removeComments": false,
     "removeEmptyLines": false,

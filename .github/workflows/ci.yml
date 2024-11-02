@@ -131,9 +131,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build
-    - run: node bin/repopack
+    - run: node bin/repomix
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: repopack-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
-        path: repopack-output.txt
+        name: repomix-output-${{ matrix.os }}-${{ matrix.node-version }}.txt
+        path: repomix-output.txt
