@@ -9,15 +9,14 @@
 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
-# Important Notice: Project Renamed to Repomix
+## Important Notice: Project Renamed to Repomix
 
 > [!NOTE]
 > Due to legal considerations, this project has been renamed from "Repopack" to "Repomix".
 > We are committed to ensuring a smooth transition for all users.
 
-## Migration Guide
+### Migration Guide
 
-### For CLI Users
 To continue using the tool, simply install the new package:
 ```bash
 # Install new package
@@ -32,11 +31,11 @@ Optionally, you can also uninstall the old package:
 npm uninstall -g repopack
 ```
 
-### Configuration Files
+#### Configuration Files
 Your existing configuration files (`repopack.config.json` and `.repopackignore`) will continue to work during the transition period.  
 `repomix` will automatically detect these files and offer to migrate them to the new format (`repomix.config.json` and `.repomixignore`).
 
-### Timeline
+#### Timeline
 - Current: Transition period begins
 - December 1st, 2024: The `repopack` npm package will be transferred
 
@@ -70,9 +69,6 @@ npm install -g repomix
 
 # Alternatively using yarn
 yarn global add repomix
-
-# Alternatively using Homebrew (macOS)
-brew install repomix
 
 # Then run in any project directory
 repomix
