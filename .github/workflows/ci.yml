@@ -90,7 +90,7 @@ jobs:
     name: Test
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest, macos-latest]
         node-version: [16.x, 18.x, 20.x, 22.x]
     runs-on: ${{ matrix.os }}
     steps:
@@ -133,7 +133,7 @@ jobs:
     name: Build and run
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest, macos-latest]
         node-version: [16.x, 18.x, 20.x, 22.x]
     runs-on: ${{ matrix.os }}
     steps:
