@@ -10,7 +10,7 @@ on:
 jobs:
   lint-biome:
     name: Lint Biome
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
 
   lint-ts:
     name: Lint TypeScript
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
 
   lint-secretlint:
     name: Lint Secretlint
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
 
   lint-renovate-config:
     name: Lint Renovate config
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
@@ -55,6 +55,19 @@ jobs:
         node-version-file: .tool-versions
     - name: Validate Renovate config
       run: npx --yes --package renovate -- renovate-config-validator --strict
+
+  lint-action:
+    name: Lint GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download actionlint
+        id: get_actionlint
+        run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+        shell: bash
+      - name: Check workflow files
+        run: ${{ steps.get_actionlint.outputs.executable }} -color
+        shell: bash
 
   check-npm-audit:
     name: Check npm audit
