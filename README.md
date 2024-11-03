@@ -162,6 +162,15 @@ This file contains the entire codebase of library. Please provide a comprehensiv
 
 Feel free to modify these prompts based on your specific needs and the capabilities of the AI tool you're using.
 
+### Community Discussion
+Check out our [community discussion](https://github.com/yamadashy/repomix/discussions/154) where users share:
+- Which AI tools they're using with Repomix
+- Effective prompts they've discovered
+- How Repomix has helped them
+- Tips and tricks for getting the most out of AI code analysis
+
+Feel free to join the discussion and share your own experiences! Your insights could help others make better use of Repomix.
+
 ### Output File Format
 
 Repomix generates a single file with clear separators between different parts of your codebase.  
