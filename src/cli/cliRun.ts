@@ -37,7 +37,7 @@ export async function run() {
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('-c, --config <path>', 'path to a custom config file')
-      .option('-cb, --copy', 'copy output to clipboard after execution')
+      .option('--clipboard', 'copy generated output to system clipboard')
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
