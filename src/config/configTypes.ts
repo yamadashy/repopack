@@ -33,6 +33,7 @@ export type RepomixConfigDefault = RepomixConfigBase & {
     removeEmptyLines: boolean;
     topFilesLength: number;
     showLineNumbers: boolean;
+    copyToClipboard?: boolean;
   };
   include: string[];
   ignore: {
