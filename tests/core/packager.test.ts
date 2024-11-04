@@ -1,10 +1,10 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import clipboardy from 'clipboardy';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type PackDependencies, pack } from '../../src/core/packager.js';
 import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
 import { createMockConfig } from '../testing/testUtils.js';
-import clipboardy from 'clipboardy';
 
 vi.mock('node:fs/promises');
 vi.mock('fs/promises');
@@ -179,7 +179,7 @@ describe('packager', () => {
       },
     });
 
-    await pack('root', mockConfig, () => { }, mockDeps);
+    await pack('root', mockConfig, () => {}, mockDeps);
     expect(clipboardy.write).toHaveBeenCalled();
-  })
+  });
 });
