@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { setTimeout } from 'node:timers/promises';
+import clipboard from 'clipboardy';
 import pMap from 'p-map';
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../config/configTypes.js';
@@ -13,7 +14,6 @@ import { searchFiles as defaultSearchFiles } from './file/fileSearch.js';
 import { generateOutput as defaultGenerateOutput } from './output/outputGenerate.js';
 import { type SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheck.js';
 import { TokenCounter } from './tokenCount/tokenCount.js';
-import clipboard from 'clipboardy';
 
 export interface PackDependencies {
   searchFiles: typeof defaultSearchFiles;
@@ -84,7 +84,7 @@ export const pack = async (
   if (config.output.copyToClipboard) {
     // Additionally copy to clipboard if flag is raised
     progressCallback('Copying to clipboard...');
-    logger.trace(`Copying output to clipboard`);
+    logger.trace('Copying output to clipboard');
     await clipboard.write(output);
   }
 

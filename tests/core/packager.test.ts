@@ -4,11 +4,17 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type PackDependencies, pack } from '../../src/core/packager.js';
 import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
 import { createMockConfig } from '../testing/testUtils.js';
+import clipboardy from 'clipboardy';
 
 vi.mock('node:fs/promises');
 vi.mock('fs/promises');
 vi.mock('../../src/core/security/securityCheck');
 vi.mock('../../src/core/tokenCount/tokenCount');
+vi.mock('clipboardy', () => ({
+  default: {
+    write: vi.fn(),
+  },
+}));
 
 describe('packager', () => {
   let mockDeps: PackDependencies;
@@ -165,4 +171,15 @@ describe('packager', () => {
     expect(result.suspiciousFilesResults).toEqual([suspiciousFile]);
     expect(result.totalFiles).toBe(2); // All files should still be included in the result
   });
+
+  test('pack should copy to clipboard when enabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        copyToClipboard: true,
+      },
+    });
+
+    await pack('root', mockConfig, () => { }, mockDeps);
+    expect(clipboardy.write).toHaveBeenCalled();
+  })
 });
