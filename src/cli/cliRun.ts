@@ -16,6 +16,7 @@ export interface CliOptions extends OptionValues {
   include?: string;
   ignore?: string;
   config?: string;
+  copy?: boolean;
   verbose?: boolean;
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
