@@ -105,7 +105,7 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
   }
   if (options.copyToClipboard) {
-    cliConfig.output = { ...cliConfig.output, copyToClipboard: true };
+    cliConfig.output = { ...cliConfig.output, copyToClipboard: options.copyToClipboard };
   }
   if (options.style) {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepomixOutputStyle };
