@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^20.17.6",
+    "@types/node": "^22.9.0",
     "@types/strip-comments": "^2.0.4",
     "@vitest/coverage-v8": "^2.1.4",
     "rimraf": "^6.0.1",
