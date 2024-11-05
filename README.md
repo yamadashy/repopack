@@ -314,6 +314,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
+- `--copy`: Additionally copy generated output to system clipboard
 - `--remote <url>`: Process a remote Git repository
 - `--verbose`: Enable verbose logging
 
@@ -377,6 +378,7 @@ Here's an explanation of the configuration options:
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
+|`output.copyToClipboard`| Whether to copy the output to system clipboard in addition to saving the file |`false`|
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
 |`include`| Patterns of files to include (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
@@ -395,6 +397,7 @@ Example configuration:
     "removeComments": false,
     "removeEmptyLines": false,
     "showLineNumbers": false,
+    "copyToClipboard": true,
     "topFilesLength": 5
   },
   "include": ["**/*"],
@@ -411,7 +414,7 @@ Example configuration:
 
 ### Global Configuration
 To create a global configuration file:
-  
+
 ```bash
 repomix --init --global
 ```
@@ -530,7 +533,7 @@ By default, Repomix's security check feature is enabled. You can disable it by s
 
 ## 🤝 Contribution
 
-We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md). 
+We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md).
 
 ### Contributors
 

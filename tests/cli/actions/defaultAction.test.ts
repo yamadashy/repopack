@@ -25,6 +25,7 @@ describe('defaultAction', () => {
         showLineNumbers: false,
         removeComments: false,
         removeEmptyLines: false,
+        copyToClipboard: false,
       },
       ignore: {
         useGitignore: true,

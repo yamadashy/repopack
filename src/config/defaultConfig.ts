@@ -14,6 +14,7 @@ export const defaultConfig: RepomixConfigDefault = {
     removeEmptyLines: false,
     topFilesLength: 5,
     showLineNumbers: false,
+    copyToClipboard: false,
   },
   include: [],
   ignore: {

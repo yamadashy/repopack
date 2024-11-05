@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { setTimeout } from 'node:timers/promises';
+import clipboard from 'clipboardy';
 import pMap from 'p-map';
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../config/configTypes.js';
@@ -79,6 +80,13 @@ export const pack = async (
   const outputPath = path.resolve(config.cwd, config.output.filePath);
   logger.trace(`Writing output to: ${outputPath}`);
   await fs.writeFile(outputPath, output);
+
+  if (config.output.copyToClipboard) {
+    // Additionally copy to clipboard if flag is raised
+    progressCallback('Copying to clipboard...');
+    logger.trace('Copying output to clipboard');
+    await clipboard.write(output);
+  }
 
   // Setup token counter
   const tokenCounter = new TokenCounter();
