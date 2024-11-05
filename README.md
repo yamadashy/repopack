@@ -314,7 +314,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
-- `--copy`: Additionally copy generated output to clipboard
+- `--copy`: Additionally copy generated output to system clipboard
 - `--remote <url>`: Process a remote Git repository
 - `--verbose`: Enable verbose logging
 
@@ -397,6 +397,7 @@ Example configuration:
     "removeComments": false,
     "removeEmptyLines": false,
     "showLineNumbers": false,
+    "copyToClipboard": true,
     "topFilesLength": 5
   },
   "include": ["**/*"],
