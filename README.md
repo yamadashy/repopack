@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/l/repomix.svg?maxAge=1000)](https://github.com/yamadashy/repomix/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
 
-Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.
+Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
 ## 📢 Important Notice: Project Renamed to Repomix
@@ -32,7 +32,7 @@ npm uninstall -g repopack
 ```
 
 #### Configuration Files
-Your existing configuration files (`repopack.config.json` and `.repopackignore`) will continue to work during the transition period.
+Your existing configuration files (`repopack.config.json` and `.repopackignore`) will continue to work during the transition period.  
 `repomix` will automatically detect these files and offer to migrate them to the new format (`repomix.config.json` and `.repomixignore`).
 
 #### Timeline
@@ -173,7 +173,7 @@ Feel free to join the discussion and share your own experiences! Your insights c
 
 ### Output File Format
 
-Repomix generates a single file with clear separators between different parts of your codebase.
+Repomix generates a single file with clear separators between different parts of your codebase.  
 To enhance AI comprehension, the output file begins with an AI-oriented explanation, making it easier for AI models to understand the context and structure of the packed repository.
 
 #### Plain Text Format (default)
@@ -258,7 +258,7 @@ src/
 </instruction>
 ```
 
-For those interested in the potential of XML tags in AI contexts:
+For those interested in the potential of XML tags in AI contexts:  
 https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags
 
 > When your prompts involve multiple components like context, instructions, and examples, XML tags can be a game-changer. They help Claude parse your prompts more accurately, leading to higher-quality outputs.
@@ -484,7 +484,7 @@ Here's an example of how you might use this feature:
 
 When Repomix generates the output, it will include the contents of `repomix-instruction.md` in a dedicated section.
 
-Note: The instruction content is appended at the end of the output file. This placement can be particularly effective for AI systems. For those interested in understanding why this might be beneficial, Anthropic provides some insights in their documentation:
+Note: The instruction content is appended at the end of the output file. This placement can be particularly effective for AI systems. For those interested in understanding why this might be beneficial, Anthropic provides some insights in their documentation:  
 https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips
 
 > Put long-form data at the top: Place your long documents and inputs (~20K+ tokens) near the top of your prompt, above your query, instructions, and examples. This can significantly improve Claude's performance across all models.
@@ -494,7 +494,7 @@ https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-con
 
 When `output.removeComments` is set to `true`, Repomix will attempt to remove comments from supported file types. This feature can help reduce the size of the output file and focus on the essential code content.
 
-Supported languages include:
+Supported languages include:  
 HTML, CSS, JavaScript, TypeScript, Vue, Svelte, Python, PHP, Ruby, C, C#, Java, Go, Rust, Swift, Kotlin, Dart, Shell, and YAML.
 
 Note: The comment removal process is conservative to avoid accidentally removing code. In complex cases, some comments might be retained.
