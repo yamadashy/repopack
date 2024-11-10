@@ -87,7 +87,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [16.x, 18.x, 20.x, 22.x]
+        node-version: [16.x, 18.x, 20.x, 22.x, 23.x]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -130,7 +130,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [16.x, 18.x, 20.x, 22.x]
+        node-version: [16.x, 18.x, 20.x, 22.x, 23.x]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
