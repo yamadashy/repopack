@@ -5,7 +5,7 @@ import type {
   RepomixConfigFile,
   RepomixConfigMerged,
   RepomixOutputStyle,
-} from '../../config/configTypes.js';
+} from '../../config/configSchema.js';
 import { type PackResult, pack } from '../../core/packager.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';

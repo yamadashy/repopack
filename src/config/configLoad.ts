@@ -1,9 +1,14 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { RepomixError } from '../shared/errorHandle.js';
+import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
-import type { RepomixConfigCli, RepomixConfigFile, RepomixConfigMerged } from './configTypes.js';
-import { RepomixConfigValidationError, validateConfig } from './configValidate.js';
+import {
+  type RepomixConfigCli,
+  type RepomixConfigFile,
+  type RepomixConfigMerged,
+  repomixConfigFileSchema,
+  repomixConfigMergedSchema,
+} from './configSchema.js';
 import { defaultConfig, defaultFilePathMap } from './defaultConfig.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
@@ -25,7 +30,6 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
 
   logger.trace('Loading local config from:', fullPath);
 
-  // Check local file existence
   const isLocalFileExists = await fs
     .stat(fullPath)
     .then((stats) => stats.isFile())
@@ -36,7 +40,6 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
   }
 
   if (useDefaultConfig) {
-    // Try to load global config
     const globalConfigPath = getGlobalConfigPath();
     logger.trace('Loading global config from:', globalConfigPath);
 
@@ -61,12 +64,9 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFil
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const config = JSON.parse(fileContent);
-    validateConfig(config);
-    return config;
+    return repomixConfigFileSchema.parse(config);
   } catch (error) {
-    if (error instanceof RepomixConfigValidationError) {
-      throw new RepomixError(`Invalid configuration in ${filePath}: ${error.message}`);
-    }
+    rethrowValidationErrorIfZodError(error, 'Invalid config schema');
     if (error instanceof SyntaxError) {
       throw new RepomixError(`Invalid JSON in config file ${filePath}: ${error.message}`);
     }
@@ -88,7 +88,7 @@ export const mergeConfigs = (
     defaultConfig.output.filePath = defaultFilePathMap[style];
   }
 
-  return {
+  const mergedConfig = {
     cwd,
     output: {
       ...defaultConfig.output,
@@ -112,4 +112,11 @@ export const mergeConfigs = (
       ...cliConfig.security,
     },
   };
+
+  try {
+    return repomixConfigMergedSchema.parse(mergedConfig);
+  } catch (error) {
+    rethrowValidationErrorIfZodError(error, 'Invalid merged config');
+    throw error;
+  }
 };

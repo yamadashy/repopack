@@ -1,5 +1,5 @@
 import { globby } from 'globby';
-import type { RepomixConfigMerged } from '../../config/configTypes.js';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { defaultIgnoreList } from '../../config/defaultIgnore.js';
 import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSort.js';

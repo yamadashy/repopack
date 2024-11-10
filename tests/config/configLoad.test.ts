@@ -4,8 +4,9 @@ import path from 'node:path';
 import process from 'node:process';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
-import type { RepomixConfigCli, RepomixConfigFile } from '../../src/config/configTypes.js';
+import type { RepomixConfigCli, RepomixConfigFile } from '../../src/config/configSchema.js';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
+import { RepomixConfigValidationError } from '../../src/shared/errorHandle.js';
 import { logger } from '../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -36,6 +37,17 @@ describe('configLoad', () => {
 
       const result = await loadFileConfig(process.cwd(), 'test-config.json');
       expect(result).toEqual(mockConfig);
+    });
+
+    test('should throw RepomixConfigValidationError for invalid config', async () => {
+      const invalidConfig = {
+        output: { filePath: 123, style: 'invalid' }, // Invalid filePath type and invalid style
+        ignore: { useDefaultPatterns: 'not a boolean' }, // Invalid type
+      };
+      vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(invalidConfig));
+      vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
+
+      await expect(loadFileConfig(process.cwd(), 'test-config.json')).rejects.toThrow(RepomixConfigValidationError);
     });
 
     test('should load global config when local config is not found', async () => {
@@ -90,6 +102,18 @@ describe('configLoad', () => {
       expect(result.ignore.useDefaultPatterns).toBe(true);
       expect(result.ignore.customPatterns).toContain('file-ignore');
       expect(result.ignore.customPatterns).toContain('cli-ignore');
+    });
+
+    test('should throw RepomixConfigValidationError for invalid merged config', () => {
+      const fileConfig: RepomixConfigFile = {
+        output: { filePath: 'file-output.txt', style: 'plain' },
+      };
+      const cliConfig: RepomixConfigCli = {
+        // @ts-ignore
+        output: { style: 'invalid' }, // Invalid style
+      };
+
+      expect(() => mergeConfigs(process.cwd(), fileConfig, cliConfig)).toThrow(RepomixConfigValidationError);
     });
   });
 });

@@ -1,4 +1,4 @@
-import type { RepomixConfigMerged } from '../../config/configTypes.js';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
 
 export const generateHeader = (generationDate: string): string => {
   return `

@@ -1,5 +1,5 @@
 import pMap from 'p-map';
-import type { RepomixConfigMerged } from '../../config/configTypes.js';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 import { getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';

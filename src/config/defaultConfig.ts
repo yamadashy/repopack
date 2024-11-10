@@ -1,4 +1,4 @@
-import type { RepomixConfigDefault, RepomixOutputStyle } from './configTypes.js';
+import type { RepomixConfigDefault, RepomixOutputStyle } from './configSchema.js';
 
 export const defaultFilePathMap: Record<RepomixOutputStyle, string> = {
   plain: 'repomix-output.txt',

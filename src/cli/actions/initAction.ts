@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import * as prompts from '@clack/prompts';
 import pc from 'picocolors';
-import type { RepomixConfigFile, RepomixOutputStyle } from '../../config/configTypes.js';
+import type { RepomixConfigFile, RepomixOutputStyle } from '../../config/configSchema.js';
 import { defaultConfig, defaultFilePathMap } from '../../config/defaultConfig.js';
 import { getGlobalDirectory } from '../../config/globalDirectory.js';
 import { logger } from '../../shared/logger.js';
