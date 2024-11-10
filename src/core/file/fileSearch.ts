@@ -3,8 +3,19 @@ import type { RepomixConfigMerged } from '../../config/configTypes.js';
 import { defaultIgnoreList } from '../../config/defaultIgnore.js';
 import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSort.js';
+import { PermissionError, checkDirectoryPermissions } from './permissionCheck.js';
 
 export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<string[]> => {
+  // First check directory permissions
+  const permissionCheck = await checkDirectoryPermissions(rootDir);
+
+  if (!permissionCheck.hasPermission) {
+    if (permissionCheck.error instanceof PermissionError) {
+      throw permissionCheck.error;
+    }
+    throw new Error(`Cannot access directory ${rootDir}: ${permissionCheck.error?.message}`);
+  }
+
   const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
 
   try {
@@ -25,6 +36,15 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       absolute: false,
       dot: true,
       followSymbolicLinks: false,
+    }).catch((error) => {
+      // Handle EPERM errors specifically
+      if (error.code === 'EPERM' || error.code === 'EACCES') {
+        throw new PermissionError(
+          'Permission denied while scanning directory. Please check folder access permissions for your terminal app.',
+          rootDir,
+        );
+      }
+      throw error;
     });
 
     logger.trace(`Filtered ${filePaths.length} files`);
@@ -32,10 +52,16 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
 
     return sortedPaths;
   } catch (error: unknown) {
+    // Re-throw PermissionError as is
+    if (error instanceof PermissionError) {
+      throw error;
+    }
+
     if (error instanceof Error) {
       logger.error('Error filtering files:', error.message);
       throw new Error(`Failed to filter files in directory ${rootDir}. Reason: ${error.message}`);
     }
+
     logger.error('An unexpected error occurred:', error);
     throw new Error('An unexpected error occurred while filtering files.');
   }
