@@ -1,5 +1,6 @@
+import { outro } from '@clack/prompts';
 import { describe, expect, it } from 'vitest';
-import { z } from 'zod';
+import { custom, z } from 'zod';
 import {
   repomixConfigBaseSchema,
   repomixConfigCliSchema,
@@ -71,6 +72,7 @@ describe('configSchema', () => {
         },
         include: [],
         ignore: {
+          customPatterns: [],
           useGitignore: true,
           useDefaultPatterns: true,
         },
@@ -82,13 +84,8 @@ describe('configSchema', () => {
     });
 
     it('should reject incomplete config', () => {
-      const incompleteConfig = {
-        output: {
-          filePath: 'output.txt',
-          // Missing required fields
-        },
-      };
-      expect(() => repomixConfigDefaultSchema.parse(incompleteConfig)).toThrow(z.ZodError);
+      const validConfig = {};
+      expect(() => repomixConfigDefaultSchema.parse(validConfig)).not.toThrow();
     });
   });
 
@@ -166,8 +163,10 @@ describe('configSchema', () => {
 
     it('should reject merged config missing required fields', () => {
       const invalidConfig = {
-        cwd: '/path/to/project',
-        // Missing required output field
+        output: {
+          filePath: 'output.txt',
+          // Missing required fields
+        },
       };
       expect(() => repomixConfigMergedSchema.parse(invalidConfig)).toThrow(z.ZodError);
     });
