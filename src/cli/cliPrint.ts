@@ -1,6 +1,6 @@
 import path from 'node:path';
 import pc from 'picocolors';
-import type { RepomixConfigMerged } from '../config/configTypes.js';
+import type { RepomixConfigMerged } from '../config/configSchema.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheck.js';
 import { logger } from '../shared/logger.js';
 

@@ -4,7 +4,7 @@ import { setTimeout } from 'node:timers/promises';
 import clipboard from 'clipboardy';
 import pMap from 'p-map';
 import pc from 'picocolors';
-import type { RepomixConfigMerged } from '../config/configTypes.js';
+import type { RepomixConfigMerged } from '../config/configSchema.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../shared/types.js';

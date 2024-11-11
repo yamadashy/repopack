@@ -1,10 +1,17 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
-import { RepomixError } from '../shared/errorHandle.js';
+import { z } from 'zod';
+import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
-import type { RepomixConfigCli, RepomixConfigFile, RepomixConfigMerged } from './configTypes.js';
-import { RepomixConfigValidationError, validateConfig } from './configValidate.js';
-import { defaultConfig, defaultFilePathMap } from './defaultConfig.js';
+import {
+  type RepomixConfigCli,
+  type RepomixConfigFile,
+  type RepomixConfigMerged,
+  defaultConfig,
+  defaultFilePathMap,
+  repomixConfigFileSchema,
+  repomixConfigMergedSchema,
+} from './configSchema.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
 const defaultConfigPath = 'repomix.config.json';
@@ -61,12 +68,9 @@ const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFil
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const config = JSON.parse(fileContent);
-    validateConfig(config);
-    return config;
+    return repomixConfigFileSchema.parse(config);
   } catch (error) {
-    if (error instanceof RepomixConfigValidationError) {
-      throw new RepomixError(`Invalid configuration in ${filePath}: ${error.message}`);
-    }
+    rethrowValidationErrorIfZodError(error, 'Invalid config schema');
     if (error instanceof SyntaxError) {
       throw new RepomixError(`Invalid JSON in config file ${filePath}: ${error.message}`);
     }
@@ -82,34 +86,47 @@ export const mergeConfigs = (
   fileConfig: RepomixConfigFile,
   cliConfig: RepomixConfigCli,
 ): RepomixConfigMerged => {
+  logger.trace('Default config:', defaultConfig);
+
+  const baseConfig = defaultConfig;
+
   // If the output file path is not provided in the config file or CLI, use the default file path for the style
   if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
-    const style = cliConfig.output?.style || fileConfig.output?.style || defaultConfig.output.style;
-    defaultConfig.output.filePath = defaultFilePathMap[style];
+    const style = cliConfig.output?.style || fileConfig.output?.style || baseConfig.output.style;
+    baseConfig.output.filePath = defaultFilePathMap[style];
+
+    logger.trace('Default output file path is set to:', baseConfig.output.filePath);
   }
 
-  return {
+  const mergedConfig = {
     cwd,
     output: {
-      ...defaultConfig.output,
+      ...baseConfig.output,
       ...fileConfig.output,
       ...cliConfig.output,
     },
+    include: [...(baseConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
     ignore: {
-      ...defaultConfig.ignore,
+      ...baseConfig.ignore,
       ...fileConfig.ignore,
       ...cliConfig.ignore,
       customPatterns: [
-        ...(defaultConfig.ignore.customPatterns || []),
+        ...(baseConfig.ignore.customPatterns || []),
         ...(fileConfig.ignore?.customPatterns || []),
         ...(cliConfig.ignore?.customPatterns || []),
       ],
     },
-    include: [...(defaultConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
     security: {
-      ...defaultConfig.security,
+      ...baseConfig.security,
       ...fileConfig.security,
       ...cliConfig.security,
     },
   };
+
+  try {
+    return repomixConfigMergedSchema.parse(mergedConfig);
+  } catch (error) {
+    rethrowValidationErrorIfZodError(error, 'Invalid merged config');
+    throw error;
+  }
 };

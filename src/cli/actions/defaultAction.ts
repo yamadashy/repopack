@@ -1,12 +1,14 @@
 import path from 'node:path';
 import { loadFileConfig, mergeConfigs } from '../../config/configLoad.js';
-import type {
-  RepomixConfigCli,
-  RepomixConfigFile,
-  RepomixConfigMerged,
-  RepomixOutputStyle,
-} from '../../config/configTypes.js';
+import {
+  type RepomixConfigCli,
+  type RepomixConfigFile,
+  type RepomixConfigMerged,
+  type RepomixOutputStyle,
+  repomixConfigCliSchema,
+} from '../../config/configSchema.js';
 import { type PackResult, pack } from '../../core/packager.js';
+import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
 import type { CliOptions } from '../cliRun.js';
@@ -111,5 +113,10 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepomixOutputStyle };
   }
 
-  return cliConfig;
+  try {
+    return repomixConfigCliSchema.parse(cliConfig);
+  } catch (error) {
+    rethrowValidationErrorIfZodError(error, 'Invalid cli arguments');
+    throw error;
+  }
 };

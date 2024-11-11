@@ -67,7 +67,8 @@
     "p-map": "^7.0.2",
     "picocolors": "^1.1.1",
     "strip-comments": "^2.0.1",
-    "tiktoken": "^1.0.17"
+    "tiktoken": "^1.0.17",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
