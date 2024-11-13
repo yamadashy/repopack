@@ -39,11 +39,7 @@ export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise
 };
 
 export async function createConfigFile(rootDir: string, isGlobal: boolean): Promise<boolean> {
-  const isCancelled = false;
-
-  const configPath = isGlobal
-    ? path.resolve(getGlobalDirectory(), 'repomix.config.json')
-    : path.resolve(rootDir, 'repomix.config.json');
+  const configPath = path.resolve(isGlobal ? getGlobalDirectory() : rootDir, 'repomix.config.json');
 
   const isCreateConfig = await prompts.confirm({
     message: `Do you want to create a ${isGlobal ? 'global ' : ''}${pc.green('repomix.config.json')} file?`,
@@ -82,9 +78,6 @@ export async function createConfigFile(rootDir: string, isGlobal: boolean): Prom
   const options = await prompts.group(
     {
       outputStyle: () => {
-        if (isCancelled) {
-          return;
-        }
         return prompts.select({
           message: 'Output style:',
           options: [
@@ -96,9 +89,6 @@ export async function createConfigFile(rootDir: string, isGlobal: boolean): Prom
         });
       },
       outputFilePath: ({ results }) => {
-        if (isCancelled) {
-          return;
-        }
         const defaultFilePath = defaultFilePathMap[results.outputStyle as RepomixOutputStyle];
         return prompts.text({
           message: 'Output file path:',
