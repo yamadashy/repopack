@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-'use strict';
 
 const nodeVersion = process.versions.node;
 const [major] = nodeVersion.split('.').map(Number);
@@ -36,16 +35,21 @@ function setupErrorHandlers() {
   process.on('SIGTERM', shutdown);
 }
 
-async function main() {
+(async () => {
   try {
     setupErrorHandlers();
 
     const { run } = await import('../lib/cli/cliRun.js');
-    run();
+    await run();
   } catch (error) {
-    console.error('Fatal Error:', error);
-    process.exit(EXIT_CODES.ERROR);
+    if (error instanceof Error) {
+      console.error('Fatal Error:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+    } else {
+      console.error('Fatal Error:', error);
+    }
   }
-}
-
-main();
+})();
