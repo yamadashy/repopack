@@ -19,7 +19,7 @@
     "lint-secretlint": "secretlint \"**/*\" --secretlintignore .gitignore",
     "test": "vitest",
     "test-coverage": "vitest run --coverage",
-    "cli-run": "npm run build && node --trace-warnings bin/repomix",
+    "cli-run": "npm run build && node --trace-warnings bin/repomix.cjs",
     "npm-publish": "npm run lint && npm run test-coverage && npm run build && npm publish",
     "npm-release-patch": "npm version patch && npm run npm-publish",
     "npm-release-minor": "npm version minor && npm run npm-publish",

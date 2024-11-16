@@ -28,8 +28,6 @@ export interface CliOptions extends OptionValues {
 
 export async function run() {
   try {
-    const version = await getVersion();
-
     program
       .description('Repomix - Pack your repository into a single AI-friendly file')
       .arguments('[directory]')
