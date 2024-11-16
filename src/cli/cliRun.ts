@@ -26,7 +26,7 @@ export interface CliOptions extends OptionValues {
   remote?: string;
 }
 
-export async function run() {
+export const run = async () => {
   try {
     program
       .description('Repomix - Pack your repository into a single AI-friendly file')
@@ -50,9 +50,9 @@ export async function run() {
   } catch (error) {
     handleError(error);
   }
-}
+};
 
-const executeAction = async (directory: string, cwd: string, options: CliOptions) => {
+export const executeAction = async (directory: string, cwd: string, options: CliOptions) => {
   logger.setVerbose(options.verbose || false);
 
   if (options.version) {
