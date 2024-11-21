@@ -24,7 +24,7 @@ export class PermissionError extends Error {
   }
 }
 
-export async function checkDirectoryPermissions(dirPath: string): Promise<PermissionCheckResult> {
+export const checkDirectoryPermissions = async (dirPath: string): Promise<PermissionCheckResult> => {
   try {
     // First try to read directory contents
     await fs.readdir(dirPath);
@@ -87,9 +87,9 @@ export async function checkDirectoryPermissions(dirPath: string): Promise<Permis
       error: error instanceof Error ? error : new Error(String(error)),
     };
   }
-}
+};
 
-function getMacOSPermissionMessage(dirPath: string, errorCode?: string): string {
+const getMacOSPermissionMessage = (dirPath: string, errorCode?: string): string => {
   if (platform() === 'darwin') {
     return `Permission denied: Cannot access '${dirPath}', error code: ${errorCode}.
 
@@ -109,4 +109,4 @@ If your terminal app is not listed:
   }
 
   return `Permission denied: Cannot access '${dirPath}'`;
-}
+};

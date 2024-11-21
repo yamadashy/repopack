@@ -140,7 +140,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build
-    - run: node bin/repomix
+    - run: node bin/repomix.cjs
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:

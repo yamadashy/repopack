@@ -18,21 +18,28 @@ export const runRemoteAction = async (repoUrl: string, options: CliOptions): Pro
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
-  const formattedUrl = formatGitUrl(repoUrl);
-  const tempDir = await createTempDirectory();
   const spinner = new Spinner('Cloning repository...');
+
+  const tempDirPath = await createTempDirectory();
 
   try {
     spinner.start();
-    await cloneRepository(formattedUrl, tempDir);
+
+    // Clone the repository
+    await cloneRepository(formatGitUrl(repoUrl), tempDirPath);
+
     spinner.succeed('Repository cloned successfully!');
     logger.log('');
 
-    const result = await runDefaultAction(tempDir, tempDir, options);
-    await copyOutputToCurrentDirectory(tempDir, process.cwd(), result.config.output.filePath);
+    // Run the default action on the cloned repository
+    const result = await runDefaultAction(tempDirPath, tempDirPath, options);
+    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+  } catch (error) {
+    spinner.fail('Error during repository cloning. cleanup...');
+    throw error;
   } finally {
-    // Clean up the temporary directory
-    await cleanupTempDirectory(tempDir);
+    // Cleanup the temporary directory
+    await cleanupTempDirectory(tempDirPath);
   }
 };
 
@@ -52,13 +59,13 @@ export const formatGitUrl = (url: string): string => {
   return url;
 };
 
-const createTempDirectory = async (): Promise<string> => {
+export const createTempDirectory = async (): Promise<string> => {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repomix-'));
   logger.trace(`Created temporary directory. (path: ${pc.dim(tempDir)})`);
   return tempDir;
 };
 
-const cloneRepository = async (url: string, directory: string): Promise<void> => {
+export const cloneRepository = async (url: string, directory: string): Promise<void> => {
   logger.log(`Clone repository: ${url} to temporary directory. ${pc.dim(`path: ${directory}`)}`);
   logger.log('');
 
@@ -69,12 +76,12 @@ const cloneRepository = async (url: string, directory: string): Promise<void> =>
   }
 };
 
-const cleanupTempDirectory = async (directory: string): Promise<void> => {
+export const cleanupTempDirectory = async (directory: string): Promise<void> => {
   logger.trace(`Cleaning up temporary directory: ${directory}`);
   await fs.rm(directory, { recursive: true, force: true });
 };
 
-const checkGitInstallation = async (): Promise<boolean> => {
+export const checkGitInstallation = async (): Promise<boolean> => {
   try {
     const result = await execAsync('git --version');
     return !result.stderr;
@@ -84,7 +91,7 @@ const checkGitInstallation = async (): Promise<boolean> => {
   }
 };
 
-const copyOutputToCurrentDirectory = async (
+export const copyOutputToCurrentDirectory = async (
   sourceDir: string,
   targetDir: string,
   outputFileName: string,

@@ -38,7 +38,7 @@ export const runInitAction = async (rootDir: string, isGlobal: boolean): Promise
   }
 };
 
-export async function createConfigFile(rootDir: string, isGlobal: boolean): Promise<boolean> {
+export const createConfigFile = async (rootDir: string, isGlobal: boolean): Promise<boolean> => {
   const configPath = path.resolve(isGlobal ? getGlobalDirectory() : rootDir, 'repomix.config.json');
 
   const isCreateConfig = await prompts.confirm({
@@ -121,9 +121,9 @@ export async function createConfigFile(rootDir: string, isGlobal: boolean): Prom
   );
 
   return true;
-}
+};
 
-export async function createIgnoreFile(rootDir: string, isGlobal: boolean): Promise<boolean> {
+export const createIgnoreFile = async (rootDir: string, isGlobal: boolean): Promise<boolean> => {
   if (isGlobal) {
     prompts.log.info(`Skipping ${pc.green('.repomixignore')} file creation for global configuration.`);
     return false;
@@ -173,4 +173,4 @@ export async function createIgnoreFile(rootDir: string, isGlobal: boolean): Prom
   );
 
   return true;
-}
+};
