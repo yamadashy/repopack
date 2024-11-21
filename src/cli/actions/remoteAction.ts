@@ -18,21 +18,28 @@ export const runRemoteAction = async (repoUrl: string, options: CliOptions): Pro
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
-  const formattedUrl = formatGitUrl(repoUrl);
-  const tempDir = await createTempDirectory();
   const spinner = new Spinner('Cloning repository...');
+
+  const tempDirPath = await createTempDirectory();
 
   try {
     spinner.start();
-    await cloneRepository(formattedUrl, tempDir);
+
+    // Clone the repository
+    await cloneRepository(formatGitUrl(repoUrl), tempDirPath);
+
     spinner.succeed('Repository cloned successfully!');
     logger.log('');
 
-    const result = await runDefaultAction(tempDir, tempDir, options);
-    await copyOutputToCurrentDirectory(tempDir, process.cwd(), result.config.output.filePath);
+    // Run the default action on the cloned repository
+    const result = await runDefaultAction(tempDirPath, tempDirPath, options);
+    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+  } catch (error) {
+    spinner.fail('Error during repository cloning. cleanup...');
+    throw error;
   } finally {
-    // Clean up the temporary directory
-    await cleanupTempDirectory(tempDir);
+    // Cleanup the temporary directory
+    await cleanupTempDirectory(tempDirPath);
   }
 };
 

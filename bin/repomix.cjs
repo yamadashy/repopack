@@ -51,5 +51,7 @@ function setupErrorHandlers() {
     } else {
       console.error('Fatal Error:', error);
     }
+
+    process.exit(EXIT_CODES.ERROR);
   }
 })();

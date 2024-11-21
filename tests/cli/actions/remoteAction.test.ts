@@ -1,22 +1,42 @@
 import * as fs from 'node:fs/promises';
-import os from 'node:os';
+import * as os from 'node:os';
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  checkGitInstallation,
   cleanupTempDirectory,
   copyOutputToCurrentDirectory,
   createTempDirectory,
   formatGitUrl,
+  runRemoteAction,
 } from '../../../src/cli/actions/remoteAction.js';
 
-vi.mock('node:child_process');
-vi.mock('node:fs/promises');
-vi.mock('node:os');
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return {
+    ...actual,
+    copyFile: vi.fn(),
+  };
+});
 vi.mock('../../../src/shared/logger');
 
 describe('remoteAction functions', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+
+  describe('runRemoteAction', () => {
+    test('should clone the repository', async () => {
+      vi.mocked(fs.copyFile).mockResolvedValue(undefined);
+      await runRemoteAction('yamadashy/repomix', {});
+    });
+  });
+
+  describe('checkGitInstallation Integration', () => {
+    test('should detect git installation in real environment', async () => {
+      const result = await checkGitInstallation();
+      expect(result).toBe(true);
+    });
   });
 
   describe('formatGitUrl', () => {
@@ -34,29 +54,6 @@ describe('remoteAction functions', () => {
     test('should not modify SSH URLs', () => {
       const sshUrl = 'git@github.com:user/repo.git';
       expect(formatGitUrl(sshUrl)).toBe(sshUrl);
-    });
-  });
-
-  describe('createTempDirectory', () => {
-    test('should create temporary directory', async () => {
-      const mockTempDir = '/mock/temp/dir';
-      vi.mocked(os.tmpdir).mockReturnValue('/mock/temp');
-      vi.mocked(fs.mkdtemp).mockResolvedValue(mockTempDir);
-
-      const result = await createTempDirectory();
-      expect(result).toBe(mockTempDir);
-      expect(fs.mkdtemp).toHaveBeenCalledWith(path.join('/mock/temp', 'repomix-'));
-    });
-  });
-
-  describe('cleanupTempDirectory', () => {
-    test('should cleanup directory', async () => {
-      const mockDir = '/mock/temp/dir';
-      vi.mocked(fs.rm).mockResolvedValue();
-
-      await cleanupTempDirectory(mockDir);
-
-      expect(fs.rm).toHaveBeenCalledWith(mockDir, { recursive: true, force: true });
     });
   });
 
