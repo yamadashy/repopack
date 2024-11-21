@@ -52,7 +52,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@clack/prompts": "^0.7.0",
+    "@clack/prompts": "^0.8.1",
     "@secretlint/core": "^9.0.0",
     "@secretlint/secretlint-rule-preset-recommend": "^9.0.0",
     "cli-spinners": "^2.9.2",
@@ -72,13 +72,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.9.0",
+    "@types/node": "^22.9.1",
     "@types/strip-comments": "^2.0.4",
-    "@vitest/coverage-v8": "^2.1.4",
+    "@vitest/coverage-v8": "^2.1.5",
     "rimraf": "^6.0.1",
     "secretlint": "^9.0.0",
     "typescript": "^5.6.3",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.5"
   },
   "engines": {
     "node": ">=16.0.0",
