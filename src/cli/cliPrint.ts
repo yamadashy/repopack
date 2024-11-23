@@ -15,7 +15,9 @@ export const printSummary = (
   let securityCheckMessage = '';
   if (config.security.enableSecurityCheck) {
     if (suspiciousFilesResults.length > 0) {
-      securityCheckMessage = pc.yellow(`${suspiciousFilesResults.length} suspicious file(s) detected and excluded`);
+      securityCheckMessage = pc.yellow(
+        `${suspiciousFilesResults.length.toLocaleString()} suspicious file(s) detected and excluded`,
+      );
     } else {
       securityCheckMessage = pc.white('✔ No suspicious files detected');
     }
@@ -25,9 +27,9 @@ export const printSummary = (
 
   logger.log(pc.white('📊 Pack Summary:'));
   logger.log(pc.dim('────────────────'));
-  logger.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toString())}`);
-  logger.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toString())}`);
-  logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toString())}`);
+  logger.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toLocaleString())} files`);
+  logger.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toLocaleString())} chars`);
+  logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toLocaleString())} tokens`);
   logger.log(`${pc.white('       Output:')} ${pc.white(outputPath)}`);
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 };
@@ -63,8 +65,9 @@ export const printTopFiles = (
   fileTokenCounts: Record<string, number>,
   topFilesLength: number,
 ) => {
+  const topFilesLengthStrLen = topFilesLength.toString().length;
   logger.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count and Token Count:`));
-  logger.log(pc.dim('──────────────────────────────────────────────────────'));
+  logger.log(pc.dim(`─────────────────────────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
 
   const topFiles = Object.entries(fileCharCounts)
     .sort((a, b) => b[1] - a[1])
@@ -74,7 +77,7 @@ export const printTopFiles = (
     const tokenCount = fileTokenCounts[filePath];
     const indexString = `${index + 1}.`.padEnd(3, ' ');
     logger.log(
-      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount} chars, ${tokenCount} tokens)`)}`,
+      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount.toLocaleString()} chars, ${tokenCount.toLocaleString()} tokens)`)}`,
     );
   });
 };

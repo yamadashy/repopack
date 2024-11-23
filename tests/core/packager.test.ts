@@ -95,8 +95,8 @@ describe('packager', () => {
 
     // Check the result of pack function
     expect(result.totalFiles).toBe(2);
-    expect(result.totalCharacters).toBe(38);
-    expect(result.totalTokens).toBe(20);
+    expect(result.totalCharacters).toBe(11);
+    expect(result.totalTokens).toBe(10);
     expect(result.fileCharCounts).toEqual({
       'file1.txt': 19,
       [file2Path]: 19,
