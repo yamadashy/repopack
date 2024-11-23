@@ -5,6 +5,7 @@
 [![npm](https://img.shields.io/npm/d18m/repomix)](https://www.npmjs.com/package/repomix)
 [![npm](https://img.shields.io/npm/l/repomix.svg?maxAge=1000)](https://github.com/yamadashy/repomix/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
+[![codecov](https://codecov.io/github/yamadashy/repomix/graph/badge.svg)](https://codecov.io/github/yamadashy/repomix)
 
 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
