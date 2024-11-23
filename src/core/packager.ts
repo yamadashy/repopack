@@ -103,11 +103,11 @@ export const pack = async (
     },
   );
 
-  tokenCounter.free();
-
   const totalFiles = processedFiles.length;
-  const totalCharacters = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.charCount, 0);
-  const totalTokens = fileMetrics.reduce((sum, fileMetric) => sum + fileMetric.tokenCount, 0);
+  const totalCharacters = output.length;
+  const totalTokens = tokenCounter.countTokens(output);
+
+  tokenCounter.free();
 
   const fileCharCounts: Record<string, number> = {};
   const fileTokenCounts: Record<string, number> = {};
