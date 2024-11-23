@@ -1,20 +1,23 @@
-import { exec } from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import pc from 'picocolors';
+import { execGitShallowClone, isGitInstalled } from '../../core/file/gitCommand.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
 import { runDefaultAction } from './defaultAction.js';
 
-const execAsync = promisify(exec);
-
-export const runRemoteAction = async (repoUrl: string, options: CliOptions): Promise<void> => {
-  const gitInstalled = await checkGitInstallation();
-  if (!gitInstalled) {
+export const runRemoteAction = async (
+  repoUrl: string,
+  options: CliOptions,
+  deps = {
+    isGitInstalled,
+    execGitShallowClone,
+  },
+): Promise<void> => {
+  if (!(await deps.isGitInstalled())) {
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
@@ -26,7 +29,9 @@ export const runRemoteAction = async (repoUrl: string, options: CliOptions): Pro
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(formatGitUrl(repoUrl), tempDirPath);
+    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, {
+      execGitShallowClone: deps.execGitShallowClone,
+    });
 
     spinner.succeed('Repository cloned successfully!');
     logger.log('');
@@ -65,12 +70,18 @@ export const createTempDirectory = async (): Promise<string> => {
   return tempDir;
 };
 
-export const cloneRepository = async (url: string, directory: string): Promise<void> => {
+export const cloneRepository = async (
+  url: string,
+  directory: string,
+  deps = {
+    execGitShallowClone: execGitShallowClone,
+  },
+): Promise<void> => {
   logger.log(`Clone repository: ${url} to temporary directory. ${pc.dim(`path: ${directory}`)}`);
   logger.log('');
 
   try {
-    await execAsync(`git clone --depth 1 ${url} ${directory}`);
+    await deps.execGitShallowClone(url, directory);
   } catch (error) {
     throw new RepomixError(`Failed to clone repository: ${(error as Error).message}`);
   }
@@ -79,16 +90,6 @@ export const cloneRepository = async (url: string, directory: string): Promise<v
 export const cleanupTempDirectory = async (directory: string): Promise<void> => {
   logger.trace(`Cleaning up temporary directory: ${directory}`);
   await fs.rm(directory, { recursive: true, force: true });
-};
-
-export const checkGitInstallation = async (): Promise<boolean> => {
-  try {
-    const result = await execAsync('git --version');
-    return !result.stderr;
-  } catch (error) {
-    logger.debug('Git is not installed:', (error as Error).message);
-    return false;
-  }
 };
 
 export const copyOutputToCurrentDirectory = async (
