@@ -8,20 +8,12 @@ import type { RepomixConfigMerged } from '../config/configSchema.js';
 import { logger } from '../shared/logger.js';
 import { getProcessConcurrency } from '../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../shared/types.js';
-import { collectFiles as defaultCollectFiles } from './file/fileCollect.js';
-import { processFiles as defaultProcessFiles } from './file/fileProcess.js';
-import { searchFiles as defaultSearchFiles } from './file/fileSearch.js';
-import { generateOutput as defaultGenerateOutput } from './output/outputGenerate.js';
-import { type SuspiciousFileResult, runSecurityCheck as defaultRunSecurityCheck } from './security/securityCheck.js';
+import { collectFiles } from './file/fileCollect.js';
+import { processFiles } from './file/fileProcess.js';
+import { searchFiles } from './file/fileSearch.js';
+import { generateOutput } from './output/outputGenerate.js';
+import { type SuspiciousFileResult, runSecurityCheck } from './security/securityCheck.js';
 import { TokenCounter } from './tokenCount/tokenCount.js';
-
-export interface PackDependencies {
-  searchFiles: typeof defaultSearchFiles;
-  collectFiles: typeof defaultCollectFiles;
-  processFiles: typeof defaultProcessFiles;
-  runSecurityCheck: typeof defaultRunSecurityCheck;
-  generateOutput: typeof defaultGenerateOutput;
-}
 
 export interface PackResult {
   totalFiles: number;
@@ -36,12 +28,12 @@ export const pack = async (
   rootDir: string,
   config: RepomixConfigMerged,
   progressCallback: RepomixProgressCallback = () => {},
-  deps: PackDependencies = {
-    searchFiles: defaultSearchFiles,
-    collectFiles: defaultCollectFiles,
-    processFiles: defaultProcessFiles,
-    runSecurityCheck: defaultRunSecurityCheck,
-    generateOutput: defaultGenerateOutput,
+  deps = {
+    searchFiles,
+    collectFiles,
+    processFiles,
+    runSecurityCheck,
+    generateOutput,
   },
 ): Promise<PackResult> => {
   // Get all file paths considering the config

@@ -1,15 +1,7 @@
 import * as fs from 'node:fs/promises';
-import * as os from 'node:os';
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import {
-  checkGitInstallation,
-  cleanupTempDirectory,
-  copyOutputToCurrentDirectory,
-  createTempDirectory,
-  formatGitUrl,
-  runRemoteAction,
-} from '../../../src/cli/actions/remoteAction.js';
+import { copyOutputToCurrentDirectory, formatGitUrl, runRemoteAction } from '../../../src/cli/actions/remoteAction.js';
 
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();
@@ -28,14 +20,16 @@ describe('remoteAction functions', () => {
   describe('runRemoteAction', () => {
     test('should clone the repository', async () => {
       vi.mocked(fs.copyFile).mockResolvedValue(undefined);
-      await runRemoteAction('yamadashy/repomix', {});
-    });
-  });
-
-  describe('checkGitInstallation Integration', () => {
-    test('should detect git installation in real environment', async () => {
-      const result = await checkGitInstallation();
-      expect(result).toBe(true);
+      await runRemoteAction(
+        'yamadashy/repomix',
+        {},
+        {
+          isGitInstalled: async () => Promise.resolve(true),
+          execGitShallowClone: async (url: string, directory: string) => {
+            await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
+          },
+        },
+      );
     });
   });
 

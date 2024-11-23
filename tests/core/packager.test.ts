@@ -2,7 +2,12 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import clipboardy from 'clipboardy';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { type PackDependencies, pack } from '../../src/core/packager.js';
+import type { collectFiles } from '../../src/core/file/fileCollect.js';
+import type { processFiles } from '../../src/core/file/fileProcess.js';
+import type { searchFiles } from '../../src/core/file/fileSearch.js';
+import type { generateOutput } from '../../src/core/output/outputGenerate.js';
+import { pack } from '../../src/core/packager.js';
+import type { runSecurityCheck } from '../../src/core/security/securityCheck.js';
 import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
@@ -17,7 +22,13 @@ vi.mock('clipboardy', () => ({
 }));
 
 describe('packager', () => {
-  let mockDeps: PackDependencies;
+  let mockDeps: {
+    searchFiles: typeof searchFiles;
+    collectFiles: typeof collectFiles;
+    processFiles: typeof processFiles;
+    runSecurityCheck: typeof runSecurityCheck;
+    generateOutput: typeof generateOutput;
+  };
 
   beforeEach(() => {
     vi.resetAllMocks();
