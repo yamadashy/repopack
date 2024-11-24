@@ -114,7 +114,10 @@ describe('packager', () => {
     const mockConfig = createMockConfig();
     const suspiciousFile = 'suspicious.txt';
     const file2Path = path.join('dir1', 'file2.txt');
-    vi.mocked(mockDeps.searchFiles).mockResolvedValue({ emptyDirPaths: [], filePaths: ['file1.txt', file2Path, suspiciousFile]});
+    vi.mocked(mockDeps.searchFiles).mockResolvedValue({
+      emptyDirPaths: [],
+      filePaths: ['file1.txt', file2Path, suspiciousFile],
+    });
     vi.mocked(mockDeps.collectFiles).mockResolvedValue([
       { path: 'file1.txt', content: 'raw content 1' },
       { path: file2Path, content: 'raw content 2' },

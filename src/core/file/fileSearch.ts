@@ -1,12 +1,12 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { globby } from 'globby';
+import { minimatch } from 'minimatch';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { defaultIgnoreList } from '../../config/defaultIgnore.js';
 import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSort.js';
 import { PermissionError, checkDirectoryPermissions } from './permissionCheck.js';
-import { minimatch } from 'minimatch';
-import path from 'path';
-import fs from 'node:fs/promises';
 
 export interface FileSearchResult {
   filePaths: string[];
@@ -24,13 +24,11 @@ const findEmptyDirectories = async (
     const fullPath = path.join(rootDir, dir);
     try {
       const entries = await fs.readdir(fullPath);
-      const hasVisibleContents = entries.some(entry => !entry.startsWith('.'));
+      const hasVisibleContents = entries.some((entry) => !entry.startsWith('.'));
 
       if (!hasVisibleContents) {
         // This checks if the directory itself matches any ignore patterns
-        const shouldIgnore = ignorePatterns.some(pattern =>
-          minimatch(dir, pattern) || minimatch(`${dir}/`, pattern)
-        );
+        const shouldIgnore = ignorePatterns.some((pattern) => minimatch(dir, pattern) || minimatch(`${dir}/`, pattern));
 
         if (!shouldIgnore) {
           emptyDirs.push(dir);
@@ -86,7 +84,6 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       throw error;
     });
 
-
     let emptyDirPaths: string[] = [];
     if (config.output.includeEmptyDirectories) {
       const directories = await globby(includePatterns, {
@@ -108,7 +105,6 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       filePaths: sortPaths(filePaths),
       emptyDirPaths: sortPaths(emptyDirPaths),
     };
-
   } catch (error: unknown) {
     // Re-throw PermissionError as is
     if (error instanceof PermissionError) {

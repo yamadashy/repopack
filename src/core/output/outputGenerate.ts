@@ -3,6 +3,7 @@ import path from 'node:path';
 import Handlebars from 'handlebars';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
+import { searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
@@ -17,7 +18,6 @@ import {
 import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
-import { searchFiles } from '../file/fileSearch.js';
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
   return {
@@ -79,9 +79,7 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
-  const emptyDirPaths = config.output.includeEmptyDirectories ?
-  (await searchFiles(rootDir, config)).emptyDirPaths :
-  [];
+  const emptyDirPaths = config.output.includeEmptyDirectories ? (await searchFiles(rootDir, config)).emptyDirPaths : [];
 
   return {
     generationDate: new Date().toISOString(),
