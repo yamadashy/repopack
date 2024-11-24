@@ -79,7 +79,6 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
-  // const emptyDirPaths = config.output.includeEmptyDirectories ? (await searchFiles(rootDir, config)).emptyDirPaths : [];
   let emptyDirPaths: string[] = [];
   if (config.output.includeEmptyDirectories) {
     try {
