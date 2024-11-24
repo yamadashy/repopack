@@ -24,6 +24,7 @@ export const repomixConfigBaseSchema = z.object({
       topFilesLength: z.number().optional(),
       showLineNumbers: z.boolean().optional(),
       copyToClipboard: z.boolean().optional(),
+      includeEmptyDirectories: z.boolean().optional()
     })
     .optional(),
   include: z.array(z.string()).optional(),
@@ -54,6 +55,7 @@ export const repomixConfigDefaultSchema = z.object({
       topFilesLength: z.number().int().min(0).default(5),
       showLineNumbers: z.boolean().default(false),
       copyToClipboard: z.boolean().default(false),
+      includeEmptyDirectories: z.boolean().optional()
     })
     .default({}),
   include: z.array(z.string()).default([]),

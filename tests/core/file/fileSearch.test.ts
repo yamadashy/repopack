@@ -46,6 +46,54 @@ describe('fileSearch', () => {
       const filePatterns = await getIgnoreFilePatterns(mockConfig);
       expect(filePatterns).toEqual(['**/.repomixignore']);
     });
+
+    test('should handle empty directories when enabled', async () => {
+      const mockConfig = createMockConfig({
+        output: {
+          includeEmptyDirectories: true,
+        },
+      });
+
+      const mockFilePaths = ['src/file1.js', 'src/file2.js'];
+      const mockEmptyDirs = ['src/empty', 'empty-root'];
+
+      vi.mocked(globby).mockImplementation(async (_, options) => {
+        if (options?.onlyDirectories) {
+          return mockEmptyDirs;
+        }
+        return mockFilePaths;
+      });
+
+      vi.mocked(fs.readdir).mockResolvedValue([]);
+
+      const result = await searchFiles('/mock/root', mockConfig);
+
+      expect(result.filePaths).toEqual(mockFilePaths);
+      expect(result.emptyDirPaths).toEqual(mockEmptyDirs);
+    });
+
+    test('should not collect empty directories when disabled', async () => {
+      const mockConfig = createMockConfig({
+        output: {
+          includeEmptyDirectories: false,
+        },
+      });
+
+      const mockFilePaths = ['src/file1.js', 'src/file2.js'];
+
+      vi.mocked(globby).mockImplementation(async (_, options) => {
+        if (options?.onlyDirectories) {
+          throw new Error('Should not search for directories when disabled');
+        }
+        return mockFilePaths;
+      });
+
+      const result = await searchFiles('/mock/root', mockConfig);
+
+      expect(result.filePaths).toEqual(mockFilePaths);
+      expect(result.emptyDirPaths).toEqual([]);
+      expect(globby).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getIgnorePatterns', () => {
@@ -194,8 +242,9 @@ node_modules
       });
 
       const result = await searchFiles('/mock/root', mockConfig);
-      expect(result).toEqual(['root/another/file3.js', 'root/subdir/file2.js', 'root/file1.js']);
-      expect(result).not.toContain('root/subdir/ignored.js');
+      expect(result.filePaths).toEqual(['root/another/file3.js', 'root/subdir/file2.js', 'root/file1.js']);
+      expect(result.filePaths).not.toContain('root/subdir/ignored.js');
+      expect(result.emptyDirPaths).toEqual([]);
     });
 
     test('should not apply .gitignore when useGitignore is false', async () => {
@@ -219,8 +268,9 @@ node_modules
 
       const result = await searchFiles('/mock/root', mockConfig);
 
-      expect(result).toEqual(mockFileStructure);
-      expect(result).toContain('root/subdir/ignored.js');
+      expect(result.filePaths).toEqual(mockFileStructure);
+      expect(result.filePaths).toContain('root/subdir/ignored.js');
+      expect(result.emptyDirPaths).toEqual([]);
     });
   });
 });

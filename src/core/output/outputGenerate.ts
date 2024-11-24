@@ -17,6 +17,7 @@ import {
 import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
+import { searchFiles } from '../file/fileSearch.js';
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
   return {
@@ -78,9 +79,13 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
+  const emptyDirPaths = config.output.includeEmptyDirectories ?
+  (await searchFiles(rootDir, config)).emptyDirPaths :
+  [];
+
   return {
     generationDate: new Date().toISOString(),
-    treeString: generateTreeString(allFilePaths),
+    treeString: generateTreeString(allFilePaths, emptyDirPaths),
     processedFiles,
     config,
     instruction: repositoryInstruction,

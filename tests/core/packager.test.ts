@@ -34,7 +34,10 @@ describe('packager', () => {
     vi.resetAllMocks();
     const file2Path = path.join('dir1', 'file2.txt');
     mockDeps = {
-      searchFiles: vi.fn().mockResolvedValue(['file1.txt', file2Path]),
+      searchFiles: vi.fn().mockResolvedValue({
+        filePaths: ['file1.txt', file2Path],
+        emptyDirPaths: [],
+      }),
       collectFiles: vi.fn().mockResolvedValue([
         { path: 'file1.txt', content: 'raw content 1' },
         { path: file2Path, content: 'raw content 2' },
@@ -111,7 +114,7 @@ describe('packager', () => {
     const mockConfig = createMockConfig();
     const suspiciousFile = 'suspicious.txt';
     const file2Path = path.join('dir1', 'file2.txt');
-    vi.mocked(mockDeps.searchFiles).mockResolvedValue(['file1.txt', file2Path, suspiciousFile]);
+    vi.mocked(mockDeps.searchFiles).mockResolvedValue({ emptyDirPaths: [], filePaths: ['file1.txt', file2Path, suspiciousFile]});
     vi.mocked(mockDeps.collectFiles).mockResolvedValue([
       { path: 'file1.txt', content: 'raw content 1' },
       { path: file2Path, content: 'raw content 2' },

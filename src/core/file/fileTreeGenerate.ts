@@ -1,4 +1,4 @@
-import path from 'node:path';
+import nodepath from 'node:path';
 
 interface TreeNode {
   name: string;
@@ -8,28 +8,37 @@ interface TreeNode {
 
 const createTreeNode = (name: string, isDirectory: boolean): TreeNode => ({ name, children: [], isDirectory });
 
-export const generateFileTree = (files: string[]): TreeNode => {
+export const generateFileTree = (files: string[], emptyDirPaths: string[] = []): TreeNode => {
   const root: TreeNode = createTreeNode('root', true);
 
   for (const file of files) {
-    const parts = file.split(path.sep);
-    let currentNode = root;
+    addPathToTree(root, file, false);
+  }
 
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      const isLastPart = i === parts.length - 1;
-      let child = currentNode.children.find((c) => c.name === part);
-
-      if (!child) {
-        child = createTreeNode(part, !isLastPart);
-        currentNode.children.push(child);
-      }
-
-      currentNode = child;
-    }
+  // Add empty directories
+  for (const dir of emptyDirPaths) {
+    addPathToTree(root, dir, true);
   }
 
   return root;
+};
+
+const addPathToTree = (root: TreeNode, path: string, isDirectory: boolean): void => {
+  const parts = path.split(nodepath.sep);
+  let currentNode = root;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const isLastPart = i === parts.length - 1;
+    let child = currentNode.children.find((c) => c.name === part);
+
+    if (!child) {
+      child = createTreeNode(part, !isLastPart || isDirectory);
+      currentNode.children.push(child);
+    }
+
+    currentNode = child;
+  }
 };
 
 const sortTreeNodes = (node: TreeNode) => {
@@ -59,7 +68,7 @@ export const treeToString = (node: TreeNode, prefix = ''): string => {
   return result;
 };
 
-export const generateTreeString = (files: string[]): string => {
-  const tree = generateFileTree(files);
+export const generateTreeString = (files: string[], emptyDirPaths: string[] = []): string => {
+  const tree = generateFileTree(files, emptyDirPaths);
   return treeToString(tree).trim();
 };

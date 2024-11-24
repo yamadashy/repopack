@@ -4,8 +4,47 @@ import { defaultIgnoreList } from '../../config/defaultIgnore.js';
 import { logger } from '../../shared/logger.js';
 import { sortPaths } from './filePathSort.js';
 import { PermissionError, checkDirectoryPermissions } from './permissionCheck.js';
+import { minimatch } from 'minimatch';
+import path from 'path';
+import fs from 'node:fs/promises';
 
-export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<string[]> => {
+export interface FileSearchResult {
+  filePaths: string[];
+  emptyDirPaths: string[];
+}
+
+const findEmptyDirectories = async (
+  rootDir: string,
+  directories: string[],
+  ignorePatterns: string[],
+): Promise<string[]> => {
+  const emptyDirs: string[] = [];
+
+  for (const dir of directories) {
+    const fullPath = path.join(rootDir, dir);
+    try {
+      const entries = await fs.readdir(fullPath);
+      const hasVisibleContents = entries.some(entry => !entry.startsWith('.'));
+
+      if (!hasVisibleContents) {
+        // This checks if the directory itself matches any ignore patterns
+        const shouldIgnore = ignorePatterns.some(pattern =>
+          minimatch(dir, pattern) || minimatch(`${dir}/`, pattern)
+        );
+
+        if (!shouldIgnore) {
+          emptyDirs.push(dir);
+        }
+      }
+    } catch (error) {
+      logger.debug(`Error checking directory ${dir}:`, error);
+    }
+  }
+
+  return emptyDirs;
+};
+
+export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<FileSearchResult> => {
   // First check directory permissions
   const permissionCheck = await checkDirectoryPermissions(rootDir);
 
@@ -47,10 +86,29 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       throw error;
     });
 
-    logger.trace(`Filtered ${filePaths.length} files`);
-    const sortedPaths = sortPaths(filePaths);
 
-    return sortedPaths;
+    let emptyDirPaths: string[] = [];
+    if (config.output.includeEmptyDirectories) {
+      const directories = await globby(includePatterns, {
+        cwd: rootDir,
+        ignore: [...ignorePatterns],
+        ignoreFiles: [...ignoreFilePatterns],
+        onlyDirectories: true,
+        absolute: false,
+        dot: true,
+        followSymbolicLinks: false,
+      });
+
+      emptyDirPaths = await findEmptyDirectories(rootDir, directories, ignorePatterns);
+    }
+
+    logger.trace(`Filtered ${filePaths.length} files`);
+
+    return {
+      filePaths: sortPaths(filePaths),
+      emptyDirPaths: sortPaths(emptyDirPaths),
+    };
+
   } catch (error: unknown) {
     // Re-throw PermissionError as is
     if (error instanceof PermissionError) {
