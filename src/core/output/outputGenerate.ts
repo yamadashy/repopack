@@ -79,8 +79,18 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
-  const emptyDirPaths = config.output.includeEmptyDirectories ? (await searchFiles(rootDir, config)).emptyDirPaths : [];
-
+  // const emptyDirPaths = config.output.includeEmptyDirectories ? (await searchFiles(rootDir, config)).emptyDirPaths : [];
+  let emptyDirPaths: string[] = [];
+  if (config.output.includeEmptyDirectories) {
+    try {
+      const searchResult = await searchFiles(rootDir, config);
+      emptyDirPaths = searchResult.emptyDirPaths;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new RepomixError(`Failed to search for empty directories: ${error.message}`);
+      }
+    }
+  }
   return {
     generationDate: new Date().toISOString(),
     treeString: generateTreeString(allFilePaths, emptyDirPaths),

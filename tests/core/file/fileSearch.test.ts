@@ -69,7 +69,7 @@ describe('fileSearch', () => {
       const result = await searchFiles('/mock/root', mockConfig);
 
       expect(result.filePaths).toEqual(mockFilePaths);
-      expect(result.emptyDirPaths).toEqual(mockEmptyDirs);
+      expect(result.emptyDirPaths.sort()).toEqual(mockEmptyDirs.sort());
     });
 
     test('should not collect empty directories when disabled', async () => {
