@@ -38,7 +38,7 @@ export const pack = async (
 ): Promise<PackResult> => {
   // Get all file paths considering the config
   progressCallback('Searching for files...');
-  const filePaths = await deps.searchFiles(rootDir, config);
+  const { filePaths } = await deps.searchFiles(rootDir, config);
 
   // Collect raw files
   progressCallback('Collecting files...');

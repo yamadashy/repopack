@@ -3,6 +3,7 @@ import path from 'node:path';
 import Handlebars from 'handlebars';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
+import { searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
@@ -78,9 +79,20 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
+  let emptyDirPaths: string[] = [];
+  if (config.output.includeEmptyDirectories) {
+    try {
+      const searchResult = await searchFiles(rootDir, config);
+      emptyDirPaths = searchResult.emptyDirPaths;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new RepomixError(`Failed to search for empty directories: ${error.message}`);
+      }
+    }
+  }
   return {
     generationDate: new Date().toISOString(),
-    treeString: generateTreeString(allFilePaths),
+    treeString: generateTreeString(allFilePaths, emptyDirPaths),
     processedFiles,
     config,
     instruction: repositoryInstruction,
