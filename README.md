@@ -381,6 +381,7 @@ Here's an explanation of the configuration options:
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
 |`output.copyToClipboard`| Whether to copy the output to system clipboard in addition to saving the file |`false`|
 |`output.topFilesLength`| Number of top files to display in the summary. If set to 0, no summary will be displayed |`5`|
+|`output.includeEmptyDirectories`| Whether to include empty directories in the repository structure |`false`|
 |`include`| Patterns of files to include (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) |`[]`|
 |`ignore.useGitignore`| Whether to use patterns from the project's `.gitignore` file |`true`|
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
@@ -399,7 +400,8 @@ Example configuration:
     "removeEmptyLines": false,
     "showLineNumbers": false,
     "copyToClipboard": true,
-    "topFilesLength": 5
+    "topFilesLength": 5,
+    "includeEmptyDirectories": false
   },
   "include": ["**/*"],
   "ignore": {
