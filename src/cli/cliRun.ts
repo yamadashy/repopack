@@ -24,6 +24,7 @@ export interface CliOptions extends OptionValues {
   init?: boolean;
   global?: boolean;
   remote?: string;
+  branch?:string;
 }
 
 export const run = async () => {
@@ -44,6 +45,7 @@ export const run = async () => {
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
+      .option('--branch <name>', 'select a specific branch or commit id')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);

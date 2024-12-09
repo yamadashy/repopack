@@ -44,20 +44,33 @@ describe('gitCommand', () => {
       const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
+      const branch = 'master';
 
-      await execGitShallowClone(url, directory, { execAsync: mockExecAsync });
+      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
 
-      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
+      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 -b ${branch} ${url} ${directory}`);
     });
 
     test('should throw error when git clone fails', async () => {
       const mockExecAsync = vi.fn().mockRejectedValue(new Error('Authentication failed'));
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
+      const branch = 'master';
 
-      await expect(execGitShallowClone(url, directory, { execAsync: mockExecAsync })).rejects.toThrow(
+      await expect(execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync })).rejects.toThrow(
         'Authentication failed',
       );
+
+      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 -b ${branch} ${url} ${directory}`);
+    });
+
+    test('should execute without branch option if not specified by user', async () => {
+      const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+      const branch = undefined;
+
+      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
 
       expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
