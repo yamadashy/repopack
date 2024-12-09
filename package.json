@@ -65,7 +65,7 @@
     "jschardet": "^3.1.4",
     "log-update": "^6.1.0",
     "minimatch": "^10.0.1",
-    "p-map": "^7.0.2",
+    "p-map": "^7.0.3",
     "picocolors": "^1.1.1",
     "strip-comments": "^2.0.1",
     "tiktoken": "^1.0.17",
@@ -75,11 +75,11 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.1",
     "@types/strip-comments": "^2.0.4",
-    "@vitest/coverage-v8": "^2.1.6",
+    "@vitest/coverage-v8": "^2.1.8",
     "rimraf": "^6.0.1",
     "secretlint": "^9.0.0",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.6"
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=16.0.0",
