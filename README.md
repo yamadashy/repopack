@@ -329,7 +329,7 @@ To process a remote repository, use the `--remote` option followed by the reposi
 repomix --remote https://github.com/user/repo.git
 ```
 
-# You can specify the branch name, tag, or commit hash:
+You can specify the branch name, tag, or commit hash:
 
 ```bash
 repomix --remote https://github.com/yamadashy/repomix --remote-branch master
