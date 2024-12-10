@@ -45,7 +45,7 @@ export const run = async () => {
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
-      .option('--remote-branch <name>', 'select a specific branch or commit id')
+      .option('--remote-branch <name>', 'specify the remote branch name, tag, or commit hash (defaults to repository default branch)')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);
