@@ -291,7 +291,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--copy`: Additionally copy generated output to system clipboard
 - `--remote <url>`: Process a remote Git repository
-- `--remote-branch <name>`: Specify a  remote branch name, tag, or commit hash (defaults to repository default branch)
+- `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
 - `--verbose`: Enable verbose logging
 
 Examples:
