@@ -73,7 +73,7 @@ export const createTempDirectory = async (): Promise<string> => {
 export const cloneRepository = async (
   url: string,
   directory: string,
-  branch?:string,
+  branch?: string,
   deps = {
     execGitShallowClone: execGitShallowClone,
   },

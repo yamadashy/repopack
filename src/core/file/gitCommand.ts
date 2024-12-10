@@ -21,10 +21,10 @@ export const isGitInstalled = async (
 export const execGitShallowClone = async (
   url: string,
   directory: string,
-  branch?:string,
+  branch?: string,
   deps = {
     execAsync,
   },
 ) => {
-  await deps.execAsync(`git clone --depth 1 ${branch ? `-b ${branch} `:""}${url} ${directory}`);
+  await deps.execAsync(`git clone --depth 1 ${branch ? `-b ${branch} ` : ''}${url} ${directory}`);
 };
