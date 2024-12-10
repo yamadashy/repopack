@@ -112,6 +112,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.style) {
     cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepomixOutputStyle };
   }
+  if (options.securityCheck !== undefined) {
+    cliConfig.security = { enableSecurityCheck: options.securityCheck };
+  }
 
   try {
     return repomixConfigCliSchema.parse(cliConfig);

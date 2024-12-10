@@ -115,4 +115,42 @@ describe('cliRun', () => {
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
   });
+
+  describe('security check flag', () => {
+    test('should enable security check by default', async () => {
+      await executeAction('.', process.cwd(), {});
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.not.objectContaining({
+          securityCheck: false,
+        }),
+      );
+    });
+
+    test('should handle --no-security-check flag', async () => {
+      await executeAction('.', process.cwd(), { securityCheck: false });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          securityCheck: false,
+        }),
+      );
+    });
+
+    test('should handle explicit --security-check flag', async () => {
+      await executeAction('.', process.cwd(), { securityCheck: true });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          securityCheck: true,
+        }),
+      );
+    });
+  });
 });
