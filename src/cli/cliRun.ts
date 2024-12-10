@@ -24,7 +24,7 @@ export interface CliOptions extends OptionValues {
   init?: boolean;
   global?: boolean;
   remote?: string;
-  branch?: string;
+  remoteBranch?: string;
 }
 
 export const run = async () => {
