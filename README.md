@@ -82,6 +82,9 @@ To pack a remote repository:
 ```bash
 repomix --remote https://github.com/yamadashy/repomix
 
+# You can specify the branch name, tag, or commit hash:
+repomix --remote https://github.com/yamadashy/repomix --remote-branch master
+
 # You can also use GitHub shorthand:
 repomix --remote yamadashy/repomix
 ```
