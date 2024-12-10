@@ -29,7 +29,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, {
+    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, options.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
@@ -73,6 +73,7 @@ export const createTempDirectory = async (): Promise<string> => {
 export const cloneRepository = async (
   url: string,
   directory: string,
+  branch?: string,
   deps = {
     execGitShallowClone: execGitShallowClone,
   },
@@ -81,7 +82,7 @@ export const cloneRepository = async (
   logger.log('');
 
   try {
-    await deps.execGitShallowClone(url, directory);
+    await deps.execGitShallowClone(url, directory, branch);
   } catch (error) {
     throw new RepomixError(`Failed to clone repository: ${(error as Error).message}`);
   }
