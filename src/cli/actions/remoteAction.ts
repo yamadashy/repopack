@@ -29,7 +29,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, options.branch, {
+    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, options.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
