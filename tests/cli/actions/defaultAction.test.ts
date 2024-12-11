@@ -123,4 +123,42 @@ describe('defaultAction', () => {
 
     await expect(runDefaultAction('.', process.cwd(), options)).rejects.toThrow('Test error');
   });
+
+  describe('security check flag', () => {
+    it('should handle --no-security-check flag', async () => {
+      const options: CliOptions = {
+        securityCheck: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          security: {
+            enableSecurityCheck: false,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --security-check flag', async () => {
+      const options: CliOptions = {
+        securityCheck: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          security: {
+            enableSecurityCheck: true,
+          },
+        }),
+      );
+    });
+  });
 });

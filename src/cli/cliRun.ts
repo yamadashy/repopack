@@ -25,6 +25,7 @@ export interface CliOptions extends OptionValues {
   global?: boolean;
   remote?: string;
   remoteBranch?: string;
+  securityCheck?: boolean;
 }
 
 export const run = async () => {
@@ -49,6 +50,7 @@ export const run = async () => {
         '--remote-branch <name>',
         'specify the remote branch name, tag, or commit hash (defaults to repository default branch)',
       )
+      .option('--no-security-check', 'disable security check')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);

@@ -292,6 +292,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--copy`: Additionally copy generated output to system clipboard
 - `--remote <url>`: Process a remote Git repository
 - `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
+- `--no-security-check`: Disable security check
 - `--verbose`: Enable verbose logging
 
 Examples:
@@ -512,6 +513,15 @@ By default, Repomix's security check feature is enabled. You can disable it by s
   }
 }
 ```
+
+Or using the `--no-security-check` command line option:
+
+```bash
+repomix --no-security-check
+```
+
+> [!NOTE]
+> Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such as when working with test files or documentation that contains example credentials.
 
 
 
