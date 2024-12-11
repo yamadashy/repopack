@@ -82,6 +82,9 @@ To pack a remote repository:
 ```bash
 repomix --remote https://github.com/yamadashy/repomix
 
+# You can specify the branch name, tag, or commit hash:
+repomix --remote https://github.com/yamadashy/repomix --remote-branch master
+
 # You can also use GitHub shorthand:
 repomix --remote yamadashy/repomix
 ```
@@ -288,6 +291,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--copy`: Additionally copy generated output to system clipboard
 - `--remote <url>`: Process a remote Git repository
+- `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
 - `--verbose`: Enable verbose logging
 
 Examples:
@@ -323,6 +327,12 @@ To process a remote repository, use the `--remote` option followed by the reposi
 
 ```bash
 repomix --remote https://github.com/user/repo.git
+```
+
+You can specify the branch name, tag, or commit hash:
+
+```bash
+repomix --remote https://github.com/yamadashy/repomix --remote-branch master
 ```
 
 You can also use GitHub's shorthand format:
