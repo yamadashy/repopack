@@ -1,4 +1,6 @@
 import { exec } from 'node:child_process';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { promisify } from 'node:util';
 import { logger } from '../../shared/logger.js';
 
@@ -31,7 +33,7 @@ export const execGitShallowClone = async (
     await deps.execAsync(`git -C ${directory} remote add origin ${url}`);
     await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${branch}`);
     await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
-    await deps.execAsync(`rm -rf ${directory}/.git 2>/dev/null || rmdir /s /q ${directory}\\.git`);
+    await fs.rm(path.join(directory, '.git'), { recursive: true, force: true });
   } else {
     await deps.execAsync(`git clone --depth 1 ${url} ${directory}`);
   }
