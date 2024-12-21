@@ -74,6 +74,5 @@ describe('gitCommand', () => {
 
       expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
-
   });
 });
