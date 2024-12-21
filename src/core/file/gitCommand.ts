@@ -26,5 +26,14 @@ export const execGitShallowClone = async (
     execAsync,
   },
 ) => {
-  await deps.execAsync(`git clone --depth 1 ${branch ? `-b ${branch} ` : ''}${url} ${directory}`);
+  if(branch){
+    await deps.execAsync(`git -C ${directory} init`);
+    await deps.execAsync(`git -C ${directory} remote add origin ${url}`);
+    await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${branch}`);
+    await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
+    await deps.execAsync(`rm -rf ${directory}/.git 2>/dev/null || rmdir /s /q ${directory}\\.git`)
+
+  }else{
+    await deps.execAsync(`git clone --depth 1 ${url} ${directory}`);
+  }
 };
