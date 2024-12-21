@@ -44,24 +44,24 @@ describe('gitCommand', () => {
       const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
-      const branch = 'master';
+      const branch = undefined;
 
       await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
 
-      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 -b ${branch} ${url} ${directory}`);
+      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
 
     test('should throw error when git clone fails', async () => {
       const mockExecAsync = vi.fn().mockRejectedValue(new Error('Authentication failed'));
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
-      const branch = 'master';
+      const branch = undefined;
 
       await expect(execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync })).rejects.toThrow(
         'Authentication failed',
       );
 
-      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 -b ${branch} ${url} ${directory}`);
+      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
 
     test('should execute without branch option if not specified by user', async () => {
@@ -73,6 +73,22 @@ describe('gitCommand', () => {
       await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
 
       expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
+    });
+
+    test('should initialize a shallow clone with a specific branch', async () => {
+      const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
+
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+      const branch = 'main';
+
+      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
+
+      expect(mockExecAsync).toHaveBeenCalledTimes(4);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(1, `git -C ${directory} init`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(2, `git -C ${directory} remote add origin ${url}`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(3, `git -C ${directory} fetch --depth 1 origin ${branch}`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(4, `git -C ${directory} checkout FETCH_HEAD`);
     });
   });
 });
